@@ -1,26 +1,11 @@
-﻿#include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
+
 #include "cuda_runtime.h"
 #include "cuda_runtime_api.h"
+#include "imageHandler.h"
 
-
-struct ImgProp {
-	int Hpixels;
-	int Vpixels;
-	unsigned char HeaderInfo[54];
-	unsigned long int Hbytes;
-};
-
-struct Pixel {
-	unsigned char R;
-	unsigned char G;
-	unsigned char B;
-};
-
-typedef unsigned char pel;    
-
-pel** ReadBMP(char*);  
-struct ImgProp ip;
+ImgProp ip;
 
 void setupImgProp(ImgProp* ip, FILE* f) {
 	pel headerInfo[54];
@@ -38,10 +23,9 @@ void setupImgProp(ImgProp* ip, FILE* f) {
 	ip->Hbytes = rowBytes;
 }
 
-pel** ReadBMP() {
-
+pel** ReadBMP(char* p) {
 	//BMP LEGGE I PIXEL NEL FORMATO BGR
-	FILE* f = fopen("src/assets/images/castle_bmp.bmp", "rb");
+	FILE* f = fopen(p, "rb");
 	if (f == NULL) {
 		printf("\n\nNOT FOUND\n\n");
 		exit(1);
@@ -53,28 +37,14 @@ pel** ReadBMP() {
 
 	pel** img;
 
-	cudaMallocManaged(&img, ip.Vpixels * sizeof(pel*));
+	cudaMallocManaged(&img, ip.Vpixels * sizeof(pel*), 0);
 	for (unsigned int i = 0; i < ip.Hpixels; i++)
-		cudaMallocManaged(&img[i], ip.Hbytes * sizeof(pel));
+		cudaMallocManaged(&img[i], ip.Hbytes * sizeof(pel), 0);
 
 	for (unsigned int i = 0; i < ip.Vpixels; i++) {
 		fread(img[i], sizeof(pel), ip.Hbytes, f);
 	}
 
 	fclose(f);
-	return img;  // remember to free() it in caller!
-}
-
-int main(int argc, char** argv) {
-
-	pel** imgSrc;				
-
-	imgSrc = ReadBMP();
-
-	if (imgSrc == NULL) {
-		printf("Cannot allocate memory for the input image...\n");
-		exit(EXIT_FAILURE);
-	}
-
-	return 0;
+	return img;
 }
