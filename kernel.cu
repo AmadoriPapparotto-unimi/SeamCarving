@@ -25,7 +25,7 @@ struct ImgProp ip;
 pel** ReadBMP() {
 
 	//BMP LEGGE I PIXEL NEL FORMATO BGR
-	FILE* f = fopen("src/assets/images/created.bmp", "rb");
+	FILE* f = fopen("src/assets/images/castle_bmp.bmp", "rb");
 	if (f == NULL) {
 		printf("\n\nNOT FOUND\n\n");
 		exit(1);
