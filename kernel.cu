@@ -22,6 +22,22 @@ typedef unsigned char pel;
 pel** ReadBMP(char*);  
 struct ImgProp ip;
 
+void setupImgProp(ImgProp* ip, FILE* f) {
+	pel headerInfo[54];
+	fread(headerInfo, sizeof(pel), 54, f);
+
+	int width = *(int*)&headerInfo[18];
+	int height = *(int*)&headerInfo[22];
+	int rowBytes = (width * 3 + 3) & (~3);
+
+	for (unsigned int i = 0; i < 54; i++)
+		ip->HeaderInfo[i] = headerInfo[i];
+
+	ip->Vpixels = height;
+	ip->Hpixels = width;
+	ip->Hbytes = rowBytes;
+}
+
 pel** ReadBMP() {
 
 	//BMP LEGGE I PIXEL NEL FORMATO BGR
@@ -31,34 +47,22 @@ pel** ReadBMP() {
 		exit(1);
 	}
 
-	pel HeaderInfo[54];
-	fread(HeaderInfo, sizeof(pel), 54, f); 
-	
-	int width = *(int*)&HeaderInfo[18];
-	int height = *(int*)&HeaderInfo[22];
-	
-	for (unsigned int i = 0; i < 54; i++)
-		ip.HeaderInfo[i] = HeaderInfo[i];
+	//extract information from headerInfo
+	setupImgProp(&ip, f);
+	printf("Input BMP dimension: (%u x %u)\n", ip.Hpixels, ip.Vpixels);
 
-	ip.Vpixels = height;
-	ip.Hpixels = width;
-	int RowBytes = (width * 3 + 3) & (~3);
-	ip.Hbytes = RowBytes;
+	pel** img;
 
-	printf("\nInput BMP File name: (%u x %u; %u)", ip.Hpixels, ip.Vpixels, ip.Hbytes);
+	cudaMallocManaged(&img, ip.Vpixels * sizeof(pel*));
+	for (unsigned int i = 0; i < ip.Hpixels; i++)
+		cudaMallocManaged(&img[i], ip.Hbytes * sizeof(pel));
 
-	pel** TheImage;
-
-	cudaMallocManaged(&TheImage, height * sizeof(pel*));
-	for (unsigned int i = 0; i < height; i++)
-		cudaMallocManaged(&TheImage[i], RowBytes * sizeof(pel));
-
-	for (unsigned int i = 0; i < height; i++) {
-		fread(TheImage[i], sizeof(pel), RowBytes, f);
+	for (unsigned int i = 0; i < ip.Vpixels; i++) {
+		fread(img[i], sizeof(pel), ip.Hbytes, f);
 	}
 
 	fclose(f);
-	return TheImage;  // remember to free() it in caller!
+	return img;  // remember to free() it in caller!
 }
 
 int main(int argc, char** argv) {
