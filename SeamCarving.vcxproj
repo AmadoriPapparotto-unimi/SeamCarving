@@ -75,9 +75,18 @@
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
     </CudaCompile>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CudaCompile Include="kernel.cu" />
+    <CudaCompile Include="src\bin\kernel.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\bin\imageHandler.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\bin\imageHandler.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
