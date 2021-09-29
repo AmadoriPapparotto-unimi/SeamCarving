@@ -19,26 +19,23 @@ struct Pixel {
 
 typedef unsigned char pel;    
 
-pel** ReadBMP(char*);        
+pel** ReadBMP(char*);  
 struct ImgProp ip;
 
-#define IMAGESIZE 
-
-
 pel** ReadBMP() {
-	FILE* f = fopen("source/assets/images/castle_bmp.bmp", "rb");
+
+	//BMP LEGGE I PIXEL NEL FORMATO BGR
+	FILE* f = fopen("src/assets/images/created.bmp", "rb");
 	if (f == NULL) {
-		printf("\n\n NOT FOUND\n\n");
+		printf("\n\nNOT FOUND\n\n");
 		exit(1);
 	}
 
 	pel HeaderInfo[54];
 	fread(HeaderInfo, sizeof(pel), 54, f); 
-
 	
 	int width = *(int*)&HeaderInfo[18];
 	int height = *(int*)&HeaderInfo[22];
-
 	
 	for (unsigned int i = 0; i < 54; i++)
 		ip.HeaderInfo[i] = HeaderInfo[i];
@@ -48,9 +45,7 @@ pel** ReadBMP() {
 	int RowBytes = (width * 3 + 3) & (~3);
 	ip.Hbytes = RowBytes;
 
-	printf("\n   Input BMP File name: %20s  (%u x %u)", "immagine", ip.Hpixels, ip.Vpixels);
-
-	pel tmp;
+	printf("\nInput BMP File name: (%u x %u; %u)", ip.Hpixels, ip.Vpixels, ip.Hbytes);
 
 	pel** TheImage;
 
@@ -59,16 +54,12 @@ pel** ReadBMP() {
 		cudaMallocManaged(&TheImage[i], RowBytes * sizeof(pel));
 
 	for (unsigned int i = 0; i < height; i++) {
-		fread(TheImage[i], sizeof(unsigned char), RowBytes, f);
-		if (i >= height - 4) {
-			printf("r %d", TheImage[i][0]);
-		}
+		fread(TheImage[i], sizeof(pel), RowBytes, f);
 	}
 
 	fclose(f);
 	return TheImage;  // remember to free() it in caller!
 }
-
 
 int main(int argc, char** argv) {
 
@@ -81,4 +72,5 @@ int main(int argc, char** argv) {
 		exit(EXIT_FAILURE);
 	}
 
+	return 0;
 }
