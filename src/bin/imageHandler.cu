@@ -1,12 +1,19 @@
-#include "imageHandler.h"
+#include "imageHandler.cuh"
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <iostream>
 
 #include "cuda_runtime.h"
 #include "cuda_runtime_api.h"
+#include "device_launch_parameters.h"
 
 ImgProp ip;
+
+__device__ void toGrayScale()
+{
+	//int i = threadIdx.x;
+}
 
 void setupImgProp(ImgProp* ip, FILE* f) {
 	pel headerInfo[54];
@@ -45,6 +52,8 @@ pel** ReadBMP(char* p) {
 	for (unsigned int i = 0; i < ip.Vpixels; i++) {
 		fread(img[i], sizeof(pel), ip.Hbytes, f);
 	}
+
+	toGrayScale<<<1, 50>>>();
 
 	fclose(f);
 	return img;

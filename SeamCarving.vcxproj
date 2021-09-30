@@ -47,11 +47,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\tommi\OneDrive\Documenti\MEGAsync\Universita\Magistrale\Corsi\GPU Computing\Proj\SeamCarving\src\bin;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <AdditionalDependencies>cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\tommi\OneDrive\Documenti\MEGAsync\Universita\Magistrale\Corsi\GPU Computing\Proj\SeamCarving\src\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
@@ -80,13 +82,13 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CudaCompile Include="src\bin\kernel.c" />
+    <CudaCompile Include="src\bin\kernel.cu" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\bin\imageHandler.h" />
+    <ClInclude Include="src\bin\imageHandler.cuh" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\bin\imageHandler.c" />
+    <ClCompile Include="src\bin\imageHandler.cu" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
