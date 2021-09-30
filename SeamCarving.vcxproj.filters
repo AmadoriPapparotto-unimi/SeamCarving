@@ -2,11 +2,9 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <CudaCompile Include="src\bin\kernel.cu" />
+    <CudaCompile Include="src\bin\image_handler.cu" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\bin\imageHandler.cu" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\bin\imageHandler.cuh" />
+    <ClInclude Include="src\bin\image_handler.h" />
   </ItemGroup>
 </Project>
