@@ -2,10 +2,10 @@
 #define IMAGEHANDLER_H_INCLUDED
 
 typedef struct ImgPropStruct {
-	int Hpixels;
-	int Vpixels;
-	unsigned char HeaderInfo[54];
-	unsigned long int Hbytes;
+	int width;
+	int height;
+	unsigned char headerInfo[54];
+	unsigned long int rowBytes;
 } ImgProp;
 
 struct Pixel {

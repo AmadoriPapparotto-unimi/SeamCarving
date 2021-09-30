@@ -10,9 +10,14 @@
 
 ImgProp ip;
 
-__global__ void toGrayScale()
+char grayValue(int r, int g, int b) {
+	return (char) (r + g + b) / 3;
+}
+
+__global__ void toGrayScale(pel** img, pel** grayImg)
 {
 	printf("%d", threadIdx.x);
+	//grayImg[threadIdx.x] = 
 }
 
 void setupImgProp(ImgProp* ip, FILE* f) {
@@ -24,11 +29,11 @@ void setupImgProp(ImgProp* ip, FILE* f) {
 	int rowBytes = (width * 3 + 3) & (~3);
 
 	for (unsigned int i = 0; i < 54; i++)
-		ip->HeaderInfo[i] = headerInfo[i];
+		ip->headerInfo[i] = headerInfo[i];
 
-	ip->Vpixels = height;
-	ip->Hpixels = width;
-	ip->Hbytes = rowBytes;
+	ip->height = height;
+	ip->width = width;
+	ip->rowBytes = rowBytes;
 }
 
 pel** ReadBMP(char* p) {
@@ -41,19 +46,32 @@ pel** ReadBMP(char* p) {
 
 	//extract information from headerInfo
 	setupImgProp(&ip, f);
-	printf("Input BMP dimension: (%u x %u)\n", ip.Hpixels, ip.Vpixels);
+	printf("Input BMP dimension: (%u x %u)\n", ip.width, ip.height);
 
-	pel** img;
+	pel **img, **imgGray;
 
-	cudaMallocManaged(&img, ip.Vpixels * sizeof(pel*), 0);
-	for (unsigned int i = 0; i < ip.Hpixels; i++)
-		cudaMallocManaged(&img[i], ip.Hbytes * sizeof(pel), 0);
+	cudaMallocManaged(&img, ip.height * sizeof(pel*), 0);
+	cudaMallocManaged(&imgGray, ip.height * sizeof(pel*), 0);
 
-	for (unsigned int i = 0; i < ip.Vpixels; i++) {
-		fread(img[i], sizeof(pel), ip.Hbytes, f);
+	for (unsigned int i = 0; i < ip.width; i++)
+		cudaMallocManaged(&img[i], ip.rowBytes * sizeof(pel), 0);
+
+	for (unsigned int i = 0; i < ip.width; i++)
+		cudaMallocManaged(&imgGray[i], ip.width * sizeof(pel), 0);
+
+
+	for (unsigned int i = 0; i < ip.height; i++) {
+		fread(img[i], sizeof(pel), ip.rowBytes, f);
 	}
 
-	toGrayScale << <1, 50 >> > ();
+	/*dim3 block;
+	dim3 gg;
+	block.x = 3;
+	gg.x = 10;*/
+
+	pel** 
+
+	toGrayScale <<<block, gg >>> (img);
 
 	fclose(f);
 	return img;
