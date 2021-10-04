@@ -8,19 +8,20 @@
 #include "cuda_runtime_api.h"
 #include "device_launch_parameters.h"
 
-ImgProp ip;
+imgProp ip;
 
-char grayValue(int r, int g, int b) {
-	return (char) (r + g + b) / 3;
+pel grayValue(pel r, pel g, pel b) {
+	return (pel) (r + g + b) / 3;
 }
 
-__global__ void toGrayScale(pel** img, pel** grayImg)
+__global__ void toGrayScale(pel* img)
 {
-	printf("%d", threadIdx.x);
-	//grayImg[threadIdx.x] = 
+	int id = threadIdx.x; //TODO: LINEARIZZARE INDICE
+	//printf("%d - %d - %d\n", id, img[1][0], *(pel*)img[1428]);
+	//*(pel*)grayImg[id] = grayValue(*(pel*)grayImg[id + 2], *(pel*)grayImg[id + 1], *(pel*)grayImg[1]);
 }
 
-void setupImgProp(ImgProp* ip, FILE* f) {
+void setupImgProp(imgProp* ip, FILE* f) {
 	pel headerInfo[54];
 	fread(headerInfo, sizeof(pel), 54, f);
 
@@ -36,7 +37,11 @@ void setupImgProp(ImgProp* ip, FILE* f) {
 	ip->rowBytes = rowBytes;
 }
 
-pel** ReadBMP(char* p) {
+pixel* readBMP(char* p) {
+
+	//img[0] = B
+	//img[1] = G
+	//img[2] = R
 	//BMP LEGGE I PIXEL NEL FORMATO BGR
 	FILE* f = fopen(p, "rb");
 	if (f == NULL) {
@@ -46,33 +51,26 @@ pel** ReadBMP(char* p) {
 
 	//extract information from headerInfo
 	setupImgProp(&ip, f);
-	printf("Input BMP dimension: (%u x %u)\n", ip.width, ip.height);
+	printf("Input BMP dimension: (%u x %u): %u\n", ip.width, ip.height, ip.rowBytes);
 
-	pel **img, **imgGray;
+	pixel* img;
 
-	cudaMallocManaged(&img, ip.height * sizeof(pel*), 0);
-	cudaMallocManaged(&imgGray, ip.height * sizeof(pel*), 0);
+	cudaMallocManaged(&img, ip.height * ip.width * sizeof(pixel));
 
-	for (unsigned int i = 0; i < ip.width; i++)
-		cudaMallocManaged(&img[i], ip.rowBytes * sizeof(pel), 0);
-
-	for (unsigned int i = 0; i < ip.width; i++)
-		cudaMallocManaged(&imgGray[i], ip.width * sizeof(pel), 0);
-
-
-	for (unsigned int i = 0; i < ip.height; i++) {
-		fread(img[i], sizeof(pel), ip.rowBytes, f);
+	for (unsigned int i = 0; i < ip.height * ip.width; i++) {
+		fread(&img[i], sizeof(pel), sizeof(pixel), f);
 	}
 
-	/*dim3 block;
-	dim3 gg;
-	block.x = 3;
-	gg.x = 10;*/
-
-	pel** 
-
-	toGrayScale <<<block, gg >>> (img);
+	writeBMP("src/assets/images/created.bmp", ip, img);
 
 	fclose(f);
 	return img;
+}
+
+void writeBMP(char* p, imgProp imgProp, pixel* img) {
+	FILE* fw = fopen(p, "wb");
+
+	fwrite(imgProp.headerInfo, sizeof(pel), 54, fw);
+	fwrite(img, sizeof(pixel), imgProp.height * imgProp.width, fw);
+	fclose(fw);
 }
