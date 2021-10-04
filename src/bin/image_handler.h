@@ -5,7 +5,7 @@ typedef struct ImgPropStruct {
 	int width;
 	int height;
 	unsigned char headerInfo[54];
-	unsigned long int rowBytes;
+	int imageSize;
 } imgProp;
 
 typedef unsigned char pel;
@@ -17,6 +17,7 @@ typedef struct PixelStruct {
 } pixel;
 
 pixel* readBMP(char* p);
-void writeBMP(char* p, imgProp imgProp, pixel* img);
+void writeBMP_pixel(char* p, imgProp imgProp, pixel* img);
+void writeBMP_pel(char* p, imgProp imgProp, pel* img);
 
 #endif
