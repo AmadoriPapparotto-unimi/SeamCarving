@@ -19,11 +19,11 @@ __device__ void grayValue(pixel *res, pel r, pel g, pel b) {
 	res->B = grayVal;
 }
 
-__global__ void toGrayScale(pixel* img, pixel* imgGray, int imageSize)
+__global__ void toGrayScale(pixel* img, energyPixel* imgGray, int imageSize)
 {
 	int id = blockIdx.x * blockDim.x + threadIdx.x;
 	if (id < imageSize) {
-		grayValue(&imgGray[id], img[id].R, img[id].G, img[id].B);
+		grayValue(&imgGray[id].pixel, img[id].R, img[id].G, img[id].B);
 	}
 }
 
@@ -60,10 +60,10 @@ pixel* readBMP(char* p) {
 	printf("Input BMP dimension: (%u x %u)\n", ip.imageSize, ip.height);
 
 	pixel* img;
-	pixel* imgGray;
+	energyPixel* imgGray;
 
 	cudaMallocManaged(&img, ip.height * ip.width * sizeof(pixel));
-	cudaMallocManaged(&imgGray, ip.height * ip.width * sizeof(pixel));
+	cudaMallocManaged(&imgGray, ip.height * ip.width * sizeof(energyPixel));
 
 	for (unsigned int i = 0; i < ip.height * ip.width; i++) {
 		fread(&img[i], sizeof(pel), sizeof(pixel), f);
@@ -74,7 +74,7 @@ pixel* readBMP(char* p) {
 
 	toGrayScale << <blocks, MAX_THREAD >> > (img, imgGray, ip.imageSize);
 	cudaDeviceSynchronize();
-	writeBMP_pixel(strcat(SOURCE_PATH, "created.bmp"), ip, imgGray);
+	writeBMP_pixel(strcat(SOURCE_PATH, "created.bmp"), ip, energy2pixel(ip, imgGray));
 
 	fclose(f);
 	return img;
@@ -87,6 +87,17 @@ void writeBMP_pixel(char* p, imgProp imgProp, pixel* img) {
 	fwrite(img, sizeof(pixel), imgProp.imageSize, fw);
 
 	fclose(fw);
+}
+
+pixel* energy2pixel(imgProp imgProp, energyPixel* energyImg) {
+	pixel* img;
+	img = (pixel*)malloc(imgProp.imageSize * sizeof(pixel));
+
+	for (int i = 0; i < imgProp.imageSize; i++) {
+		img[i] = energyImg[i].pixel;
+	}
+
+	return img;
 }
 
 //void writeBMP_pel(char* p, imgProp imgProp, pel* img) {

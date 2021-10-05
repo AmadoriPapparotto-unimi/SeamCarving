@@ -18,8 +18,14 @@ typedef struct PixelStruct {
 	pel R;
 } pixel;
 
+typedef struct EnergyPixelStruct {
+	pixel pixel;
+	float energy;
+} energyPixel;
+
 pixel* readBMP(char* p);
 void writeBMP_pixel(char* p, imgProp imgProp, pixel* img);
 void writeBMP_pel(char* p, imgProp imgProp, pel* img);
+pixel* energy2pixel(imgProp imgProp, energyPixel* energyImg);
 
 #endif
