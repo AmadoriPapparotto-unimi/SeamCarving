@@ -10,16 +10,15 @@
 
 #define MAX_THREAD 1024
 
-imgProp ip;
 
-__device__ void grayValue(pixel *res, pel r, pel g, pel b) {
+__device__ void grayValue(pixel_t *res, pel_t r, pel_t g, pel_t b) {
 	int grayVal = (r + g + b) / 3;
 	res->R = grayVal;
 	res->G = grayVal;
 	res->B = grayVal;
 }
 
-__global__ void toGrayScale(pixel* img, energyPixel* imgGray, int imageSize)
+__global__ void toGrayScale(pixel_t* img, energyPixel_t* imgGray, int imageSize)
 {
 	int id = blockIdx.x * blockDim.x + threadIdx.x;
 	if (id < imageSize) {
@@ -27,13 +26,13 @@ __global__ void toGrayScale(pixel* img, energyPixel* imgGray, int imageSize)
 	}
 }
 
-void setupImgProp(imgProp* ip, FILE* f) {
-	pel headerInfo[54];
-	fread(headerInfo, sizeof(pel), 54, f);
+void setupImgProp(imgProp_t* ip, FILE* f) {
+	pel_t headerInfo[54];
+	fread(headerInfo, sizeof(pel_t), 54, f);
 
 	int width = *(int*)&headerInfo[18];
 	int height = *(int*)&headerInfo[22];
-	printf("%d\n", *(int*)&headerInfo[34]);
+	printf("#bytes: %d\n", *(int*)&headerInfo[34]);
 
 	for (unsigned int i = 0; i < 54; i++)
 		ip->headerInfo[i] = headerInfo[i];
@@ -43,7 +42,7 @@ void setupImgProp(imgProp* ip, FILE* f) {
 	ip->imageSize = width * height;
 }
 
-pixel* readBMP(char* p) {
+void readBMP(pixel_t* img, energyPixel_t* imgGray, char* p, imgProp_t* ip) {
 
 	//img[0] = B
 	//img[1] = G
@@ -56,44 +55,40 @@ pixel* readBMP(char* p) {
 	}
 
 	//extract information from headerInfo
-	setupImgProp(&ip, f);
-	printf("Input BMP dimension: (%u x %u)\n", ip.imageSize, ip.height);
+	setupImgProp(ip, f);
+	printf("Input BMP dimension: (%u x %u)\n", ip->width, ip->height);
 
-	pixel* img;
-	energyPixel* imgGray;
+	cudaMallocManaged(&img, ip->height * ip->width * sizeof(pixel_t));
+	cudaMallocManaged(&imgGray, ip->height * ip->width * sizeof(energyPixel_t));
 
-	cudaMallocManaged(&img, ip.height * ip.width * sizeof(pixel));
-	cudaMallocManaged(&imgGray, ip.height * ip.width * sizeof(energyPixel));
-
-	for (unsigned int i = 0; i < ip.height * ip.width; i++) {
-		fread(&img[i], sizeof(pel), sizeof(pixel), f);
+	for (unsigned int i = 0; i < ip->height * ip->width; i++) {
+		fread(&img[i], sizeof(pel_t), sizeof(pixel_t), f);
 	}
 
 	dim3 blocks;
-	blocks.x = ip.imageSize / MAX_THREAD;
+	blocks.x = ip->imageSize / MAX_THREAD;
 
-	toGrayScale << <blocks, MAX_THREAD >> > (img, imgGray, ip.imageSize);
+	toGrayScale << <blocks, MAX_THREAD >> > (img, imgGray, ip->imageSize);
 	cudaDeviceSynchronize();
-	writeBMP_pixel(strcat(SOURCE_PATH, "created.bmp"), ip, energy2pixel(ip, imgGray));
+	writeBMP_pixel(strcat(SOURCE_PATH, "created.bmp"), energy2pixel(imgGray, ip), ip);
 
 	fclose(f);
-	return img;
 }
 
-void writeBMP_pixel(char* p, imgProp imgProp, pixel* img) {
+void writeBMP_pixel(char* p, pixel_t* img, imgProp_t* ip) {
 	FILE* fw = fopen(p, "wb");
 
-	fwrite(imgProp.headerInfo, sizeof(pel), 54, fw);
-	fwrite(img, sizeof(pixel), imgProp.imageSize, fw);
+	fwrite(ip->headerInfo, sizeof(pel_t), 54, fw);
+	fwrite(img, sizeof(pixel_t), ip->imageSize, fw);
 
 	fclose(fw);
 }
 
-pixel* energy2pixel(imgProp imgProp, energyPixel* energyImg) {
-	pixel* img;
-	img = (pixel*)malloc(imgProp.imageSize * sizeof(pixel));
+pixel_t* energy2pixel(energyPixel_t* energyImg, imgProp_t* ip) {
+	pixel_t* img;
+	img = (pixel_t*)malloc(ip->imageSize * sizeof(pixel_t));
 
-	for (int i = 0; i < imgProp.imageSize; i++) {
+	for (int i = 0; i < ip->imageSize; i++) {
 		img[i] = energyImg[i].pixel;
 	}
 

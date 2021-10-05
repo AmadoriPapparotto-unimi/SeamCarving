@@ -8,24 +8,24 @@ typedef struct ImgPropStruct {
 	int height;
 	unsigned char headerInfo[54];
 	int imageSize;
-} imgProp;
+} imgProp_t;
 
-typedef unsigned char pel;
+typedef unsigned char pel_t;
 
 typedef struct PixelStruct {
-	pel B;
-	pel G;
-	pel R;
-} pixel;
+	pel_t B;
+	pel_t G;
+	pel_t R;
+} pixel_t;
 
 typedef struct EnergyPixelStruct {
-	pixel pixel;
+	pixel_t pixel;
 	float energy;
-} energyPixel;
+} energyPixel_t;
 
-pixel* readBMP(char* p);
-void writeBMP_pixel(char* p, imgProp imgProp, pixel* img);
-void writeBMP_pel(char* p, imgProp imgProp, pel* img);
-pixel* energy2pixel(imgProp imgProp, energyPixel* energyImg);
+void readBMP(pixel_t* img, energyPixel_t* imgGray, char* p, imgProp_t* ip);
+void writeBMP_pixel(char* p, pixel_t* img, imgProp_t* ip);
+//void writeBMP_pel(char* p, pel* img, imgProp* ip);
+pixel_t* energy2pixel(energyPixel_t* energyImg, imgProp_t* ip);
 
 #endif
