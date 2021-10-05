@@ -1,6 +1,8 @@
 #ifndef IMAGEHANDLER_H_INCLUDED
 #define IMAGEHANDLER_H_INCLUDED
 
+static char SOURCE_PATH[100] = "src/assets/images/";
+
 typedef struct ImgPropStruct {
 	int width;
 	int height;

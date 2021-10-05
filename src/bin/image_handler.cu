@@ -21,11 +21,10 @@ __device__ void grayValue(pixel *res, pel r, pel g, pel b) {
 
 __global__ void toGrayScale(pixel* img, pixel* imgGray, int imageSize)
 {
-	int id = blockIdx.x * blockDim.x + threadIdx.x; //TODO: LINEARIZZARE INDICE
-	//printf("%d - %d - %d\n", id, img[1][0], *(pel*)img[1428]);
-	if (id < imageSize) 
+	int id = blockIdx.x * blockDim.x + threadIdx.x;
+	if (id < imageSize) {
 		grayValue(&imgGray[id], img[id].R, img[id].G, img[id].B);
-	
+	}
 }
 
 void setupImgProp(imgProp* ip, FILE* f) {
@@ -73,9 +72,9 @@ pixel* readBMP(char* p) {
 	dim3 blocks;
 	blocks.x = ip.imageSize / MAX_THREAD;
 
-	toGrayScale << <blocks, 1024 >> > (img, imgGray, ip.imageSize);
+	toGrayScale << <blocks, MAX_THREAD >> > (img, imgGray, ip.imageSize);
 	cudaDeviceSynchronize();
-	writeBMP_pixel("src/assets/images/created.bmp", ip, imgGray);
+	writeBMP_pixel(strcat(SOURCE_PATH, "created.bmp"), ip, imgGray);
 
 	fclose(f);
 	return img;
