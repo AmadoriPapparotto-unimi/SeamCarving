@@ -7,16 +7,19 @@
 #include "cuda_runtime.h"
 #include "cuda_runtime_api.h"
 
-imgProp_t* imgProp = (imgProp_t*)malloc(sizeof(imgProp_t));;
 pixel_t* imgSrc;
 energyPixel_t* imgGray;
 
 int main(int argc, char** argv) {
 
+	imgProp_t* imgProp;
+	cudaMallocManaged(&imgProp, sizeof(imgProp_t));
+
 	char* path = strcat(SOURCE_PATH, "castle_bmp.bmp");
 
 	readBMP(imgSrc, imgGray, path, imgProp);
-	map(imgGray, imgProp);
+	//cudaMallocManaged(imgGray, imgProp->imageSize);
+	//map(imgGray, imgProp);
 
 	return 0;
 }

@@ -1,0 +1,18 @@
+﻿  Compiling CUDA source file kernel.cu...
+  
+  C:\Users\lucap\source\repos\SeamCarving\SeamCarving>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.2\bin\nvcc.exe" -gencode=arch=compute_52,code=\"sm_52,compute_52\" --use-local-env -ccbin "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29910\bin\HostX86\x64" -x cu   -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.2\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.2\include"  -G   --keep-dir x64\Debug  -maxrregcount=0  --machine 64 --compile -cudart static  -g  -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Fdx64\Debug\vc142.pdb /FS /Zi /RTC1 /MDd " -o x64\Debug\kernel.cu.obj "C:\Users\lucap\source\repos\SeamCarving\SeamCarving\kernel.cu" 
+C:/Users/lucap/source/repos/SeamCarving/SeamCarving/kernel.cu(57): warning : variable "TheImage" is used before its value is set
+  
+C:/Users/lucap/source/repos/SeamCarving/SeamCarving/kernel.cu(53): warning : variable "tmp" was declared but never referenced
+  
+C:/Users/lucap/source/repos/SeamCarving/SeamCarving/kernel.cu(57): warning : variable "TheImage" is used before its value is set
+  
+  kernel.cu
+C:/Users/lucap/source/repos/SeamCarving/SeamCarving/kernel.cu(58): warning C4018: '<': signed/unsigned mismatch
+C:/Users/lucap/source/repos/SeamCarving/SeamCarving/kernel.cu(61): warning C4018: '<': signed/unsigned mismatch
+C:/Users/lucap/source/repos/SeamCarving/SeamCarving/kernel.cu(63): warning C4018: '>=': signed/unsigned mismatch
+C:/Users/lucap/source/repos/SeamCarving/SeamCarving/kernel.cu(64): warning C4477: 'printf' : format string '%c' requires an argument of type 'int', but variadic argument 1 has type 'pel *'
+C:/Users/lucap/source/repos/SeamCarving/SeamCarving/kernel.cu(64): warning C4313: 'printf': '%c' in format string conflicts with argument 1 of type 'pel *'
+C:/Users/lucap/source/repos/SeamCarving/SeamCarving/kernel.cu(53): warning C4101: 'tmp': unreferenced local variable
+C:\Users\lucap\source\repos\SeamCarving\SeamCarving\kernel.cu(57): warning C4700: uninitialized local variable 'TheImage' used
+  SeamCarving.vcxproj -> C:\Users\lucap\source\repos\SeamCarving\x64\Debug\SeamCarving.exe

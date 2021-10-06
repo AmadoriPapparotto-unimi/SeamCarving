@@ -20,11 +20,12 @@ typedef struct PixelStruct {
 
 typedef struct EnergyPixelStruct {
 	pixel_t pixel;
-	float energy;
+	double energy;
 } energyPixel_t;
 
 void readBMP(pixel_t* img, energyPixel_t* imgGray, char* p, imgProp_t* ip);
 void writeBMP_pixel(char* p, pixel_t* img, imgProp_t* ip);
+void writeBMP_energy(char* p, energyPixel_t* energyImg, imgProp_t* ip);
 //void writeBMP_pel(char* p, pel* img, imgProp* ip);
 pixel_t* energy2pixel(energyPixel_t* energyImg, imgProp_t* ip);
 

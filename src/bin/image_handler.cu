@@ -1,4 +1,5 @@
 ﻿#include "image_handler.h"
+#include "seam_carving.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,6 +22,7 @@ __device__ void grayValue(pixel_t *res, pel_t r, pel_t g, pel_t b) {
 __global__ void toGrayScale(pixel_t* img, energyPixel_t* imgGray, int imageSize)
 {
 	int id = blockIdx.x * blockDim.x + threadIdx.x;
+
 	if (id < imageSize) {
 		grayValue(&imgGray[id].pixel, img[id].R, img[id].G, img[id].B);
 	}
@@ -71,11 +73,37 @@ void readBMP(pixel_t* img, energyPixel_t* imgGray, char* p, imgProp_t* ip) {
 	toGrayScale << <blocks, MAX_THREAD >> > (img, imgGray, ip->imageSize);
 	cudaDeviceSynchronize();
 	writeBMP_pixel(strcat(SOURCE_PATH, "created.bmp"), energy2pixel(imgGray, ip), ip);
+	//printf("%d", imgGray[0].pixel.R);
 
 	fclose(f);
+
+	map(imgGray, ip);
+	findSeams(imgGray, ip);
+
+
+
 }
 
 void writeBMP_pixel(char* p, pixel_t* img, imgProp_t* ip) {
+	FILE* fw = fopen(p, "wb");
+
+	fwrite(ip->headerInfo, sizeof(pel_t), 54, fw);
+	fwrite(img, sizeof(pixel_t), ip->imageSize, fw);
+
+	fclose(fw);
+}
+
+void writeBMP_energy(char* p, energyPixel_t* energyImg, imgProp_t* ip) {
+	pixel_t* img;
+	int sd = 1;
+	img = (pixel_t*)malloc(ip->imageSize * sizeof(pixel_t));
+
+	for (int i = 0; i < ip->imageSize; i++) {
+		img[i].R = energyImg[i].energy;
+		img[i].G = energyImg[i].energy;
+		img[i].B = energyImg[i].energy;
+	}
+
 	FILE* fw = fopen(p, "wb");
 
 	fwrite(ip->headerInfo, sizeof(pel_t), 54, fw);
