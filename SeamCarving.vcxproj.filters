@@ -4,8 +4,10 @@
     <CudaCompile Include="src\bin\kernel.cu" />
     <CudaCompile Include="src\bin\image_handler.cu" />
     <CudaCompile Include="src\bin\seam_carving.cu" />
+    <CudaCompile Include="src\bin\utils.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\bin\image_handler.h" />
+    <ClInclude Include="src\bin\utils.h" />
   </ItemGroup>
 </Project>

@@ -1,5 +1,6 @@
 ﻿#include "image_handler.h"
 #include "seam_carving.h"
+#include "utils.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,6 +23,8 @@ __device__ void grayValue(pixel_t *res, pel_t r, pel_t g, pel_t b) {
 __global__ void toGrayScale(pixel_t* img, energyPixel_t* imgGray, int imageSize)
 {
 	int id = blockIdx.x * blockDim.x + threadIdx.x;
+	if(id == gridDim.x * 1024 + 1)
+		printf("%d", gridDim.x);
 
 	if (id < imageSize) {
 		grayValue(&imgGray[id].pixel, img[id].R, img[id].G, img[id].B);
@@ -68,19 +71,16 @@ void readBMP(pixel_t* img, energyPixel_t* imgGray, char* p, imgProp_t* ip) {
 	}
 
 	dim3 blocks;
-	blocks.x = ip->imageSize / MAX_THREAD;
+	blocks.x = ip->imageSize / MAX_THREAD + 1;
 
 	toGrayScale << <blocks, MAX_THREAD >> > (img, imgGray, ip->imageSize);
 	cudaDeviceSynchronize();
-	writeBMP_pixel(strcat(SOURCE_PATH, "created.bmp"), energy2pixel(imgGray, ip), ip);
-	//printf("%d", imgGray[0].pixel.R);
+	writeBMP_pixel(strcat(SOURCE_PATH, "gray.bmp"), energy2pixel(imgGray, ip), ip);
 
 	fclose(f);
 
 	map(imgGray, ip);
 	findSeams(imgGray, ip);
-
-
 
 }
 
@@ -91,6 +91,7 @@ void writeBMP_pixel(char* p, pixel_t* img, imgProp_t* ip) {
 	fwrite(img, sizeof(pixel_t), ip->imageSize, fw);
 
 	fclose(fw);
+	printf("Immagine %s generata\n", p);
 }
 
 void writeBMP_energy(char* p, energyPixel_t* energyImg, imgProp_t* ip) {
@@ -104,12 +105,17 @@ void writeBMP_energy(char* p, energyPixel_t* energyImg, imgProp_t* ip) {
 		img[i].B = energyImg[i].energy;
 	}
 
-	FILE* fw = fopen(p, "wb");
+	writeBMP_pixel(p, img, ip);
+}
 
-	fwrite(ip->headerInfo, sizeof(pel_t), 54, fw);
-	fwrite(img, sizeof(pixel_t), ip->imageSize, fw);
-
-	fclose(fw);
+void writeBMP_minimumSeam(char* p, energyPixel_t* energyImg, seam_t* minSeam, imgProp_t* imgProp) {
+	for (int y = 0; y < imgProp->height; y++) {
+		printf("PATH: %d\n", minSeam[0].ids[y]);
+		energyImg[minSeam[0].ids[y]].pixel.R = 0;
+		energyImg[minSeam[0].ids[y]].pixel.G = 255;
+		energyImg[minSeam[0].ids[y]].pixel.B = 0;
+	}
+	writeBMP_pixel(strcat(SOURCE_PATH, "seams_map_minimum.bmp"), energy2pixel(energyImg, imgProp), imgProp);
 }
 
 pixel_t* energy2pixel(energyPixel_t* energyImg, imgProp_t* ip) {

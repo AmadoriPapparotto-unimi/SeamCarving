@@ -26,7 +26,7 @@ typedef struct EnergyPixelStruct {
 void readBMP(pixel_t* img, energyPixel_t* imgGray, char* p, imgProp_t* ip);
 void writeBMP_pixel(char* p, pixel_t* img, imgProp_t* ip);
 void writeBMP_energy(char* p, energyPixel_t* energyImg, imgProp_t* ip);
-//void writeBMP_pel(char* p, pel* img, imgProp* ip);
+//void writeBMP_minimumSeam(char* p, energyPixel_t* energyImg, seam_t* minSeam, imgProp_t* imgProp);
 pixel_t* energy2pixel(energyPixel_t* energyImg, imgProp_t* ip);
 
 #endif

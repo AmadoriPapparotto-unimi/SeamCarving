@@ -12,6 +12,11 @@ energyPixel_t* imgGray;
 
 int main(int argc, char** argv) {
 
+	/*
+			cudaDeviceProp deviceProp;
+		cudaGetDeviceProperties(&deviceProp, dev);
+	*/
+
 	imgProp_t* imgProp;
 	cudaMallocManaged(&imgProp, sizeof(imgProp_t));
 
