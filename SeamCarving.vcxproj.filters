@@ -9,5 +9,6 @@
   <ItemGroup>
     <ClInclude Include="src\bin\image_handler.h" />
     <ClInclude Include="src\bin\utils.h" />
+    <ClInclude Include="src\bin\seam_carving.h" />
   </ItemGroup>
 </Project>
