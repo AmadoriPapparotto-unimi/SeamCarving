@@ -7,22 +7,45 @@
 #include "cuda_runtime.h"
 #include "cuda_runtime_api.h"
 
-pixel_t* imgSrc;
-energyPixel_t* imgGray;
+void applySeamCarving(char *p) {
+
+	pixel_t* imgSrc;
+	imgProp_t* imgProp;
+	energyPixel_t* imgGray;
+
+	FILE* f = fopen(p, "rb");
+	if (f == NULL) {
+		printf("*** FILE NOT FOUND ***\n");
+		exit(1);
+	}
+
+	cudaMallocManaged(&imgProp, sizeof(imgProp_t));
+	setupImgProp(imgProp, f);
+
+	cudaMallocManaged(&imgSrc, imgProp->height * imgProp->width * sizeof(pixel_t));
+	cudaMallocManaged(&imgGray, imgProp->height * imgProp->width * sizeof(energyPixel_t));
+
+	readBMP(f, imgSrc, imgProp);
+	toGrayScale(imgSrc, imgGray, imgProp);
+	map(imgGray, imgProp);
+	findSeams(imgGray, imgProp);
+
+	fclose(f);
+}
 
 int main(int argc, char** argv) {
 
 	/*
-			cudaDeviceProp deviceProp;
+		cudaDeviceProp deviceProp;
 		cudaGetDeviceProperties(&deviceProp, dev);
 	*/
 
-	imgProp_t* imgProp;
-	cudaMallocManaged(&imgProp, sizeof(imgProp_t));
+	//imgProp_t* imgProp;
 
 	char* path = strcat(SOURCE_PATH, "castle_bmp.bmp");
 
-	readBMP(imgSrc, imgGray, path, imgProp);
+	applySeamCarving(path);
+
 	//cudaMallocManaged(imgGray, imgProp->imageSize);
 	//map(imgGray, imgProp);
 

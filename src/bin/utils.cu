@@ -40,6 +40,6 @@ __global__ void min_(const seam_t* energiesArray, seam_t* outputArray, imgProp_t
     }
 }
 
-void min(dim3 gridSize, dim3 blockSize, seam_t* energiesArray, seam_t* outputArray, imgProp_t* imgProp) {
+void minArr(dim3 gridSize, dim3 blockSize, seam_t* energiesArray, seam_t* outputArray, imgProp_t* imgProp) {
     min_ << <gridSize, blockSize >> > (energiesArray, outputArray, imgProp);
 }

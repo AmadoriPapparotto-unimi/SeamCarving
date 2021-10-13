@@ -1,5 +1,7 @@
 #ifndef IMAGEHANDLER_H_INCLUDED
 #define IMAGEHANDLER_H_INCLUDED
+#include <stdio.h>
+#include <stdlib.h>
 
 static char SOURCE_PATH[100] = "src/assets/images/";
 
@@ -23,9 +25,11 @@ typedef struct EnergyPixelStruct {
 	double energy;
 } energyPixel_t;
 
-void readBMP(pixel_t* img, energyPixel_t* imgGray, char* p, imgProp_t* ip);
+void readBMP(FILE* f, pixel_t* img, imgProp_t* imgProp);
+void setupImgProp(imgProp_t* ip, FILE* f);
 void writeBMP_pixel(char* p, pixel_t* img, imgProp_t* ip);
 void writeBMP_energy(char* p, energyPixel_t* energyImg, imgProp_t* ip);
+void toGrayScale(pixel_t* img, energyPixel_t* imgGray, imgProp_t* imgProp);
 //void writeBMP_minimumSeam(char* p, energyPixel_t* energyImg, seam_t* minSeam, imgProp_t* imgProp);
 pixel_t* energy2pixel(energyPixel_t* energyImg, imgProp_t* ip);
 

@@ -9,4 +9,4 @@ typedef struct seamStruct {
 	int* ids;
 } seam_t;
 
-void min(dim3 gridSize, dim3 blockSize, seam_t* seams, seam_t* outputSeams, imgProp_t* imgProp);
+void minArr(dim3 gridSize, dim3 blockSize, seam_t* seams, seam_t* outputSeams, imgProp_t* imgProp);

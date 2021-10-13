@@ -20,7 +20,7 @@ __device__ void grayValue(pixel_t *res, pel_t r, pel_t g, pel_t b) {
 	res->B = grayVal;
 }
 
-__global__ void toGrayScale(pixel_t* img, energyPixel_t* imgGray, int imageSize)
+__global__ void toGrayScale_(pixel_t* img, energyPixel_t* imgGray, int imageSize)
 {
 	int id = blockIdx.x * blockDim.x + threadIdx.x;
 	if(id == gridDim.x * 1024 + 1)
@@ -31,7 +31,16 @@ __global__ void toGrayScale(pixel_t* img, energyPixel_t* imgGray, int imageSize)
 	}
 }
 
-void setupImgProp(imgProp_t* ip, FILE* f) {
+void toGrayScale(pixel_t* img, energyPixel_t* imgGray, imgProp_t* imgProp) {
+	dim3 blocks;
+	blocks.x = imgProp->imageSize / 1024 + 1;
+
+	toGrayScale_<< <blocks, 1024 >> > (img, imgGray, imgProp->imageSize);
+	cudaDeviceSynchronize();
+	writeBMP_pixel(strcat(SOURCE_PATH, "gray.bmp"), energy2pixel(imgGray, imgProp), imgProp);
+}
+
+void setupImgProp(imgProp_t* imgProp, FILE* f) {
 	pel_t headerInfo[54];
 	fread(headerInfo, sizeof(pel_t), 54, f);
 
@@ -40,48 +49,23 @@ void setupImgProp(imgProp_t* ip, FILE* f) {
 	printf("#bytes: %d\n", *(int*)&headerInfo[34]);
 
 	for (unsigned int i = 0; i < 54; i++)
-		ip->headerInfo[i] = headerInfo[i];
+		imgProp->headerInfo[i] = headerInfo[i];
 
-	ip->height = height;
-	ip->width = width;
-	ip->imageSize = width * height;
+	imgProp->height = height;
+	imgProp->width = width;
+	imgProp->imageSize = width * height;
+
+	printf("Input BMP dimension: (%u x %u)\n", imgProp->width, imgProp->height);
 }
 
-void readBMP(pixel_t* img, energyPixel_t* imgGray, char* p, imgProp_t* ip) {
-
+void readBMP(FILE *f, pixel_t* img, imgProp_t* imgProp) {
 	//img[0] = B
 	//img[1] = G
 	//img[2] = R
 	//BMP LEGGE I PIXEL NEL FORMATO BGR
-	FILE* f = fopen(p, "rb");
-	if (f == NULL) {
-		printf("*** FILE NOT FOUND ***\n");
-		exit(1);
-	}
-
-	//extract information from headerInfo
-	setupImgProp(ip, f);
-	printf("Input BMP dimension: (%u x %u)\n", ip->width, ip->height);
-
-	cudaMallocManaged(&img, ip->height * ip->width * sizeof(pixel_t));
-	cudaMallocManaged(&imgGray, ip->height * ip->width * sizeof(energyPixel_t));
-
-	for (unsigned int i = 0; i < ip->height * ip->width; i++) {
+	for (unsigned int i = 0; i < imgProp->height * imgProp->width; i++) {
 		fread(&img[i], sizeof(pel_t), sizeof(pixel_t), f);
 	}
-
-	dim3 blocks;
-	blocks.x = ip->imageSize / MAX_THREAD + 1;
-
-	toGrayScale << <blocks, MAX_THREAD >> > (img, imgGray, ip->imageSize);
-	cudaDeviceSynchronize();
-	writeBMP_pixel(strcat(SOURCE_PATH, "gray.bmp"), energy2pixel(imgGray, ip), ip);
-
-	fclose(f);
-
-	map(imgGray, ip);
-	findSeams(imgGray, ip);
-
 }
 
 void writeBMP_pixel(char* p, pixel_t* img, imgProp_t* ip) {

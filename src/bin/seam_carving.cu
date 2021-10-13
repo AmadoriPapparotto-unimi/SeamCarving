@@ -232,10 +232,10 @@ void findSeams(energyPixel_t* energyImg, imgProp_t* imgProp) {
 	cudaDeviceSynchronize();
 	writeBMP_pixel(strcat(SOURCE_PATH,"seams_map.bmp"), energy2pixel(img, imgProp), imgProp);
 
-	min(numBlocks, 1024, seams, minSeamsPerBlock, imgProp);
+	minArr(numBlocks, 1024, seams, minSeamsPerBlock, imgProp);
 	cudaDeviceSynchronize();
 
-	min(1, imgProp->width / 1024 + 1, minSeamsPerBlock, minmin, imgProp);
+	minArr(1, imgProp->width / 1024 + 1, minSeamsPerBlock, minmin, imgProp);
 	cudaDeviceSynchronize();
 
 	for (int y = 0; y < imgProp->height; y++) {
