@@ -44,6 +44,7 @@ void setupImgProp(imgProp_t* imgProp, FILE* f) {
 	pel_t headerInfo[54];
 	fread(headerInfo, sizeof(pel_t), 54, f);
 
+
 	int width = *(int*)&headerInfo[18];
 	int height = *(int*)&headerInfo[22];
 	printf("#bytes: %d\n", *(int*)&headerInfo[34]);
@@ -56,6 +57,7 @@ void setupImgProp(imgProp_t* imgProp, FILE* f) {
 	imgProp->imageSize = width * height;
 
 	printf("Input BMP dimension: (%u x %u)\n", imgProp->width, imgProp->height);
+	printf("IHeader[2] %d\n", *(int*)&headerInfo[2]);
 }
 
 void readBMP(FILE *f, pixel_t* img, imgProp_t* imgProp) {
@@ -111,6 +113,50 @@ pixel_t* energy2pixel(energyPixel_t* energyImg, imgProp_t* ip) {
 	}
 
 	return img;
+}
+
+
+void writeBMPHeader(char* p, energyPixel_t* energyImg, imgProp_t* ip, int newSize) {
+
+	printf("Original image size = %d\n", ip->imageSize);
+	printf("new size byte= %d\n", newSize);
+	pixel_t* img;
+
+	printf("new image size = %d\n", (newSize -54 )/3);
+	printf("new image size 2 = %d\n", (ip->imageSize - ip->height));
+
+	
+	ip->headerInfo[2] = (unsigned char)(newSize >> 0) & 0xff;
+	ip->headerInfo[3] = (unsigned char)(newSize >> 8) & 0xff;
+	ip->headerInfo[4] = (unsigned char)(newSize >> 16) & 0xff;
+	ip->headerInfo[5] = (unsigned char)(newSize >> 24) & 0xff;
+
+
+	
+	//printf("#bytes: %x\n", *(int*)&(ip->headerInfo[2]));
+
+	int newWidth = ip->width - 1;
+
+	ip->imageSize =(newSize- 54) /3;
+	ip->width = newWidth;
+
+	//ip->headerInfo[18] = newWidth;
+
+	ip->headerInfo[18] = (unsigned char)(newWidth >> 0) & 0xff;
+	ip->headerInfo[19] = (unsigned char)(newWidth >> 8) & 0xff;
+	ip->headerInfo[20] = (unsigned char)(newWidth >> 16) & 0xff;
+	ip->headerInfo[21] = (unsigned char)(newWidth >> 24) & 0xff;
+	
+	//printf("newWidth  = %d\n", *(int*)&(ip->headerInfo[18]));
+	img = (pixel_t*)malloc(ip->imageSize * sizeof(pixel_t));
+
+	for (int i = 0; i < ip->imageSize; i++) {
+		img[i].R = energyImg[i].energy;
+		img[i].G = energyImg[i].energy;
+		img[i].B = energyImg[i].energy;
+	}
+
+	//writeBMP_pixel(p, img, ip);*/
 }
 
 //void writeBMP_pel(char* p, imgProp imgProp, pel* img) {

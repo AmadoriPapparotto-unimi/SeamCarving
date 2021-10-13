@@ -32,5 +32,6 @@ void writeBMP_energy(char* p, energyPixel_t* energyImg, imgProp_t* ip);
 void toGrayScale(pixel_t* img, energyPixel_t* imgGray, imgProp_t* imgProp);
 //void writeBMP_minimumSeam(char* p, energyPixel_t* energyImg, seam_t* minSeam, imgProp_t* imgProp);
 pixel_t* energy2pixel(energyPixel_t* energyImg, imgProp_t* ip);
+void writeBMPHeader(char* p, energyPixel_t* energyImg, imgProp_t* ip, int newSize);
 
 #endif

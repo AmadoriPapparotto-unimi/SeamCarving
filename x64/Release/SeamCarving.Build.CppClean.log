@@ -1,3 +1,7 @@
+x64\release\image_handler.cu.obj
+x64\release\kernel.cu.obj
+x64\release\seam_carving.cu.obj
+x64\release\utils.cu.obj
 c:\users\lucap\source\repos\seamcarving\x64\release\seamcarving.exe
 c:\users\lucap\source\repos\seamcarving\x64\release\seamcarving.pdb
 c:\users\lucap\source\repos\seamcarving\x64\release\seamcarving.lib
@@ -5,9 +9,11 @@ c:\users\lucap\source\repos\seamcarving\x64\release\seamcarving.exp
 c:\users\lucap\source\repos\seamcarving\seamcarving\x64\release\image_handler.cu.cache
 c:\users\lucap\source\repos\seamcarving\seamcarving\x64\release\kernel.cu.cache
 c:\users\lucap\source\repos\seamcarving\seamcarving\x64\release\seam_carving.cu.cache
+c:\users\lucap\source\repos\seamcarving\seamcarving\x64\release\utils.cu.cache
 c:\users\lucap\source\repos\seamcarving\seamcarving\x64\release\image_handler.cu.obj
 c:\users\lucap\source\repos\seamcarving\seamcarving\x64\release\kernel.cu.obj
 c:\users\lucap\source\repos\seamcarving\seamcarving\x64\release\seam_carving.cu.obj
+c:\users\lucap\source\repos\seamcarving\seamcarving\x64\release\utils.cu.obj
 c:\users\lucap\source\repos\seamcarving\seamcarving\x64\release\seamcarving.tlog\cudacompile.read.1u.tlog
 c:\users\lucap\source\repos\seamcarving\seamcarving\x64\release\seamcarving.tlog\cudacompile.write.1u.tlog
 c:\users\lucap\source\repos\seamcarving\seamcarving\x64\release\seamcarving.tlog\link.command.1.tlog
