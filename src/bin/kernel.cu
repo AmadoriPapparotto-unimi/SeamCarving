@@ -26,9 +26,14 @@ void applySeamCarving(char *p) {
 	cudaMallocManaged(&imgGray, imgProp->height * imgProp->width * sizeof(energyPixel_t));
 
 	readBMP(f, imgSrc, imgProp);
+	//writeBMP_pixel(strcat(SOURCE_PATH, "hhh.bmp"), imgSrc, imgProp);
 	toGrayScale(imgSrc, imgGray, imgProp);
 	map(imgGray, imgProp);
 	findSeams(imgGray, imgProp);
+
+	cudaFree(imgProp);
+	cudaFree(imgGray);
+	cudaFree(imgSrc);
 
 	fclose(f);
 }
@@ -42,7 +47,7 @@ int main(int argc, char** argv) {
 
 	//imgProp_t* imgProp;
 
-	char* path = strcat(SOURCE_PATH, "castle_bmp.bmp");
+	char* path = strcat(SOURCE_PATH, "a.bmp");
 
 	applySeamCarving(path);
 

@@ -1,6 +1,8 @@
 ﻿#include "image_handler.h"
 #include "seam_carving.h"
 #include "utils.h"
+#include <windows.h>
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -65,16 +67,53 @@ void readBMP(FILE *f, pixel_t* img, imgProp_t* imgProp) {
 	//img[1] = G
 	//img[2] = R
 	//BMP LEGGE I PIXEL NEL FORMATO BGR
-	for (unsigned int i = 0; i < imgProp->height * imgProp->width; i++) {
-		fread(&img[i], sizeof(pel_t), sizeof(pixel_t), f);
+
+	for (int r = 0; r < imgProp->height; r++) {
+		fread(&img[r*imgProp->width], sizeof(pel_t), imgProp->width * sizeof(pixel_t), f);
+		int count_padding = 0;
+
+		if (imgProp->width % 4 != 0) {
+			int padding = imgProp->width % 4;
+			count_padding++;
+			fseek(f, padding, SEEK_CUR);
+			
+		}
+		//printf("PADDING LETTO PER RIGA %d\n", count_padding);
 	}
+
 }
 
 void writeBMP_pixel(char* p, pixel_t* img, imgProp_t* ip) {
-	FILE* fw = fopen(p, "wb");
+	FILE* fw = fopen(p, "wb+");
 
+	printf("HEIGHT %d\n", ip->height);
+	printf("WIDTH %d\n", ip->width);
 	fwrite(ip->headerInfo, sizeof(pel_t), 54, fw);
-	fwrite(img, sizeof(pixel_t), ip->imageSize, fw);
+	int count_padding = 0;
+	for (int r = 0; r < ip->height; r++) {
+		int count_padding_per_row = 0;
+
+		for (int c = 0; c < ip->width; c++) {
+			fputc(img[c + r * ip->width].B, fw);
+			fputc(img[c + r * ip->width].G, fw);
+			fputc(img[c + r * ip->width].R, fw);
+		}
+		if (ip->width % 4 != 0) {
+			int padding = (ip->width % 4);
+			for (int i = 0; i < padding; i++) {
+				count_padding++;
+				count_padding_per_row++;
+				fputc(0, fw);
+			}
+		}
+		//printf("PADDING AGGIUNTO PER RIGA %d\n", count_padding_per_row);
+
+//		fwrite(&img[r * ip->width], sizeof(pixel_t), ip->width, fw);
+		//560
+	}
+
+	printf("PADDING AGGIUNTO %d\n", count_padding);
+	Sleep(1 * 1000);
 
 	fclose(fw);
 	printf("Immagine %s generata\n", p);
@@ -82,7 +121,6 @@ void writeBMP_pixel(char* p, pixel_t* img, imgProp_t* ip) {
 
 void writeBMP_energy(char* p, energyPixel_t* energyImg, imgProp_t* ip) {
 	pixel_t* img;
-	int sd = 1;
 	img = (pixel_t*)malloc(ip->imageSize * sizeof(pixel_t));
 
 	for (int i = 0; i < ip->imageSize; i++) {
@@ -92,6 +130,7 @@ void writeBMP_energy(char* p, energyPixel_t* energyImg, imgProp_t* ip) {
 	}
 
 	writeBMP_pixel(p, img, ip);
+	free(img);
 }
 
 void writeBMP_minimumSeam(char* p, energyPixel_t* energyImg, seam_t* minSeam, imgProp_t* imgProp) {
@@ -156,7 +195,8 @@ void writeBMPHeader(char* p, energyPixel_t* energyImg, imgProp_t* ip, int newSiz
 		img[i].B = energyImg[i].energy;
 	}
 
-	//writeBMP_pixel(p, img, ip);*/
+	writeBMP_pixel(p, img, ip);
+	free(img);
 }
 
 //void writeBMP_pel(char* p, imgProp imgProp, pel* img) {
