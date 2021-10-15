@@ -1,5 +1,6 @@
 ﻿#include "image_handler.h"
 #include "seam_carving.h"
+#include "utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
@@ -12,6 +13,8 @@ void applySeamCarving(char *p) {
 	pixel_t* imgSrc;
 	imgProp_t* imgProp;
 	energyPixel_t* imgGray;
+	energyPixel_t* imgEnergy;
+	seam_t* minSeam;
 
 	FILE* f = fopen(p, "rb");
 	if (f == NULL) {
@@ -24,13 +27,21 @@ void applySeamCarving(char *p) {
 
 	cudaMallocManaged(&imgSrc, imgProp->height * imgProp->width * sizeof(pixel_t));
 	cudaMallocManaged(&imgGray, imgProp->height * imgProp->width * sizeof(energyPixel_t));
+	cudaMallocManaged(&imgEnergy, imgProp->height * imgProp->width * sizeof(energyPixel_t));
+
+	cudaMallocManaged(&minSeam, sizeof(seam_t));
+	cudaMallocManaged(&minSeam->ids, imgProp->height * sizeof(int));
 
 	readBMP(f, imgSrc, imgProp);
 	//writeBMP_pixel(strcat(SOURCE_PATH, "hhh.bmp"), imgSrc, imgProp);
 	toGrayScale(imgSrc, imgGray, imgProp);
-	//for(int i = 0; i < 10; i++) 
-	map(imgGray, imgProp);
-	findSeams(imgGray, imgProp);
+	for (int i = 0; i < 50; i++) {
+		map(imgGray, imgProp);
+		printf("-----------------width %d height %d\n", imgProp->width, imgProp->height);
+		findSeams(imgGray, imgProp, minSeam);
+		removeSeam(imgGray, minSeam->ids, imgProp);
+		printf("ITERAZIONE %d COMPLETATA\n", i);
+	}
 
 	cudaFree(imgProp);
 	cudaFree(imgGray);

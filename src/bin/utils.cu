@@ -6,6 +6,7 @@
 #include "device_launch_parameters.h"
 #include "image_handler.h"
 #include "utils.h"
+#include "seam_carving.h"
 
 //static const int blockSize = 1024;
 
@@ -51,4 +52,11 @@ __global__ void min_(const seam_t* energiesArray, seam_t* outputArray, imgProp_t
 
 void minArr(dim3 gridSize, dim3 blockSize, seam_t* energiesArray, seam_t* outputArray, imgProp_t* imgProp) {
     min_ << <gridSize, blockSize >> > (energiesArray, outputArray, imgProp);
+}
+
+void report_gpu_mem()
+{
+    size_t free, total;
+    cudaMemGetInfo(&free, &total);
+    printf("Free = %zu, Total = %zu\n", free, total);
 }
