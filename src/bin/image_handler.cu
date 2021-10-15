@@ -39,7 +39,12 @@ void toGrayScale(pixel_t* img, energyPixel_t* imgGray, imgProp_t* imgProp) {
 
 	toGrayScale_<< <blocks, 1024 >> > (img, imgGray, imgProp->imageSize);
 	cudaDeviceSynchronize();
-	writeBMP_pixel(strcat(SOURCE_PATH, "gray.bmp"), energy2pixel(imgGray, imgProp), imgProp);
+
+	pixel_t* img2convert = (pixel_t*)malloc(imgProp->imageSize * sizeof(pixel_t));
+	energy2pixel(img2convert, imgGray, imgProp);
+
+	writeBMP_pixel(strcat(SOURCE_PATH, "gray.bmp"), img2convert, imgProp);
+	free(img2convert);
 }
 
 void setupImgProp(imgProp_t* imgProp, FILE* f) {
@@ -113,7 +118,7 @@ void writeBMP_pixel(char* p, pixel_t* img, imgProp_t* ip) {
 	}
 
 	printf("PADDING AGGIUNTO %d\n", count_padding);
-	Sleep(1 * 1000);
+	//Sleep(1 * 1000);
 
 	fclose(fw);
 	printf("Immagine %s generata\n", p);
@@ -140,18 +145,22 @@ void writeBMP_minimumSeam(char* p, energyPixel_t* energyImg, seam_t* minSeam, im
 		energyImg[minSeam[0].ids[y]].pixel.G = 255;
 		energyImg[minSeam[0].ids[y]].pixel.B = 0;
 	}
-	writeBMP_pixel(strcat(SOURCE_PATH, "seams_map_minimum.bmp"), energy2pixel(energyImg, imgProp), imgProp);
+
+	pixel_t* img2convert = (pixel_t*)malloc(imgProp->imageSize * sizeof(pixel_t));
+	energy2pixel(img2convert, energyImg, imgProp);
+	writeBMP_pixel(strcat(SOURCE_PATH, "seams_map_minimum.bmp"), img2convert, imgProp);
+	free(img2convert);
 }
 
-pixel_t* energy2pixel(energyPixel_t* energyImg, imgProp_t* ip) {
-	pixel_t* img;
-	img = (pixel_t*)malloc(ip->imageSize * sizeof(pixel_t));
+void energy2pixel(pixel_t* img2convert, energyPixel_t* energyImg, imgProp_t* ip) {
+	//pixel_t* img;
+	//img = (pixel_t*)malloc(ip->imageSize * sizeof(pixel_t));
 
 	for (int i = 0; i < ip->imageSize; i++) {
-		img[i] = energyImg[i].pixel;
+		img2convert[i] = energyImg[i].pixel;
 	}
 
-	return img;
+	//return img;
 }
 
 

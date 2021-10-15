@@ -271,7 +271,9 @@ void findSeams(energyPixel_t* energyImg, imgProp_t* imgProp) {
 
 	cudaDeviceSynchronize();
 
-	writeBMP_pixel(strcat(SOURCE_PATH,"seams_map.bmp"), energy2pixel(img, imgProp), imgProp);
+	pixel_t* img2convert = (pixel_t*)malloc(imgProp->imageSize * sizeof(pixel_t));
+	energy2pixel(img2convert, img, imgProp);
+	writeBMP_pixel(strcat(SOURCE_PATH,"seams_map.bmp"), img2convert, imgProp);
 
 	minArr(numBlocks, 1024, seams, minSeamsPerBlock, imgProp);
 	cudaDeviceSynchronize();
@@ -285,9 +287,10 @@ void findSeams(energyPixel_t* energyImg, imgProp_t* imgProp) {
 		img[minSeamPath[0].ids[y]].pixel.B = 0;
 	}
 
-	
-	writeBMP_pixel(strcat(SOURCE_PATH, "seams_map_minimum.bmp"), energy2pixel(img, imgProp), imgProp);
+	energy2pixel(img2convert, img, imgProp);
+	writeBMP_pixel(strcat(SOURCE_PATH, "seams_map_minimum.bmp"), img2convert, imgProp);
 	//writeBMP_minimumSeam(strcat(SOURCE_PATH, "seams_map.bmp"), img, minmin, imgProp);
+	free(img2convert);
 
 	cudaDeviceSynchronize();
 	printf("%d", minSeamPath[0].total_energy);
