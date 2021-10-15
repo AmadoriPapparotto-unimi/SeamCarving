@@ -7,17 +7,17 @@
 #include "image_handler.h"
 #include "utils.h"
 
-static const int blockSize = 1024;
+//static const int blockSize = 1024;
 
 __global__ void min_(const seam_t* energiesArray, seam_t* outputArray, imgProp_t* imgProp) {
     int thIdx = threadIdx.x;
-    int gthIdx = thIdx + blockIdx.x * blockSize;
-
-    __shared__ seam_t shArr[blockSize];
+    const int myBlockSize = 1024;
+    int gthIdx = thIdx + blockIdx.x * myBlockSize;
+    __shared__ seam_t shArr[myBlockSize];
     if(gthIdx < imgProp->width)
         shArr[thIdx] = energiesArray[gthIdx];
 
-    int seamsPerBlock = blockSize; // 0 < seamsPerBlock < 1024
+    int seamsPerBlock = myBlockSize; // 0 < seamsPerBlock < 1024
     
     // si ottiene il numero preciso di seams rimanenti da controllare:
     // per ogni blocco che non sia l'ultimo -> seamsPerBlock = 1024
@@ -27,8 +27,17 @@ __global__ void min_(const seam_t* energiesArray, seam_t* outputArray, imgProp_t
 
     __syncthreads();
     
+    int size = seamsPerBlock / 2;
+    bool isOdd = seamsPerBlock % 2 == 1;
+    if (isOdd) {
+        size++;
+        if (thIdx < seamsPerBlock / 2)
+            shArr[thIdx] = (shArr[thIdx].total_energy < shArr[thIdx + size].total_energy) ? shArr[thIdx] : shArr[thIdx + size];
+
+        size /= 2;
+    }
     // get minimum
-    for (int size = seamsPerBlock / 2; size > 0; size /= 2) { //uniform
+    for (; size > 0; size /= 2) { //uniform
         if (thIdx < size)
             shArr[thIdx] = (shArr[thIdx].total_energy < shArr[thIdx + size].total_energy) ? shArr[thIdx] : shArr[thIdx + size];
         __syncthreads();

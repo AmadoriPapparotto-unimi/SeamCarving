@@ -3,7 +3,6 @@
 #include "utils.h"
 #include <windows.h>
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
@@ -43,7 +42,7 @@ void toGrayScale(pixel_t* img, energyPixel_t* imgGray, imgProp_t* imgProp) {
 	pixel_t* img2convert = (pixel_t*)malloc(imgProp->imageSize * sizeof(pixel_t));
 	energy2pixel(img2convert, imgGray, imgProp);
 
-	writeBMP_pixel(strcat(SOURCE_PATH, "gray.bmp"), img2convert, imgProp);
+	//writeBMP_pixel(strcat(SOURCE_PATH, "gray.bmp"), img2convert, imgProp);
 	free(img2convert);
 }
 
@@ -93,18 +92,24 @@ void writeBMP_pixel(char* p, pixel_t* img, imgProp_t* ip) {
 
 	printf("HEIGHT %d\n", ip->height);
 	printf("WIDTH %d\n", ip->width);
-	fwrite(ip->headerInfo, sizeof(pel_t), 54, fw);
-	int count_padding = 0;
-	for (int r = 0; r < ip->height; r++) {
-		int count_padding_per_row = 0;
+	for (unsigned int i = 0; i < 54; i++)
+		fputc(ip->headerInfo[i], fw);
 
+	//Sleep(1 * 1000);
+
+	//fwrite(ip->headerInfo, sizeof(pel_t), 54, fw);
+	int count_padding = 0;
+	int count_padding_per_row = 0;
+	int padding = 0;
+	for (int r = 0; r < ip->height; r++) {
+		count_padding_per_row = 0;
 		for (int c = 0; c < ip->width; c++) {
 			fputc(img[c + r * ip->width].B, fw);
 			fputc(img[c + r * ip->width].G, fw);
 			fputc(img[c + r * ip->width].R, fw);
 		}
 		if (ip->width % 4 != 0) {
-			int padding = (ip->width % 4);
+			padding = (ip->width % 4);
 			for (int i = 0; i < padding; i++) {
 				count_padding++;
 				count_padding_per_row++;
@@ -120,6 +125,7 @@ void writeBMP_pixel(char* p, pixel_t* img, imgProp_t* ip) {
 	printf("PADDING AGGIUNTO %d\n", count_padding);
 	//Sleep(1 * 1000);
 
+	//syncfs(fw);
 	fclose(fw);
 	printf("Immagine %s generata\n", p);
 }
@@ -166,12 +172,12 @@ void energy2pixel(pixel_t* img2convert, energyPixel_t* energyImg, imgProp_t* ip)
 
 void writeBMPHeader(char* p, energyPixel_t* energyImg, imgProp_t* ip, int newSize) {
 
-	printf("Original image size = %d\n", ip->imageSize);
-	printf("new size byte= %d\n", newSize);
+	//printf("Original image size = %d\n", ip->imageSize);
+	//printf("new size byte= %d\n", newSize);
 	pixel_t* img;
 
-	printf("new image size = %d\n", (newSize -54 )/3);
-	printf("new image size 2 = %d\n", (ip->imageSize - ip->height));
+	//printf("new image size = %d\n", (newSize -54 )/3);
+	//printf("new image size 2 = %d\n", (ip->imageSize - ip->height));
 
 	
 	ip->headerInfo[2] = (unsigned char)(newSize >> 0) & 0xff;

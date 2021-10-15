@@ -28,6 +28,7 @@ void applySeamCarving(char *p) {
 	readBMP(f, imgSrc, imgProp);
 	//writeBMP_pixel(strcat(SOURCE_PATH, "hhh.bmp"), imgSrc, imgProp);
 	toGrayScale(imgSrc, imgGray, imgProp);
+	//for(int i = 0; i < 10; i++) 
 	map(imgGray, imgProp);
 	findSeams(imgGray, imgProp);
 
@@ -47,12 +48,46 @@ int main(int argc, char** argv) {
 
 	//imgProp_t* imgProp;
 
-	char* path = strcat(SOURCE_PATH, "a.bmp");
+	char* path = strcat(SOURCE_PATH, "castle_bmp.bmp");
 
 	applySeamCarving(path);
 
 	//cudaMallocManaged(imgGray, imgProp->imageSize);
 	//map(imgGray, imgProp);
-
+	cudaDeviceReset();
 	return 0;
 }
+
+//void report_gpu_mem()
+//{
+//	size_t free, total;
+//	cudaMemGetInfo(&free, &total);
+//	printf("Free = %zu, Total = %zu\n", free, total);
+//}
+//
+//int main()
+//{
+//	float* a, * a_out, *b, *bo;
+//	int sz = 1 << 20; // 16Mb
+//	report_gpu_mem();
+//	cudaMallocManaged((void**)&a, sz);
+//	report_gpu_mem();
+//	cudaMallocManaged((void**)&a_out, sz);
+//	report_gpu_mem();
+//
+//	cudaMallocManaged((void**)&b, sz);
+//	report_gpu_mem();
+//	cudaMallocManaged((void**)&bo, sz);
+//	report_gpu_mem();
+//
+//
+//	cudaFree(a);
+//	report_gpu_mem();
+//	cudaFree(a_out);
+//	report_gpu_mem();
+//	cudaFree(b);
+//	report_gpu_mem();
+//	cudaFree(bo);
+//	report_gpu_mem();
+//	return cudaDeviceReset();
+//}
