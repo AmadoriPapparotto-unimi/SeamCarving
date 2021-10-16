@@ -33,5 +33,6 @@ void toGrayScale(pixel_t* img, energyPixel_t* imgGray, imgProp_t* imgProp);
 //void writeBMP_minimumSeam(char* p, energyPixel_t* energyImg, seam_t* minSeam, imgProp_t* imgProp);
 void energy2pixel(pixel_t* img2convert, energyPixel_t* energyImg, imgProp_t* ip);
 void writeBMPHeader(char* p, energyPixel_t* energyImg, imgProp_t* ip, int newSize);
+void setBMP_header(imgProp_t* imgProp, int fileSize, int width);
 
 #endif

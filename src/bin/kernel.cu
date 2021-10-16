@@ -35,13 +35,20 @@ void applySeamCarving(char *p) {
 	readBMP(f, imgSrc, imgProp);
 	//writeBMP_pixel(strcat(SOURCE_PATH, "hhh.bmp"), imgSrc, imgProp);
 	toGrayScale(imgSrc, imgGray, imgProp);
-	for (int i = 0; i < 50; i++) {
+	for (int i = 0; i < 1; i++) {
 		map(imgGray, imgProp);
 		printf("-----------------width %d height %d\n", imgProp->width, imgProp->height);
 		findSeams(imgGray, imgProp, minSeam);
 		removeSeam(imgGray, minSeam->ids, imgProp);
 		printf("ITERAZIONE %d COMPLETATA\n", i);
 	}
+
+	setBMP_header(imgProp, 0, imgProp->width);
+
+	pixel_t* img2convert = (pixel_t*)malloc(imgProp->imageSize * sizeof(pixel_t));
+	energy2pixel(img2convert, imgGray, imgProp);
+	writeBMP_pixel(strcat(SOURCE_PATH, "ffff.bmp"), img2convert, imgProp);
+	free(img2convert);
 
 	cudaFree(imgProp);
 	cudaFree(imgGray);
@@ -59,7 +66,7 @@ int main(int argc, char** argv) {
 
 	//imgProp_t* imgProp;
 
-	char* path = strcat(SOURCE_PATH, "castle_bmp.bmp");
+	char* path = strcat(SOURCE_PATH, "33.bmp");
 
 	applySeamCarving(path);
 

@@ -42,7 +42,7 @@ void toGrayScale(pixel_t* img, energyPixel_t* imgGray, imgProp_t* imgProp) {
 	pixel_t* img2convert = (pixel_t*)malloc(imgProp->imageSize * sizeof(pixel_t));
 	energy2pixel(img2convert, imgGray, imgProp);
 
-	//writeBMP_pixel(strcat(SOURCE_PATH, "gray.bmp"), img2convert, imgProp);
+	writeBMP_pixel(strcat(SOURCE_PATH, "gray.bmp"), img2convert, imgProp);
 	free(img2convert);
 }
 
@@ -74,15 +74,14 @@ void readBMP(FILE *f, pixel_t* img, imgProp_t* imgProp) {
 
 	for (int r = 0; r < imgProp->height; r++) {
 		fread(&img[r*imgProp->width], sizeof(pel_t), imgProp->width * sizeof(pixel_t), f);
-		int count_padding = 0;
 
-		if (imgProp->width % 4 != 0) {
-			int padding = imgProp->width % 4;
-			count_padding++;
+		int padding = 4 - ((imgProp->width * 3) % 4);
+		//int padding = (imgProp->width * 3) % 4;
+		if (padding != 0 && padding != 4) {
 			fseek(f, padding, SEEK_CUR);
 			
 		}
-		//printf("PADDING LETTO PER RIGA %d\n", count_padding);
+		//printf("PADDING LETTO PER RIGA %d\n", padding % 4);
 	}
 
 }
@@ -108,15 +107,15 @@ void writeBMP_pixel(char* p, pixel_t* img, imgProp_t* ip) {
 			fputc(img[c + r * ip->width].G, fw);
 			fputc(img[c + r * ip->width].R, fw);
 		}
-		if (ip->width % 4 != 0) {
-			padding = (ip->width % 4);
+		padding = 4 - ((ip->width * 3) % 4);
+		if (padding != 0 && padding != 4) {
 			for (int i = 0; i < padding; i++) {
 				count_padding++;
 				count_padding_per_row++;
 				fputc(0, fw);
 			}
 		}
-		//printf("PADDING AGGIUNTO PER RIGA %d\n", count_padding_per_row);
+		printf("PADDING AGGIUNTO PER RIGA %d\n", count_padding_per_row);
 
 //		fwrite(&img[r * ip->width], sizeof(pixel_t), ip->width, fw);
 		//560
@@ -167,6 +166,18 @@ void energy2pixel(pixel_t* img2convert, energyPixel_t* energyImg, imgProp_t* ip)
 	}
 
 	//return img;
+}
+
+void setBMP_header(imgProp_t* imgProp, int fileSize, int width) {
+	imgProp->headerInfo[2] = (unsigned char)(fileSize >> 0) & 0xff;
+	imgProp->headerInfo[3] = (unsigned char)(fileSize >> 8) & 0xff;
+	imgProp->headerInfo[4] = (unsigned char)(fileSize >> 16) & 0xff;
+	imgProp->headerInfo[5] = (unsigned char)(fileSize >> 24) & 0xff;
+	
+	imgProp->headerInfo[18] = (unsigned char)(width >> 0) & 0xff;
+	imgProp->headerInfo[19] = (unsigned char)(width >> 8) & 0xff;
+	imgProp->headerInfo[20] = (unsigned char)(width >> 16) & 0xff;
+	imgProp->headerInfo[21] = (unsigned char)(width >> 24) & 0xff;
 }
 
 
