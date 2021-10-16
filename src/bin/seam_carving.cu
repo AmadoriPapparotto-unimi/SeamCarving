@@ -214,10 +214,10 @@ __global__ void removeSeam_(energyPixel_t* energyImg, int* idsToRemove, imgProp_
 		if (idThread == idToRemove)
 			return;
 
-		printf("idRow %d (%d)\n", idRow, idThread);
-		printf("idToRemove %d (%d)\n", idToRemove, idThread);
-		printf("shift %d (%d)\n", shift, idThread);
-		printf("new Position %d (%d)\n", idThread + shift, idThread);
+		//printf("idRow %d (%d)\n", idRow, idThread);
+		//printf("idToRemove %d (%d)\n", idToRemove, idThread);
+		//printf("shift %d (%d)\n", shift, idThread);
+		//printf("new Position %d (%d)\n", idThread + shift, idThread);
 
 		newImage[idThread - shift].energy =  energyImg[idThread].energy;
 		newImage[idThread - shift].pixel.R = energyImg[idThread].pixel.R;
@@ -238,7 +238,7 @@ __global__ void removeSeam_(energyPixel_t* energyImg, int* idsToRemove, imgProp_
 void map(energyPixel_t* energyImg, imgProp_t* imgProp) {
 	energyMap << <imgProp->imageSize / 1024 + 1, 1024 >> > (energyImg, imgProp);
 	cudaDeviceSynchronize();
-	writeBMP_energy("src/assets/images/energy.bmp", energyImg, imgProp);
+	//writeBMP_energy("src/assets/images/energy.bmp", energyImg, imgProp);
 }
 
 void findSeams(energyPixel_t* energyImg, imgProp_t* imgProp, seam_t* minSeam) {
@@ -282,9 +282,9 @@ void findSeams(energyPixel_t* energyImg, imgProp_t* imgProp, seam_t* minSeam) {
 	minArr(1, imgProp->width / 1024 + 1, minSeamsPerBlock, minSeam, imgProp);
 	cudaDeviceSynchronize();
 
-	for (int i = 0; i < imgProp->height; i++) {
-		printf("%d - ", minSeam->ids[i]);
-	}
+	//for (int i = 0; i < imgProp->height; i++) {
+	//	printf("%d - ", minSeam->ids[i]);
+	//}
 	//for (int y = 0; y < imgProp->height; y++) {
 	//	img[minSeam[0].ids[y]].pixel.R = 0;
 	//	img[minSeam[0].ids[y]].pixel.G = 255;

@@ -35,7 +35,7 @@ void applySeamCarving(char *p) {
 	readBMP(f, imgSrc, imgProp);
 	//writeBMP_pixel(strcat(SOURCE_PATH, "hhh.bmp"), imgSrc, imgProp);
 	toGrayScale(imgSrc, imgGray, imgProp);
-	for (int i = 0; i < 1; i++) {
+	for (int i = 0; i < 10; i++) {
 		map(imgGray, imgProp);
 		printf("-----------------width %d height %d\n", imgProp->width, imgProp->height);
 		findSeams(imgGray, imgProp, minSeam);
@@ -66,7 +66,7 @@ int main(int argc, char** argv) {
 
 	//imgProp_t* imgProp;
 
-	char* path = strcat(SOURCE_PATH, "33.bmp");
+	char* path = strcat(SOURCE_PATH, "castle_bmp.bmp");
 
 	applySeamCarving(path);
 

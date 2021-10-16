@@ -115,13 +115,13 @@ void writeBMP_pixel(char* p, pixel_t* img, imgProp_t* ip) {
 				fputc(0, fw);
 			}
 		}
-		printf("PADDING AGGIUNTO PER RIGA %d\n", count_padding_per_row);
+		//printf("PADDING AGGIUNTO PER RIGA %d\n", count_padding_per_row);
 
 //		fwrite(&img[r * ip->width], sizeof(pixel_t), ip->width, fw);
 		//560
 	}
 
-	printf("PADDING AGGIUNTO %d\n", count_padding);
+	//printf("PADDING AGGIUNTO %d\n", count_padding);
 	//Sleep(1 * 1000);
 
 	//syncfs(fw);
