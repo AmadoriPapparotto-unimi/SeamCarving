@@ -37,13 +37,13 @@ void toGrayScale(pixel_t* img, energyPixel_t* imgGray, imgProp_t* imgProp) {
 	blocks.x = imgProp->imageSize / 1024 + 1;
 
 	toGrayScale_<< <blocks, 1024 >> > (img, imgGray, imgProp->imageSize);
-	cudaDeviceSynchronize();
+	gpuErrchk(cudaDeviceSynchronize());
 
-	pixel_t* img2convert = (pixel_t*)malloc(imgProp->imageSize * sizeof(pixel_t));
+	/*pixel_t* img2convert = (pixel_t*)malloc(imgProp->imageSize * sizeof(pixel_t));
 	energy2pixel(img2convert, imgGray, imgProp);
 
 	writeBMP_pixel(strcat(SOURCE_PATH, "gray.bmp"), img2convert, imgProp);
-	free(img2convert);
+	free(img2convert);*/
 }
 
 void setupImgProp(imgProp_t* imgProp, FILE* f) {

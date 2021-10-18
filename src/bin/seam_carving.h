@@ -9,4 +9,4 @@ typedef struct seamStruct {
 
 void map(energyPixel_t* energyImg, imgProp_t* imgProp);
 void findSeams(energyPixel_t* energyImg, imgProp_t* imgProp, seam_t* minSeam);
-void removeSeam(energyPixel_t* imgGray, int* idsToRemove, imgProp_t* imgProp);
+void removeSeam(energyPixel_t* imgGray, seam_t* idsToRemove, imgProp_t* imgProp);
