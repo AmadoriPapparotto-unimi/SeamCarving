@@ -7,7 +7,15 @@
 
 #include "cuda_runtime.h"
 #include "cuda_runtime_api.h"
+#include "device_launch_parameters.h"
 
+__global__
+void fillMinSeam_(seam_t* minSeam, int width) {
+	int idThread = blockIdx.x * blockDim.x + threadIdx.x;
+
+	minSeam->ids[idThread] = idThread * width;
+
+}
 
 void applySeamCarving(char *p) {
 
@@ -32,23 +40,39 @@ void applySeamCarving(char *p) {
 
 	gpuErrchk(cudaMallocManaged(&minSeam, sizeof(seam_t)));
 	gpuErrchk(cudaMallocManaged(&minSeam->ids, imgProp->height * sizeof(int)));
+	int numBlocks = imgProp->width / 1024 + 1;
+	seam_t* seams;
+	seam_t* minSeamsPerBlock;
+
+	gpuErrchk(cudaMallocManaged(&seams, imgProp->width * sizeof(seam_t)));
+	for (int i = 0; i < imgProp->width; i++)
+		gpuErrchk(cudaMallocManaged(&seams[i].ids, imgProp->height * sizeof(int)));
+
+	gpuErrchk(cudaMallocManaged(&minSeamsPerBlock, numBlocks * sizeof(seam_t)));
+	for (int i = 0; i < numBlocks; i++)
+		gpuErrchk(cudaMallocManaged(&minSeamsPerBlock[i].ids, imgProp->height * sizeof(int)));
+	
 
 	readBMP(f, imgSrc, imgProp);
 	//writeBMP_pixel(strcat(SOURCE_PATH, "hhh.bmp"), imgSrc, imgProp);
 	toGrayScale(imgSrc, imgGray, imgProp);
 	
-	for (int i = 0; i < 15; i++) {
+	for (int i = 0; i < 2; i++) {
 		map(imgGray, imgProp);
-		printf("-----------------width %d height %d\n", imgProp->width, imgProp->height);
-		findSeams(imgGray, imgProp, minSeam);
+		//printf("-----------------width %d height %d\n", imgProp->width, imgProp->height);
 		
-		for (int i = 0; i < imgProp->height; i++) {
-			printf("%d - ", minSeam[0].ids[i]);
-		}
+		findSeams(imgGray, imgProp, minSeam, seams, minSeamsPerBlock);
+		
+		//fillMinSeam_ << <1, 968>> > (minSeam, imgProp->width);
+		//cudaDeviceSynchronize();
+		
+		//for (int i = 0; i < imgProp->height; i++) {
+		//	printf("%d - ", minSeam[0].ids[i]);
+		//}
 		removeSeam(imgGray, minSeam, imgProp);
 		printf("ITERAZIONE %d COMPLETATA\n", i);
 	}
-		setBMP_header(imgProp, 0, imgProp->width);
+	setBMP_header(imgProp, 0, imgProp->width);
 
 	pixel_t* img2convert = (pixel_t*)malloc(imgProp->imageSize * sizeof(pixel_t));
 	energy2pixel(img2convert, imgGray, imgProp);
@@ -60,7 +84,8 @@ void applySeamCarving(char *p) {
 	cudaFree(imgProp);
 	cudaFree(imgGray);
 	cudaFree(imgSrc);
-
+	//cudaFree(seams);
+	//cudaFree(minSeamsPerBlock);
 	fclose(f);
 }
 
@@ -75,7 +100,7 @@ int main(int argc, char** argv) {
 
 	//imgProp_t* imgProp;
 
-	char* path = strcat(SOURCE_PATH, "castle_bmp.bmp");
+	char* path = strcat(SOURCE_PATH, "a.bmp");
 
 	applySeamCarving(path);
 

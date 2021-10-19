@@ -10,6 +10,19 @@
 
 //static const int blockSize = 1024;
 
+void dummyMin(seam_t* energiesArray, seam_t &output, imgProp_t* imgProp) {
+    output = energiesArray[0];
+    //printf("XXXXXXX %d \n", output->total_energy);
+    for (int i = 0; i < imgProp->width; i++) {
+        if (output.total_energy > energiesArray[i].total_energy) {
+            output = energiesArray[i];
+            //printf("new min PPPPPP %d %d\n", energiesArray[i].total_energy, output->total_energy);
+
+        }
+    }
+
+}
+
 __global__ void min_(const seam_t* energiesArray, seam_t* outputArray, imgProp_t* imgProp) {
     int thIdx = threadIdx.x;
     const int myBlockSize = 1024;

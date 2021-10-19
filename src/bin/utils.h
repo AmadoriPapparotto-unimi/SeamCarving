@@ -5,6 +5,7 @@
 #include "image_handler.h"
 #include "seam_carving.h"
 
+void dummyMin(seam_t* energiesArray, seam_t &output, imgProp_t* imgProp);
 void minArr(dim3 gridSize, dim3 blockSize, seam_t* seams, seam_t* outputSeams, imgProp_t* imgProp);
 void report_gpu_mem();
 

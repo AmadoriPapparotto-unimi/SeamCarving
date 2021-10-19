@@ -87,12 +87,14 @@ void readBMP(FILE *f, pixel_t* img, imgProp_t* imgProp) {
 }
 
 void writeBMP_pixel(char* p, pixel_t* img, imgProp_t* ip) {
-	FILE* fw = fopen(p, "wb+");
+	FILE* fw = fopen(p, "wb");
 
 	printf("HEIGHT %d\n", ip->height);
 	printf("WIDTH %d\n", ip->width);
-	for (unsigned int i = 0; i < 54; i++)
-		fputc(ip->headerInfo[i], fw);
+	fwrite(ip->headerInfo, 1, 54, fw);
+	//fflush(fw);
+	//for (unsigned int i = 0; i < 54; i++)
+	//	fputc(ip->headerInfo[i], fw);
 
 	//Sleep(1 * 1000);
 
@@ -120,6 +122,7 @@ void writeBMP_pixel(char* p, pixel_t* img, imgProp_t* ip) {
 //		fwrite(&img[r * ip->width], sizeof(pixel_t), ip->width, fw);
 		//560
 	}
+	fflush(fw);
 
 	//printf("PADDING AGGIUNTO %d\n", count_padding);
 	//Sleep(1 * 1000);
