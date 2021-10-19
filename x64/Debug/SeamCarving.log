@@ -4,9 +4,9 @@
 C:\Users\tommi\OneDrive\Documenti\MEGAsync\Universita\Magistrale\Corsi\GPU Computing\Proj\SeamCarving\src\bin\seam_carving.h(2): warning C4067: token imprevisti dopo una direttiva per il preprocessore. Previsto un carattere di nuova riga
 C:/Users/tommi/OneDrive/Documenti/MEGAsync/Universita/Magistrale/Corsi/GPU Computing/Proj/SeamCarving/src/bin/seam_carving.cu(70): warning : variable "inde" was declared but never referenced
   
-C:/Users/tommi/OneDrive/Documenti/MEGAsync/Universita/Magistrale/Corsi/GPU Computing/Proj/SeamCarving/src/bin/seam_carving.cu(344): warning : variable "newFileSize" was declared but never referenced
+C:/Users/tommi/OneDrive/Documenti/MEGAsync/Universita/Magistrale/Corsi/GPU Computing/Proj/SeamCarving/src/bin/seam_carving.cu(320): warning : variable "newFileSize" was declared but never referenced
   
-C:/Users/tommi/OneDrive/Documenti/MEGAsync/Universita/Magistrale/Corsi/GPU Computing/Proj/SeamCarving/src/bin/seam_carving.cu(345): warning : variable "numBlocks" was declared but never referenced
+C:/Users/tommi/OneDrive/Documenti/MEGAsync/Universita/Magistrale/Corsi/GPU Computing/Proj/SeamCarving/src/bin/seam_carving.cu(321): warning : variable "numBlocks" was declared but never referenced
   
 C:\Users\tommi\OneDrive\Documenti\MEGAsync\Universita\Magistrale\Corsi\GPU Computing\Proj\SeamCarving\src\bin\seam_carving.h(2): warning C4067: token imprevisti dopo una direttiva per il preprocessore. Previsto un carattere di nuova riga
   seam_carving.cu

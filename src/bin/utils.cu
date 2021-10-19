@@ -23,13 +23,18 @@ void dummyMin(seam_t* energiesArray, seam_t &output, imgProp_t* imgProp) {
 
 }
 
-__global__ void min_(const seam_t* energiesArray, seam_t* outputArray, imgProp_t* imgProp) {
+__global__ void min_(const seam_t* energiesArray, seam_t* outputArray, imgProp_t* imgProp, int nThreads) {
     int thIdx = threadIdx.x;
     const int myBlockSize = 1024;
     int gthIdx = thIdx + blockIdx.x * myBlockSize;
-    __shared__ seam_t shArr[myBlockSize];
-    if(gthIdx < imgProp->width)
-        shArr[thIdx] = energiesArray[gthIdx];
+    extern __shared__ int shArr[];
+    int* shared_mins = (int*)shArr;
+    int* shared_min_indices = (int*)(&(shArr[nThreads]));
+
+    if (gthIdx < imgProp->width) {
+        shared_mins[thIdx] = energiesArray[gthIdx].total_energy;
+        shared_min_indices[thIdx] = gthIdx;
+    }
 
     int seamsPerBlock = myBlockSize; // 0 < seamsPerBlock < 1024
     
@@ -45,26 +50,37 @@ __global__ void min_(const seam_t* energiesArray, seam_t* outputArray, imgProp_t
     bool isOdd = seamsPerBlock % 2 == 1;
     if (isOdd) {
         size++;
-        if (thIdx < seamsPerBlock / 2)
-            shArr[thIdx] = (shArr[thIdx].total_energy < shArr[thIdx + size].total_energy) ? shArr[thIdx] : shArr[thIdx + size];
+        if (thIdx < seamsPerBlock / 2) {
+            if (shared_mins[thIdx] > shared_mins[thIdx + size]) {
+                shared_mins[thIdx] = shared_mins[thIdx + size];
+                shared_min_indices[thIdx] = shared_min_indices[thIdx + size];
+            }
+        }
+            //shArr[thIdx] = (shArr[thIdx].total_energy < shArr[thIdx + size].total_energy) ? shArr[thIdx] : shArr[thIdx + size];
 
         size /= 2;
     }
     // get minimum
     for (; size > 0; size /= 2) { //uniform
-        if (thIdx < size)
-            shArr[thIdx] = (shArr[thIdx].total_energy < shArr[thIdx + size].total_energy) ? shArr[thIdx] : shArr[thIdx + size];
+        if (thIdx < size) {
+            if (shared_mins[thIdx] > shared_mins[thIdx + size]) {
+                shared_mins[thIdx] = shared_mins[thIdx + size];
+                shared_min_indices[thIdx] = shared_min_indices[thIdx + size];
+            }
+        }
+            //shArr[thIdx] = (shArr[thIdx].total_energy < shArr[thIdx + size].total_energy) ? shArr[thIdx] : shArr[thIdx + size];
         __syncthreads();
     }
 
     //save current block's minimum
     if (thIdx == 0) {
-        outputArray[blockIdx.x] = shArr[0];
+        outputArray[blockIdx.x] = energiesArray[shared_min_indices[0]];
+        //printf("OUTPUT ARRAY %d: \n", outputArray[blockIdx.x].total_energy);
     }
 }
 
-void minArr(dim3 gridSize, dim3 blockSize, seam_t* energiesArray, seam_t* outputArray, imgProp_t* imgProp) {
-    min_ << <gridSize, blockSize >> > (energiesArray, outputArray, imgProp);
+void minArr(dim3 gridSize, dim3 blockSize, seam_t* energiesArray, seam_t* outputArray, imgProp_t* imgProp, int nThreads) {
+    min_ << <gridSize, blockSize, 1024 * (sizeof(int) + sizeof(int)) >> > (energiesArray, outputArray, imgProp, nThreads);
 }
 
 void report_gpu_mem()

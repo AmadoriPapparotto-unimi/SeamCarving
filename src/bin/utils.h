@@ -6,7 +6,7 @@
 #include "seam_carving.h"
 
 void dummyMin(seam_t* energiesArray, seam_t &output, imgProp_t* imgProp);
-void minArr(dim3 gridSize, dim3 blockSize, seam_t* seams, seam_t* outputSeams, imgProp_t* imgProp);
+void minArr(dim3 gridSize, dim3 blockSize, seam_t* energiesArray, seam_t* outputArray, imgProp_t* imgProp, int nThreads);
 void report_gpu_mem();
 
 #define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }

@@ -250,16 +250,10 @@ void map(energyPixel_t* energyImg, imgProp_t* imgProp) {
 void findSeams(energyPixel_t* energyImg, imgProp_t* imgProp, seam_t* minSeam, seam_t* seams, seam_t* minSeamsPerBlock) {
 
 	//energyPixel_t* img;
-	//seam_t* seams;
-	//seam_t* minSeamsPerBlock;
-
-
 	int numBlocks = imgProp->width / 1024 + 1;
 
 
 	//gpuErrchk(cudaMallocManaged(&img, imgProp->imageSize * sizeof(energyPixel_t)));
-
-
 	//for (int i = 0; i < imgProp->imageSize; i++) {
 	//	img[i].pixel.R = energyImg[i].energy;
 	//	img[i].pixel.G = energyImg[i].energy;
@@ -269,46 +263,31 @@ void findSeams(energyPixel_t* energyImg, imgProp_t* imgProp, seam_t* minSeam, se
 
 
 	computeSeams << <numBlocks, 1024 >> > (energyImg, seams, imgProp);
-	//cudaDeviceSynchronize();
-
-	/*for (int i = 0; i < imgProp->height; i++) {
-		printf("%d - ", seams[0].ids[i]);
-	}*/
-
 	gpuErrchk(cudaDeviceSynchronize());
 
 	//pixel_t* img2convert = (pixel_t*)malloc(imgProp->imageSize * sizeof(pixel_t));
 	//energy2pixel(img2convert, img, imgProp);
 	//writeBMP_pixel(strcat(SOURCE_PATH,"seams_map.bmp"), img2convert, imgProp);
 
-	//minArr(numBlocks, 1024, seams, minSeamsPerBlock, imgProp);
+	//minArr(numBlocks, 1024, seams, minSeamsPerBlock, imgProp, 1024);
 	//gpuErrchk(cudaDeviceSynchronize());
 
-	//for (int i = 0; i < imgProp->height; i++) {
-	//	printf("%d - ", minSeamsPerBlock[0].ids[i]);
+	//minSeam = &minSeamsPerBlock[0];
+	//for (int i = 1; i < numBlocks; i++) {
+	//	if (minSeamsPerBlock[i].total_energy < minSeam->total_energy) {
+	//		minSeam = &minSeamsPerBlock[i];
+	//	}
 	//}
-
-	//printf("\n\n");
-
-	//for (int i = 0; i < imgProp->height; i++) {
-	//	printf("%d - ", minSeamsPerBlock[1].ids[i]);
-	//}
-
-	//minArr(1, imgProp->width / 1024 + 1, minSeamsPerBlock, minSeam, imgProp);
+	// 
+	
+	//minArr(1, imgProp->width / 1024 + 1, minSeamsPerBlock, minSeam, imgProp, imgProp->width / 1024 + 1);
 	//gpuErrchk(cudaDeviceSynchronize());
+
+
 	dummyMin(seams, *minSeam, imgProp);
 
-	//for (int i = 0; i < imgProp->height; i++) {
-	//	printf("%d - ", minSeam[0].ids[i]);
-	//}
-
-	//minSeam->total_energy = seams[0].total_energy;
-	//for (int i = 0; i < imgProp->height; i++) {
-	//	
-	//	minSeam->ids[i] = seams[0].ids[i];
-
-	//}
-
+	//printf("%d - \n", minSeam[0].total_energy);
+	
 
 	//for (int i = 0; i < imgProp->height; i++) {
 	//	printf("%d - ", minSeam->ids[i]);
@@ -331,9 +310,6 @@ void findSeams(energyPixel_t* energyImg, imgProp_t* imgProp, seam_t* minSeam, se
 	//gpuErrchk(cudaFree(&minSeamsPerBlock[i].ids));
 
 	//gpuErrchk(cudaFree(img));
-	//gpuErrchk(cudaDeviceSynchronize());
-	//gpuErrchk(cudaFree(minSeamsPerBlock));
-
 }
 
 void removeSeam(energyPixel_t* imgGray, seam_t* idsToRemove, imgProp_t* imgProp) {
