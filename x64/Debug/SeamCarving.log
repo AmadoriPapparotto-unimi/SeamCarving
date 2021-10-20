@@ -1,15 +1,45 @@
-﻿  Compiling CUDA source file src\bin\seam_carving.cu...
+﻿  Compiling CUDA source file src\bin\image_handler.cu...
+  Compiling CUDA source file src\bin\seam_carving.cu...
+  Compiling CUDA source file src\bin\utils.cu...
+  Compiling CUDA source file src\bin\kernel.cu...
+  
+  C:\Users\tommi\OneDrive\Documenti\MEGAsync\Universita\Magistrale\Corsi\GPU Computing\Proj\SeamCarving>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.2\bin\nvcc.exe" -gencode=arch=compute_52,code=\"sm_52,compute_52\" --use-local-env -ccbin "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29910\bin\HostX86\x64" -x cu -rdc=true  -I"C:\Users\tommi\OneDrive\Documenti\MEGAsync\Universita\Magistrale\Corsi\GPU Computing\Proj\SeamCarving\src\bin" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.2\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.2\include"  -G   --keep-dir x64\Debug  -maxrregcount=0  --machine 64 --compile -cudart static  -g  -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Fdx64\Debug\vc142.pdb /FS /Zi /RTC1 /MDd " -o x64\Debug\image_handler.cu.obj "C:\Users\tommi\OneDrive\Documenti\MEGAsync\Universita\Magistrale\Corsi\GPU Computing\Proj\SeamCarving\src\bin\image_handler.cu" 
   
   C:\Users\tommi\OneDrive\Documenti\MEGAsync\Universita\Magistrale\Corsi\GPU Computing\Proj\SeamCarving>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.2\bin\nvcc.exe" -gencode=arch=compute_52,code=\"sm_52,compute_52\" --use-local-env -ccbin "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29910\bin\HostX86\x64" -x cu -rdc=true  -I"C:\Users\tommi\OneDrive\Documenti\MEGAsync\Universita\Magistrale\Corsi\GPU Computing\Proj\SeamCarving\src\bin" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.2\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.2\include"  -G   --keep-dir x64\Debug  -maxrregcount=0  --machine 64 --compile -cudart static  -g  -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Fdx64\Debug\vc142.pdb /FS /Zi /RTC1 /MDd " -o x64\Debug\seam_carving.cu.obj "C:\Users\tommi\OneDrive\Documenti\MEGAsync\Universita\Magistrale\Corsi\GPU Computing\Proj\SeamCarving\src\bin\seam_carving.cu" 
+  
+  C:\Users\tommi\OneDrive\Documenti\MEGAsync\Universita\Magistrale\Corsi\GPU Computing\Proj\SeamCarving>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.2\bin\nvcc.exe" -gencode=arch=compute_52,code=\"sm_52,compute_52\" --use-local-env -ccbin "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29910\bin\HostX86\x64" -x cu -rdc=true  -I"C:\Users\tommi\OneDrive\Documenti\MEGAsync\Universita\Magistrale\Corsi\GPU Computing\Proj\SeamCarving\src\bin" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.2\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.2\include"  -G   --keep-dir x64\Debug  -maxrregcount=0  --machine 64 --compile -cudart static  -g  -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Fdx64\Debug\vc142.pdb /FS /Zi /RTC1 /MDd " -o x64\Debug\utils.cu.obj "C:\Users\tommi\OneDrive\Documenti\MEGAsync\Universita\Magistrale\Corsi\GPU Computing\Proj\SeamCarving\src\bin\utils.cu" 
+  
+  C:\Users\tommi\OneDrive\Documenti\MEGAsync\Universita\Magistrale\Corsi\GPU Computing\Proj\SeamCarving>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.2\bin\nvcc.exe" -gencode=arch=compute_52,code=\"sm_52,compute_52\" --use-local-env -ccbin "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29910\bin\HostX86\x64" -x cu -rdc=true  -I"C:\Users\tommi\OneDrive\Documenti\MEGAsync\Universita\Magistrale\Corsi\GPU Computing\Proj\SeamCarving\src\bin" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.2\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.2\include"  -G   --keep-dir x64\Debug  -maxrregcount=0  --machine 64 --compile -cudart static  -g  -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Fdx64\Debug\vc142.pdb /FS /Zi /RTC1 /MDd " -o x64\Debug\kernel.cu.obj "C:\Users\tommi\OneDrive\Documenti\MEGAsync\Universita\Magistrale\Corsi\GPU Computing\Proj\SeamCarving\src\bin\kernel.cu" 
+C:\Users\tommi\OneDrive\Documenti\MEGAsync\Universita\Magistrale\Corsi\GPU Computing\Proj\SeamCarving\src\bin\seam_carving.h(2): warning C4067: token imprevisti dopo una direttiva per il preprocessore. Previsto un carattere di nuova riga
+C:\Users\tommi\OneDrive\Documenti\MEGAsync\Universita\Magistrale\Corsi\GPU Computing\Proj\SeamCarving\src\bin\seam_carving.h(2): warning C4067: token imprevisti dopo una direttiva per il preprocessore. Previsto un carattere di nuova riga
+C:\Users\tommi\OneDrive\Documenti\MEGAsync\Universita\Magistrale\Corsi\GPU Computing\Proj\SeamCarving\src\bin\seam_carving.h(2): warning C4067: token imprevisti dopo una direttiva per il preprocessore. Previsto un carattere di nuova riga
 C:\Users\tommi\OneDrive\Documenti\MEGAsync\Universita\Magistrale\Corsi\GPU Computing\Proj\SeamCarving\src\bin\seam_carving.h(2): warning C4067: token imprevisti dopo una direttiva per il preprocessore. Previsto un carattere di nuova riga
 C:/Users/tommi/OneDrive/Documenti/MEGAsync/Universita/Magistrale/Corsi/GPU Computing/Proj/SeamCarving/src/bin/seam_carving.cu(70): warning : variable "inde" was declared but never referenced
   
-C:/Users/tommi/OneDrive/Documenti/MEGAsync/Universita/Magistrale/Corsi/GPU Computing/Proj/SeamCarving/src/bin/seam_carving.cu(320): warning : variable "newFileSize" was declared but never referenced
+C:/Users/tommi/OneDrive/Documenti/MEGAsync/Universita/Magistrale/Corsi/GPU Computing/Proj/SeamCarving/src/bin/seam_carving.cu(361): warning : variable "newFileSize" was declared but never referenced
   
-C:/Users/tommi/OneDrive/Documenti/MEGAsync/Universita/Magistrale/Corsi/GPU Computing/Proj/SeamCarving/src/bin/seam_carving.cu(321): warning : variable "numBlocks" was declared but never referenced
+C:/Users/tommi/OneDrive/Documenti/MEGAsync/Universita/Magistrale/Corsi/GPU Computing/Proj/SeamCarving/src/bin/kernel.cu(72): warning : reference is to variable "i"
+  (56): here -- under old for-init scoping rules it would have been variable "i"
+  (68): here
   
 C:\Users\tommi\OneDrive\Documenti\MEGAsync\Universita\Magistrale\Corsi\GPU Computing\Proj\SeamCarving\src\bin\seam_carving.h(2): warning C4067: token imprevisti dopo una direttiva per il preprocessore. Previsto un carattere di nuova riga
+C:\Users\tommi\OneDrive\Documenti\MEGAsync\Universita\Magistrale\Corsi\GPU Computing\Proj\SeamCarving\src\bin\seam_carving.h(2): warning C4067: token imprevisti dopo una direttiva per il preprocessore. Previsto un carattere di nuova riga
+C:\Users\tommi\OneDrive\Documenti\MEGAsync\Universita\Magistrale\Corsi\GPU Computing\Proj\SeamCarving\src\bin\seam_carving.h(2): warning C4067: token imprevisti dopo una direttiva per il preprocessore. Previsto un carattere di nuova riga
+C:/Users/tommi/OneDrive/Documenti/MEGAsync/Universita/Magistrale/Corsi/GPU Computing/Proj/SeamCarving/src/bin/kernel.cu(72): warning : reference is to variable "i"
+  (56): here -- under old for-init scoping rules it would have been variable "i"
+  (68): here
+  
+  utils.cu
   seam_carving.cu
+  kernel.cu
+C:\Users\tommi\OneDrive\Documenti\MEGAsync\Universita\Magistrale\Corsi\GPU Computing\Proj\SeamCarving\src\bin\seam_carving.h(2): warning C4067: token imprevisti dopo una direttiva per il preprocessore. Previsto un carattere di nuova riga
+  image_handler.cu
+C:/Users/tommi/OneDrive/Documenti/MEGAsync/Universita/Magistrale/Corsi/GPU Computing/Proj/SeamCarving/src/bin/image_handler.cu(140): warning C4244: '=': conversione da 'double' a 'pel_t'. Possibile perdita di dati.
+C:/Users/tommi/OneDrive/Documenti/MEGAsync/Universita/Magistrale/Corsi/GPU Computing/Proj/SeamCarving/src/bin/image_handler.cu(141): warning C4244: '=': conversione da 'double' a 'pel_t'. Possibile perdita di dati.
+C:/Users/tommi/OneDrive/Documenti/MEGAsync/Universita/Magistrale/Corsi/GPU Computing/Proj/SeamCarving/src/bin/image_handler.cu(142): warning C4244: '=': conversione da 'double' a 'pel_t'. Possibile perdita di dati.
+C:/Users/tommi/OneDrive/Documenti/MEGAsync/Universita/Magistrale/Corsi/GPU Computing/Proj/SeamCarving/src/bin/image_handler.cu(222): warning C4244: '=': conversione da 'double' a 'pel_t'. Possibile perdita di dati.
+C:/Users/tommi/OneDrive/Documenti/MEGAsync/Universita/Magistrale/Corsi/GPU Computing/Proj/SeamCarving/src/bin/image_handler.cu(223): warning C4244: '=': conversione da 'double' a 'pel_t'. Possibile perdita di dati.
+C:/Users/tommi/OneDrive/Documenti/MEGAsync/Universita/Magistrale/Corsi/GPU Computing/Proj/SeamCarving/src/bin/image_handler.cu(224): warning C4244: '=': conversione da 'double' a 'pel_t'. Possibile perdita di dati.
   
   C:\Users\tommi\OneDrive\Documenti\MEGAsync\Universita\Magistrale\Corsi\GPU Computing\Proj\SeamCarving>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.2\bin\nvcc.exe" -dlink -o x64\Debug\SeamCarving.device-link.obj -Xcompiler "/EHsc /W3 /nologo /Od /Fdx64\Debug\vc142.pdb /Zi /RTC1 /MDd " -L"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.2\bin/crt" -L"C:\Users\tommi\OneDrive\Documenti\MEGAsync\Universita\Magistrale\Corsi\GPU Computing\Proj\SeamCarving\src\bin" -L"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.2\lib\x64" cudart_static.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib cudadevrt.lib cudart.lib  -gencode=arch=compute_52,code=sm_52 -G --machine 64 x64\Debug\image_handler.cu.obj x64\Debug\kernel.cu.obj x64\Debug\seam_carving.cu.obj x64\Debug\utils.cu.obj 
   cudart_static.lib

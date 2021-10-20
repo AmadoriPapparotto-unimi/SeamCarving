@@ -12,12 +12,9 @@
 
 void dummyMin(seam_t* energiesArray, seam_t &output, imgProp_t* imgProp) {
     output = energiesArray[0];
-    //printf("XXXXXXX %d \n", output->total_energy);
     for (int i = 0; i < imgProp->width; i++) {
         if (output.total_energy > energiesArray[i].total_energy) {
             output = energiesArray[i];
-            //printf("new min PPPPPP %d %d\n", energiesArray[i].total_energy, output->total_energy);
-
         }
     }
 
@@ -56,8 +53,6 @@ __global__ void min_(const seam_t* energiesArray, seam_t* outputArray, imgProp_t
                 shared_min_indices[thIdx] = shared_min_indices[thIdx + size];
             }
         }
-            //shArr[thIdx] = (shArr[thIdx].total_energy < shArr[thIdx + size].total_energy) ? shArr[thIdx] : shArr[thIdx + size];
-
         size /= 2;
     }
     // get minimum
@@ -68,14 +63,12 @@ __global__ void min_(const seam_t* energiesArray, seam_t* outputArray, imgProp_t
                 shared_min_indices[thIdx] = shared_min_indices[thIdx + size];
             }
         }
-            //shArr[thIdx] = (shArr[thIdx].total_energy < shArr[thIdx + size].total_energy) ? shArr[thIdx] : shArr[thIdx + size];
         __syncthreads();
     }
 
     //save current block's minimum
     if (thIdx == 0) {
         outputArray[blockIdx.x] = energiesArray[shared_min_indices[0]];
-        //printf("OUTPUT ARRAY %d: \n", outputArray[blockIdx.x].total_energy);
     }
 }
 
