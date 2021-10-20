@@ -7,6 +7,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SeamCarving", "SeamCarving.
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		33|x64 = 33|x64
 		big|x64 = big|x64
 		castle|x64 = castle|x64
 		Debug|x64 = Debug|x64
@@ -14,6 +15,8 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3BBCC29F-CEE4-4849-9533-1F0A673FDB36}.33|x64.ActiveCfg = 33|x64
+		{3BBCC29F-CEE4-4849-9533-1F0A673FDB36}.33|x64.Build.0 = 33|x64
 		{3BBCC29F-CEE4-4849-9533-1F0A673FDB36}.big|x64.ActiveCfg = big|x64
 		{3BBCC29F-CEE4-4849-9533-1F0A673FDB36}.big|x64.Build.0 = big|x64
 		{3BBCC29F-CEE4-4849-9533-1F0A673FDB36}.castle|x64.ActiveCfg = castle|x64

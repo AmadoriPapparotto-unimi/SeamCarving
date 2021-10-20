@@ -8,8 +8,8 @@ static char SOURCE_PATH[100] = "src/assets/images/";
 typedef struct ImgPropStruct {
 	int width;
 	int height;
-	unsigned char headerInfo[54];
 	int imageSize;
+	unsigned char headerInfo[54];
 } imgProp_t;
 
 typedef unsigned char pel_t;
@@ -21,8 +21,8 @@ typedef struct PixelStruct {
 } pixel_t;
 
 typedef struct EnergyPixelStruct {
-	pixel_t pixel;
-	double energy;
+	pel_t color;
+	float energy;
 } energyPixel_t;
 
 void readBMP(FILE* f, pixel_t* img, imgProp_t* imgProp);

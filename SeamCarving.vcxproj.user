@@ -11,11 +11,15 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='castle|x64'">
-    <LocalDebuggerCommandArguments>"src\assets\images\castle_bmp.bmp" 1428</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>"src\assets\images\castle_bmp.bmp" 300</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='big|x64'">
-    <LocalDebuggerCommandArguments>"src\assets\images\big.bmp" 1427</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>"src\assets\images\big.bmp" 100</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='33|x64'">
+    <LocalDebuggerCommandArguments>"src\assets\images\33.bmp" 1</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='dog|x64'">
