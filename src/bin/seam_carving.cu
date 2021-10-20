@@ -199,45 +199,6 @@ __global__ void computeSeams(energyPixel_t* energyImg, seam_t* seams, imgProp_t*
 	//	}
 	//}
 }
-__global__ void removePixelPerRow_(energyPixel_t* energyImg, int idToRemove, energyPixel_t* newImage, int imageSize, int width, int idRow) {
-
-	int idThread = blockIdx.x * blockDim.x + threadIdx.x;
-	int newPosition = idThread  + (width *idRow);
-	int oldPosition = idThread + ((width+1) * idRow);
-
-	if (idThread < width) {
-
-		int shift = oldPosition < idToRemove ? 0 : 1;
-
-
-		/*printf("idRow %d (%d)\n", idRow, newPosition);
-		printf("idToRemove %d (%d)\n", idToRemove, newPosition);
-		printf("shift %d (%d)\n", shift, newPosition);
-		printf("new Position %d (%d)\n", newPosition + shift, newPosition);*/
-
-		newImage[newPosition].energy = energyImg[oldPosition + shift].energy;
-		newImage[newPosition].pixel.R = energyImg[oldPosition + shift].pixel.R;
-		newImage[newPosition].pixel.G = energyImg[oldPosition + shift].pixel.G;
-		newImage[newPosition].pixel.B = energyImg[oldPosition + shift].pixel.B;
-	}
-
-
-}
-
-__global__ void removeSeamt_(energyPixel_t* energyImg, seam_t* idsToRemove, energyPixel_t* newImage, imgProp_t* imgProp) {
-
-	int idThread = blockIdx.x * blockDim.x + threadIdx.x;
-	
-	if (idThread < imgProp->height) {
-
-		int idToRemove = idsToRemove->ids[idThread];
-		removePixelPerRow_ << <(imgProp->width - 1) / 1024 + 1, 1024 >> > (energyImg, idToRemove, newImage, imgProp->imageSize, imgProp->width - 1, idThread);
-		cudaDeviceSynchronize();
-
-	}
-	__syncthreads();
-	cudaDeviceSynchronize();
-}
 
 void energyMap(energyPixel_t* energyImg, imgProp_t* imgProp) {
 	energyMap_ << <imgProp->imageSize / 1024 + 1, 1024 >> > (energyImg, imgProp);
