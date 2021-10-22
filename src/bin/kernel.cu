@@ -11,6 +11,19 @@
 
 char* src_path;
 
+__global__
+void removePixelsFromSrc_(pixel_t* imgSrc, pixel_t* newImgSrc, energyPixel_t* imgGray, imgProp_t* imgProp) {
+	int idThread = blockIdx.x * blockDim.x + threadIdx.x;
+	//if (idThread < 3)
+	if (idThread < imgProp->imageSize) {
+
+		//printf("%d - ", imgGray[idThread].idPixel);
+		newImgSrc[idThread].R = imgSrc[imgGray[idThread].idPixel].R;
+		newImgSrc[idThread].G = imgSrc[imgGray[idThread].idPixel].G;
+		newImgSrc[idThread].B = imgSrc[imgGray[idThread].idPixel].B;
+	}
+}
+
 void applySeamCarving(char *p, int iterations) {
 
 	imgProp_t* imgProp;
@@ -25,9 +38,11 @@ void applySeamCarving(char *p, int iterations) {
 	seam_t* minSeamsPerBlock;
 	seam_t* minSeam;
 
+	int** seamsToRemove;
+
 	FILE* f = fopen(p, "rb");
 	if (f == NULL) {
-		printf("*** FILE NOT FOUND ***\n");
+		printf("*** FILE NOT FOUND %s ***\n", p);
 		exit(1);
 	}
 
@@ -35,10 +50,9 @@ void applySeamCarving(char *p, int iterations) {
 	setupImgProp(imgProp, f);
 
 	int numBlocks = imgProp->width / 1024 + 1;
-
 	gpuErrchk(cudaMallocManaged(&imgSrc, imgProp->imageSize * sizeof(pixel_t)));
 	gpuErrchk(cudaMallocManaged(&imgGray, imgProp->imageSize * sizeof(energyPixel_t)));
-	gpuErrchk(cudaMallocManaged(&imgWithoutSeamSrc, imgProp->imageSize * sizeof(pixel_t)));
+	gpuErrchk(cudaMallocManaged(&imgWithoutSeamSrc, (imgProp->imageSize - (imgProp->height * iterations)) * sizeof(pixel_t)));
 	gpuErrchk(cudaMallocManaged(&imgWithoutSeamGray, imgProp->imageSize * sizeof(energyPixel_t)));
 
 	gpuErrchk(cudaMallocManaged(&minSeam, sizeof(seam_t)));
@@ -53,7 +67,11 @@ void applySeamCarving(char *p, int iterations) {
 		gpuErrchk(cudaMallocManaged(&minSeamsPerBlock[i].ids, imgProp->height * sizeof(int)));
 
 	gpuErrchk(cudaMallocManaged(&imgWithoutSeamGray, imgProp->imageSize * sizeof(energyPixel_t)));
-	gpuErrchk(cudaMallocManaged(&imgWithoutSeamSrc, imgProp->imageSize * sizeof(pixel_t)));
+	//gpuErrchk(cudaMallocManaged(&imgWithoutSeamSrc, imgProp->imageSize * sizeof(pixel_t)));
+
+	gpuErrchk(cudaMallocManaged(&seamsToRemove, iterations * sizeof(int*)));
+	for (int i = 0; i < iterations; i++)
+		gpuErrchk(cudaMallocManaged(&seamsToRemove[i], imgProp ->height * sizeof(int)));
 
 
 	readBMP(f, imgSrc, imgProp);
@@ -62,17 +80,17 @@ void applySeamCarving(char *p, int iterations) {
 	for (int i = 0; i < iterations; i++) {
 		energyMap(imgGray, imgProp);		
 		findSeams(imgGray, imgSrc, imgProp, minSeam, seams, minSeamsPerBlock);
-		removeSeam(imgGray, imgSrc, imgWithoutSeamGray, imgWithoutSeamSrc, minSeam, imgProp);
-		//printf("ITERAZIONE %d COMPLETATA\n", i);
+		removeSeam(imgGray, imgWithoutSeamGray, minSeam, imgProp);
+		printf("ITERAZIONE %d COMPLETATA\n", i);
 	}
 
+	removePixelsFromSrc_ << <imgProp->imageSize/1024 + 1, 1024 >> > (imgSrc, imgWithoutSeamSrc, imgGray, imgProp);
+	gpuErrchk(cudaDeviceSynchronize());
 	setBMP_header(imgProp, 0, imgProp->width);
-	writeBMP_pixel(strcat(SOURCE_PATH, "reduced.bmp"), imgSrc, imgProp);
+	writeBMP_pixel("C:\\aa\\reduced.bmp", imgWithoutSeamSrc, imgProp);
 		
 	fclose(f);
 }
-
-
 
 int main(int argc, char** argv) {
 

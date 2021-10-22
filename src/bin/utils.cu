@@ -5,7 +5,7 @@
 #include "cuda_runtime_api.h"
 #include "device_launch_parameters.h"
 #include "image_handler.h"
-#include "utils.h"
+#include "utils.cuh"
 #include "seam_carving.h"
 
 //static const int blockSize = 1024;

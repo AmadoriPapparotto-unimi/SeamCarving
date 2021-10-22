@@ -14,9 +14,10 @@
 #define MAX_THREAD 1024
 
 
-__device__ void grayValue(energyPixel_t *res, pel_t r, pel_t g, pel_t b) {
+__device__ void grayValue(energyPixel_t *energyPixel, pel_t r, pel_t g, pel_t b, int id) {
 	int grayVal = (r + g + b) / 3;
-	res->color = grayVal;
+	energyPixel->color = grayVal;
+	energyPixel->idPixel = id;
 }
 
 __global__ void toGrayScale_(pixel_t* img, energyPixel_t* imgGray, int imageSize)
@@ -26,7 +27,7 @@ __global__ void toGrayScale_(pixel_t* img, energyPixel_t* imgGray, int imageSize
 	//	printf("%d", gridDim.x);
 
 	if (id < imageSize) {
-		grayValue(&imgGray[id], img[id].R, img[id].G, img[id].B);
+		grayValue(&imgGray[id], img[id].R, img[id].G, img[id].B, id);
 	}
 }
 

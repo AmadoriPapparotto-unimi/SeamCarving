@@ -21,8 +21,9 @@ typedef struct PixelStruct {
 } pixel_t;
 
 typedef struct EnergyPixelStruct {
-	pel_t color;
+	long long idPixel; //idOriginale dell'immagine iniziale
 	float energy;
+	pel_t color;
 } energyPixel_t;
 
 void readBMP(FILE* f, pixel_t* img, imgProp_t* imgProp);

@@ -8,3 +8,5 @@
 	- L'esecuzione degli stream avviene in parallelo
 	- Il calcolo dei bordi avviene alla fine dell'esecuzione di tutti gli stream
 
+## Meglio parallelismo dinamico o singolo kernel? (seam_carving.cu:removeSeam)
+
