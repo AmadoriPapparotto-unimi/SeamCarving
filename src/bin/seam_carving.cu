@@ -387,3 +387,21 @@ void removeSeam(energyPixel_t* imgGray, energyPixel_t* imgWithoutSeamGray, seam_
 	//cudaStreamDestroy(stream[0]);
 
 }
+
+__global__
+void removePixelsFromSrc_(pixel_t* imgSrc, pixel_t* newImgSrc, energyPixel_t* imgGray, imgProp_t* imgProp) {
+	int idThread = blockIdx.x * blockDim.x + threadIdx.x;
+	//if (idThread < 3)
+	if (idThread < imgProp->imageSize) {
+
+		//printf("%d - ", imgGray[idThread].idPixel);
+		newImgSrc[idThread].R = imgSrc[imgGray[idThread].idPixel].R;
+		newImgSrc[idThread].G = imgSrc[imgGray[idThread].idPixel].G;
+		newImgSrc[idThread].B = imgSrc[imgGray[idThread].idPixel].B;
+	}
+}
+
+void removePixelsFromSrc(pixel_t* imgSrc, pixel_t* imgWithoutSeamSrc, energyPixel_t* imgGray, imgProp_t* imgProp) {
+	removePixelsFromSrc_ << <imgProp->imageSize / 1024 + 1, 1024 >> > (imgSrc, imgWithoutSeamSrc, imgGray, imgProp);
+	gpuErrchk(cudaDeviceSynchronize());
+}

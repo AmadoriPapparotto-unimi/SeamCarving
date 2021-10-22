@@ -11,19 +11,6 @@
 
 char* src_path;
 
-__global__
-void removePixelsFromSrc_(pixel_t* imgSrc, pixel_t* newImgSrc, energyPixel_t* imgGray, imgProp_t* imgProp) {
-	int idThread = blockIdx.x * blockDim.x + threadIdx.x;
-	//if (idThread < 3)
-	if (idThread < imgProp->imageSize) {
-
-		//printf("%d - ", imgGray[idThread].idPixel);
-		newImgSrc[idThread].R = imgSrc[imgGray[idThread].idPixel].R;
-		newImgSrc[idThread].G = imgSrc[imgGray[idThread].idPixel].G;
-		newImgSrc[idThread].B = imgSrc[imgGray[idThread].idPixel].B;
-	}
-}
-
 void applySeamCarving(char *p, int iterations) {
 
 	imgProp_t* imgProp;
@@ -84,8 +71,8 @@ void applySeamCarving(char *p, int iterations) {
 		printf("ITERAZIONE %d COMPLETATA\n", i);
 	}
 
-	removePixelsFromSrc_ << <imgProp->imageSize/1024 + 1, 1024 >> > (imgSrc, imgWithoutSeamSrc, imgGray, imgProp);
-	gpuErrchk(cudaDeviceSynchronize());
+	removePixelsFromSrc(imgSrc, imgWithoutSeamSrc, imgGray, imgProp);
+
 	setBMP_header(imgProp, 0, imgProp->width);
 	writeBMP_pixel("C:\\aa\\reduced.bmp", imgWithoutSeamSrc, imgProp);
 		
