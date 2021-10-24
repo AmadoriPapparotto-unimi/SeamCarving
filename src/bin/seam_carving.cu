@@ -11,7 +11,11 @@
 #include "cuda_runtime_api.h"
 #include "device_launch_parameters.h"
 
-__device__ char getPosition(int id, imgProp_t* imgProp) {
+#define nThreads 128;
+#define maxThreads 1024;
+
+__device__ 
+char getPosition(int id, imgProp_t* imgProp) {
 	int width = imgProp->width;
 	int imageSize = imgProp->imageSize;
 
@@ -51,7 +55,8 @@ __device__ char getPosition(int id, imgProp_t* imgProp) {
 	return -1;
 }
 
-__device__ void calculateEnergy(energyPixel_t* energyPixel, energyPixel_t* pixel, int id, imgProp_t* imgProp) {
+__device__ 
+void calculateEnergy(energyPixel_t* energyPixel, energyPixel_t* pixel, int id, imgProp_t* imgProp) {
 	int dx2, dy2;
 	//ANGOLO BASSO SX:									[0]
 	//ANGOLO ALTO SX									[1]
@@ -67,8 +72,6 @@ __device__ void calculateEnergy(energyPixel_t* energyPixel, energyPixel_t* pixel
 		345
 		012
 	*/
-	int inde = 1382303 - (1428) - (1428 - 540);
-
 	char pos = getPosition(id, imgProp);
 	switch (pos)
 	{
@@ -113,19 +116,22 @@ __device__ void calculateEnergy(energyPixel_t* energyPixel, energyPixel_t* pixel
 	pixel->energy = sqrtf((dx2 * dx2) + (dy2 * dy2));
 }
 
-__global__ void energyMap_(energyPixel_t* energyImg, imgProp_t* imgProp) {
+__global__ 
+void energyMap_(energyPixel_t* energyImg, imgProp_t* imgProp) {
 	int id = blockIdx.x * blockDim.x + threadIdx.x;
 	if (id < imgProp->imageSize) {
 		calculateEnergy(energyImg, &energyImg[id], id, imgProp);
 	}
 }
 
-__device__ int min(int id1, int id2, energyPixel_t* energyImg)
+__device__ 
+int min(int id1, int id2, energyPixel_t* energyImg)
 {
 	return (energyImg[id1].energy < energyImg[id2].energy) ? id1 : id2;
 }
 
-__global__ void computeSeams_(energyPixel_t* energyImg, pixel_t* imgSrc, seam_t* seams, imgProp_t* imgProp, bool colorSeams = false) {
+__global__ 
+void computeSeams_(energyPixel_t* energyImg, pixel_t* imgSrc, seam_t* seams, imgProp_t* imgProp, bool colorSeams = false) {
 
 	//ANGOLO BASSO SX:									[0]
 	//ANGOLO ALTO SX									[1]
@@ -147,13 +153,9 @@ __global__ void computeSeams_(energyPixel_t* energyImg, pixel_t* imgSrc, seam_t*
 	int currentId = idThread;
 	if (currentId > imgProp->width - 1)
 		return;
+
 	int nextIdMin = currentId;
-
-
 	seams[idThread].total_energy = 0;
-	//seams[idThread].ids[0] = currentId;
-
-
 
 	for (int i = 0; i < imgProp->height; i++) {		
 		
@@ -188,88 +190,6 @@ __global__ void computeSeams_(energyPixel_t* energyImg, pixel_t* imgSrc, seam_t*
 		}
 
 	}
-}
-
-void energyMap(energyPixel_t* energyImg, imgProp_t* imgProp) {
-	energyMap_ << <imgProp->imageSize / 1024 + 1, 1024 >> > (energyImg, imgProp);
-	gpuErrchk(cudaDeviceSynchronize());
-	//writeBMP_energy("src/assets/images/energy.bmp", energyImg, imgProp);
-}
-
-__global__
-void populatePixelsToRemove_(int* pixelsToRemove, int* currentMinSeamIds, int totalIterations, int currentIteration) {
-	int idThread = blockIdx.x * blockDim.x + threadIdx.x;
-
-	pixelsToRemove[idThread * totalIterations + currentIteration] = currentMinSeamIds[idThread];
-}
-
-
-
-void findSeams(energyPixel_t* energyImg, pixel_t* imgSrc, imgProp_t* imgProp, seam_t *minSeam, seam_t* seams, seam_t* minSeamsPerBlock) {
-	int nThreads = 128;
-	//energyPixel_t* img;
-	int numBlocksComputeSeams = imgProp->width / nThreads + 1;
-	int numBlocksMin = imgProp->width / 1024 + 1;
-
-
-	//gpuErrchk(cudaMallocManaged(&img, imgProp->imageSize * sizeof(energyPixel_t)));
-	//for (int i = 0; i < imgProp->imageSize; i++) {
-	//	img[i].pixel.R = energyImg[i].energy;
-	//	img[i].pixel.G = energyImg[i].energy;
-	//	img[i].pixel.B = energyImg[i].energy;
-	//	img[i].energy = energyImg[i].energy;
-	//}
-
-
-	computeSeams_ << <numBlocksComputeSeams, nThreads >> > (energyImg, imgSrc, seams, imgProp);
-	//pixel_t* img2convert = (pixel_t*)malloc(imgProp->imageSize * sizeof(pixel_t));
-	//energy2pixel(img2convert, img, imgProp);
-	//writeBMP_pixel(strcat(SOURCE_PATH,"seams_map.bmp"), img2convert, imgProp);
-
-	min_ <<<numBlocksMin, 1024, 1024 * (sizeof(int) + sizeof(int))>>>(seams, minSeamsPerBlock, imgProp, 1024);
-	gpuErrchk(cudaDeviceSynchronize());
-
-	*minSeam = minSeamsPerBlock[0];
-	for (int i = 1; i < numBlocksMin; i++) {
-		if (minSeamsPerBlock[i].total_energy < minSeam->total_energy) {
-			*minSeam = minSeamsPerBlock[i];
-		}
-	}
-
-	//printf("min: %d\n", minSeam->ids[0]);
-
-	//populatePixelsToRemove_ << < imgProp->height/nThreads + 1, nThreads>> > ();
-	
-	//minArr(1, imgProp->width / 1024 + 1, minSeamsPerBlock, minSeam, imgProp, imgProp->width / 1024 + 1);
-	//gpuErrchk(cudaDeviceSynchronize());
-
-
-	//dummyMin(seams, *minSeam, imgProp);
-
-	//printf("%d - \n", minSeam[0].total_energy);
-	
-
-	//for (int i = 0; i < imgProp->height; i++) {
-	//	printf("%d - ", minSeam->ids[i]);
-	//}
-	//for (int y = 0; y < imgProp->height; y++) {
-	//	img[minSeam[0].ids[y]].pixel.R = 0;
-	//	img[minSeam[0].ids[y]].pixel.G = 255;
-	//	img[minSeam[0].ids[y]].pixel.B = 0;
-	//}
-
-	//energy2pixel(img2convert, img, imgProp);
-	//writeBMP_pixel(strcat(SOURCE_PATH, "seams_map_minimum.bmp"), img2convert, imgProp);
-	//free(img2convert);
-
-	//printf("%d", minSeamPath[0].total_energy);
-	//for (int i = 0; i < imgProp->width; i++)
-	//gpuErrchk(cudaFree(&(seams[i].ids)));
-
-	//for (int i = 0; i < numBlocks; i++)
-	//gpuErrchk(cudaFree(&minSeamsPerBlock[i].ids));
-
-	//gpuErrchk(cudaFree(img));
 }
 
 __global__ 
@@ -315,7 +235,8 @@ void updateImageColored_(pixel_t* imgSrc, pixel_t* imgWithoutSeamSrc, imgProp_t*
 	}
 }
 
-__global__ void removePixelPerRow_(energyPixel_t* energyImg, pixel_t* imgSrc, int idToRemove, energyPixel_t* newImageGray, pixel_t* newImageSrc, int imageSize, int width, int idRow) {
+__global__
+void removePixelPerRow_(energyPixel_t* energyImg, pixel_t* imgSrc, int idToRemove, energyPixel_t* newImageGray, pixel_t* newImageSrc, int imageSize, int width, int idRow) {
 
 	int idThread = blockIdx.x * blockDim.x + threadIdx.x;
 	int newPosition = idThread + (width * idRow);
@@ -342,7 +263,8 @@ __global__ void removePixelPerRow_(energyPixel_t* energyImg, pixel_t* imgSrc, in
 
 }
 
-__global__ void removeSeamDP_(energyPixel_t* energyImg, pixel_t* imgSrc, int* idsToRemove, energyPixel_t* newImageGray, pixel_t* newImageSrc, imgProp_t* imgProp) {
+__global__
+void removeSeamDP_(energyPixel_t* energyImg, pixel_t* imgSrc, int* idsToRemove, energyPixel_t* newImageGray, pixel_t* newImageSrc, imgProp_t* imgProp) {
 
 	int idThread = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -355,37 +277,6 @@ __global__ void removeSeamDP_(energyPixel_t* energyImg, pixel_t* imgSrc, int* id
 	}
 	__syncthreads();
 	cudaDeviceSynchronize();
-}
-
-void removeSeam(energyPixel_t* imgGray, energyPixel_t* imgWithoutSeamGray, seam_t* idsToRemove, imgProp_t* imgProp) {
-
-	int newImgSizePixel = imgProp->imageSize - imgProp->height;
-	int newFileSize = newImgSizePixel * 3 + 54;
-	int numBlocks = newImgSizePixel / 1024 + 1;
-	//cudaStream_t stream[2];
-	//cudaStreamCreateWithFlags(&stream[0], cudaStreamNonBlocking);
-	//cudaStreamCreateWithFlags(&stream[1], cudaStreamNonBlocking);
-
-	//
-	removeSeam_ << <numBlocks, 1024 >> > (imgGray, idsToRemove->ids, imgProp, imgWithoutSeamGray);
-	//removeSeamDP_ << <imgProp->height / 1024 + 1, 1024 >> > (imgGray, imgSrc, idsToRemove->ids, imgWithoutSeamGray, imgWithoutSeamSrc, imgProp);
-
-	gpuErrchk(cudaDeviceSynchronize());
-
-	imgProp->imageSize = newImgSizePixel;
-	imgProp->width -= 1;
-
-	//updateImageColored_ << <newImgSizePixel / 1024 + 1, 1024 >> > (imgSrc, imgWithoutSeamSrc, imgProp);
-	
-	updateImageGray_ << <newImgSizePixel / 1024 + 1, 1024 >> > (imgGray, imgWithoutSeamGray, imgProp);
-	
-	
-	//updateImageGray_ << <newImgSizePixel/1024 + 1, 1024, 0, stream[1] >> > (imgGray, imgWithoutSeamGray, imgProp);
-	//cudaStreamDestroy(stream[1]);
-	//updateImageColored_ << <newImgSizePixel/1024 + 1, 1024, 0, stream[0] >> > (imgSrc, imgWithoutSeamSrc, imgProp);
-	gpuErrchk(cudaDeviceSynchronize());
-	//cudaStreamDestroy(stream[0]);
-
 }
 
 __global__
@@ -404,4 +295,116 @@ void removePixelsFromSrc_(pixel_t* imgSrc, pixel_t* newImgSrc, energyPixel_t* im
 void removePixelsFromSrc(pixel_t* imgSrc, pixel_t* imgWithoutSeamSrc, energyPixel_t* imgGray, imgProp_t* imgProp) {
 	removePixelsFromSrc_ << <imgProp->imageSize / 1024 + 1, 1024 >> > (imgSrc, imgWithoutSeamSrc, imgGray, imgProp);
 	gpuErrchk(cudaDeviceSynchronize());
+}
+
+void energyMap(energyPixel_t* energyImg, imgProp_t* imgProp) {
+	energyMap_ << <imgProp->imageSize / 1024 + 1, 1024 >> > (energyImg, imgProp);
+	gpuErrchk(cudaDeviceSynchronize());
+	//writeBMP_energy("src/assets/images/energy.bmp", energyImg, imgProp);
+}
+
+void findSeams(energyPixel_t* energyImg, pixel_t* imgSrc, imgProp_t* imgProp, seam_t* minSeam, seam_t* seams, seam_t* minSeamsPerBlock) {
+	
+	//int numBlocksComputeSeams = imgProp->width / nThreads + 1;
+	//int numBlocksMin = imgProp->width / 1024 + 1;
+
+
+	////gpuErrchk(cudaMallocManaged(&img, imgProp->imageSize * sizeof(energyPixel_t)));
+	////for (int i = 0; i < imgProp->imageSize; i++) {
+	////	img[i].pixel.R = energyImg[i].energy;
+	////	img[i].pixel.G = energyImg[i].energy;
+	////	img[i].pixel.B = energyImg[i].energy;
+	////	img[i].energy = energyImg[i].energy;
+	////}
+
+
+	//computeSeams_ << <numBlocksComputeSeams, nThreads >> > (energyImg, imgSrc, seams, imgProp);
+	////pixel_t* img2convert = (pixel_t*)malloc(imgProp->imageSize * sizeof(pixel_t));
+	////energy2pixel(img2convert, img, imgProp);
+	////writeBMP_pixel(strcat(SOURCE_PATH,"seams_map.bmp"), img2convert, imgProp);
+
+	//min_ << <numBlocksMin, 1024, 1024 * (sizeof(int) + sizeof(int)) >> > (seams, minSeamsPerBlock, imgProp, 1024);
+	//gpuErrchk(cudaDeviceSynchronize());
+
+	//*minSeam = minSeamsPerBlock[0];
+	//for (int i = 1; i < numBlocksMin; i++) {
+	//	if (minSeamsPerBlock[i].total_energy < minSeam->total_energy) {
+	//		*minSeam = minSeamsPerBlock[i];
+	//	}
+	//}
+
+}
+
+void removeSeam(energyPixel_t* imgGray, energyPixel_t* imgWithoutSeamGray, seam_t* idsToRemove, imgProp_t* imgProp) {
+
+	int newImgSizePixel = imgProp->imageSize - imgProp->height;
+	int numBlocks = newImgSizePixel / 1024 + 1;
+	//cudaStream_t stream[2];
+	//cudaStreamCreateWithFlags(&stream[0], cudaStreamNonBlocking);
+	//cudaStreamCreateWithFlags(&stream[1], cudaStreamNonBlocking);
+
+	//
+	removeSeam_ << <numBlocks, 1024 >> > (imgGray, idsToRemove->ids, imgProp, imgWithoutSeamGray);
+	//removeSeamDP_ << <imgProp->height / 1024 + 1, 1024 >> > (imgGray, imgSrc, idsToRemove->ids, imgWithoutSeamGray, imgWithoutSeamSrc, imgProp);
+
+	gpuErrchk(cudaDeviceSynchronize());
+
+	imgProp->imageSize = newImgSizePixel;
+	imgProp->width -= 1;
+
+	//updateImageColored_ << <newImgSizePixel / 1024 + 1, 1024 >> > (imgSrc, imgWithoutSeamSrc, imgProp);
+
+	updateImageGray_ << <newImgSizePixel / 1024 + 1, 1024 >> > (imgGray, imgWithoutSeamGray, imgProp);
+
+
+	//updateImageGray_ << <newImgSizePixel/1024 + 1, 1024, 0, stream[1] >> > (imgGray, imgWithoutSeamGray, imgProp);
+	//cudaStreamDestroy(stream[1]);
+	//updateImageColored_ << <newImgSizePixel/1024 + 1, 1024, 0, stream[0] >> > (imgSrc, imgWithoutSeamSrc, imgProp);
+	gpuErrchk(cudaDeviceSynchronize());
+	//cudaStreamDestroy(stream[0]);
+
+}
+
+__global__ void computeGlobalMin_(seam_t* minSeam, seam_t* minSeamsPerBlock, imgProp_t* imgProp) {
+	int id = blockIdx.x * blockDim.x + threadIdx.x;
+
+	if (id == 0) {
+		int numBlocksMin = imgProp->width / 1024 + 1;
+
+		*minSeam = minSeamsPerBlock[0];
+		for (int i = 1; i < numBlocksMin; i++) {
+			if (minSeamsPerBlock[i].total_energy < minSeam->total_energy) {
+				*minSeam = minSeamsPerBlock[i];
+			}
+		}
+	}
+}
+
+__global__ void changeImgProp_(imgProp_t* imgProp, int newImgSizePixel) {
+	imgProp->imageSize = newImgSizePixel;
+	imgProp->width -= 1;
+}
+void apply(energyPixel_t* energyImg, pixel_t* imgSrc, imgProp_t* imgProp, seam_t* minSeam, seam_t* seams, seam_t* minSeamsPerBlock, energyPixel_t* imgWithoutSeamGray) {
+	cudaStream_t stream;
+	cudaStreamCreate(&stream);
+	int a = imgProp->imageSize / 1024 + 1;
+	int b = imgProp->width / 128 + 1;
+	int c = imgProp->width / 1024 + 1;
+	int newImgSizePixel = imgProp->imageSize - imgProp->height;
+	int numBlocks = newImgSizePixel / 1024 + 1;
+	energyMap_ << <a, 1024, 0, stream>> > (energyImg, imgProp);
+	//gpuErrchk(cudaDeviceSynchronize());
+
+	computeSeams_ << < b, 128, 0, stream >> > (energyImg, imgSrc, seams, imgProp);
+	//gpuErrchk(cudaDeviceSynchronize());
+
+	min_ << <c , 1024, 1024 * (sizeof(int) + sizeof(int)),stream >> > (seams, minSeamsPerBlock, imgProp, 1024);
+	gpuErrchk(cudaDeviceSynchronize());
+	computeGlobalMin_ << <6, 1024, 0, stream >> > (minSeam, minSeamsPerBlock, imgProp);
+	//gpuErrchk(cudaDeviceSynchronize());
+	removeSeam_ << <numBlocks, 1024, 0, stream >> > (energyImg, minSeam->ids, imgProp, imgWithoutSeamGray);
+	changeImgProp_ << <1,1, 0, stream >> > (imgProp, newImgSizePixel);
+	updateImageGray_ << <newImgSizePixel / 1024 + 1, 1024, 0, stream >> > (energyImg, imgWithoutSeamGray, imgProp);
+	gpuErrchk(cudaDeviceSynchronize());
+
 }
