@@ -297,7 +297,7 @@ __global__
 void updateImageGray_(energyPixel_t* imgGray, energyPixel_t* imgWithoutSeamGray, imgProp_t* imgProp) {
 	int idThread = blockIdx.x * blockDim.x + threadIdx.x;
 	if (idThread < imgProp->imageSize) {
-		imgGray[idThread].energy  = imgWithoutSeamGray[idThread].energy; //si puo commentare?
+		imgGray[idThread].energy  = imgWithoutSeamGray[idThread].energy;
 		imgGray[idThread].color = imgWithoutSeamGray[idThread].color;
 	}
 }

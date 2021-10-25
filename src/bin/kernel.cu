@@ -41,9 +41,6 @@ void applySeamCarving(char *p, int iterations) {
 	gpuErrchk(cudaMallocManaged(&imgWithoutSeamSrc, imgProp->imageSize * sizeof(pixel_t)));
 	gpuErrchk(cudaMallocManaged(&imgWithoutSeamGray, imgProp->imageSize * sizeof(energyPixel_t)));
 
-	gpuErrchk(cudaMallocManaged(&minSeam, sizeof(seam_t)));
-	gpuErrchk(cudaMallocManaged(&minSeam->ids, imgProp->height * sizeof(int)));
-
 	gpuErrchk(cudaMallocManaged(&seams, imgProp->width * sizeof(seam_t)));
 	for (int i = 0; i < imgProp->width; i++)
 		gpuErrchk(cudaMallocManaged(&seams[i].ids, imgProp->height * sizeof(int)));
@@ -52,9 +49,8 @@ void applySeamCarving(char *p, int iterations) {
 	for (int i = 0; i < numBlocks; i++)
 		gpuErrchk(cudaMallocManaged(&minSeamsPerBlock[i].ids, imgProp->height * sizeof(int)));
 
-	gpuErrchk(cudaMallocManaged(&imgWithoutSeamGray, imgProp->imageSize * sizeof(energyPixel_t)));
-	gpuErrchk(cudaMallocManaged(&imgWithoutSeamSrc, imgProp->imageSize * sizeof(pixel_t)));
-
+	gpuErrchk(cudaMallocManaged(&minSeam, sizeof(seam_t)));
+	gpuErrchk(cudaMallocManaged(&minSeam->ids, imgProp->height * sizeof(int)));
 
 	readBMP(f, imgSrc, imgProp);
 	toGrayScale(imgSrc, imgGray, imgProp);
@@ -63,7 +59,7 @@ void applySeamCarving(char *p, int iterations) {
 		energyMap(imgGray, imgProp);		
 		findSeams(imgGray, imgSrc, imgProp, minSeam, seams, minSeamsPerBlock);
 		removeSeam(imgGray, imgSrc, imgWithoutSeamGray, imgWithoutSeamSrc, minSeam, imgProp);
-		//printf("ITERAZIONE %d COMPLETATA\n", i);
+		printf("ITERAZIONE %d COMPLETATA\n", i);
 	}
 
 	setBMP_header(imgProp, 0, imgProp->width);
@@ -81,9 +77,9 @@ int main(int argc, char** argv) {
 		cudaGetDeviceProperties(&deviceProp, dev);
 	*/
 
-	char* path = argv[1];//strcat(SOURCE_PATH, "big.bmp");
+	char* path = argv[1];
 	int iterations = atoi(argv[2]);
-	//src_path = path
+
 	applySeamCarving(path, iterations);
 	cudaDeviceReset();
 
