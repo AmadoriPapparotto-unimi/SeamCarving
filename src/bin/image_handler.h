@@ -3,8 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static char SOURCE_PATH[100] = "src/assets/images/";
-
 typedef struct ImgPropStruct {
 	int width;
 	int height;
@@ -21,18 +19,25 @@ typedef struct PixelStruct {
 } pixel_t;
 
 typedef struct EnergyPixelStruct {
-	pel_t color;
+	long long idPixel; //idOriginale dell'immagine iniziale
 	float energy;
+	pel_t color;
 } energyPixel_t;
+
+typedef struct seamStruct {
+	float total_energy;
+	int* ids;
+} seam_t;
 
 void readBMP(FILE* f, pixel_t* img, imgProp_t* imgProp);
 void setupImgProp(imgProp_t* ip, FILE* f);
-void writeBMP_pixel(char* p, pixel_t* img, imgProp_t* ip);
-//void writeBMP_energy(char* p, energyPixel_t* energyImg, imgProp_t* ip);
 void toGrayScale(pixel_t* img, energyPixel_t* imgGray, imgProp_t* imgProp);
-//void writeBMP_minimumSeam(char* p, energyPixel_t* energyImg, seam_t* minSeam, imgProp_t* imgProp);
-//void energy2pixel(pixel_t* img2convert, energyPixel_t* energyImg, imgProp_t* ip);
-//void writeBMPHeader(char* p, energyPixel_t* energyImg, imgProp_t* ip, int newSize);
+
 void setBMP_header(imgProp_t* imgProp, int fileSize, int width);
+
+void writeBMP_minimumSeam(char* p, pixel_t* img, seam_t* minSeam, imgProp_t* imgProp);
+void writeBMP_pixel(char* p, pixel_t* img, imgProp_t* ip);
+void writeBMP_energy(char* p, energyPixel_t* energyImg, imgProp_t* ip);
+void writeBMP_grayscale(energyPixel_t* imgGray, imgProp_t* imgProp);
 
 #endif

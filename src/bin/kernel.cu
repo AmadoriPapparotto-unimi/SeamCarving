@@ -1,6 +1,6 @@
 ﻿#include "image_handler.h"
 #include "seam_carving.h"
-#include "utils.h"
+#include "utils.cuh"
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
@@ -27,7 +27,7 @@ void applySeamCarving(char *p, int iterations) {
 
 	FILE* f = fopen(p, "rb");
 	if (f == NULL) {
-		printf("*** FILE NOT FOUND ***\n");
+		printf("*** FILE NOT FOUND %s ***\n", p);
 		exit(1);
 	}
 
@@ -35,10 +35,9 @@ void applySeamCarving(char *p, int iterations) {
 	setupImgProp(imgProp, f);
 
 	int numBlocks = imgProp->width / 1024 + 1;
-
 	gpuErrchk(cudaMallocManaged(&imgSrc, imgProp->imageSize * sizeof(pixel_t)));
 	gpuErrchk(cudaMallocManaged(&imgGray, imgProp->imageSize * sizeof(energyPixel_t)));
-	gpuErrchk(cudaMallocManaged(&imgWithoutSeamSrc, imgProp->imageSize * sizeof(pixel_t)));
+	gpuErrchk(cudaMallocManaged(&imgWithoutSeamSrc, (imgProp->imageSize - (imgProp->height * iterations)) * sizeof(pixel_t)));
 	gpuErrchk(cudaMallocManaged(&imgWithoutSeamGray, imgProp->imageSize * sizeof(energyPixel_t)));
 
 	gpuErrchk(cudaMallocManaged(&seams, imgProp->width * sizeof(seam_t)));
@@ -58,17 +57,17 @@ void applySeamCarving(char *p, int iterations) {
 	for (int i = 0; i < iterations; i++) {
 		energyMap(imgGray, imgProp);		
 		findSeams(imgGray, imgSrc, imgProp, minSeam, seams, minSeamsPerBlock);
-		removeSeam(imgGray, imgSrc, imgWithoutSeamGray, imgWithoutSeamSrc, minSeam, imgProp);
+		removeSeam(imgGray, imgWithoutSeamGray, minSeam, imgProp);
 		printf("ITERAZIONE %d COMPLETATA\n", i);
 	}
 
+	removePixelsFromSrc(imgSrc, imgWithoutSeamSrc, imgGray, imgProp);
+
 	setBMP_header(imgProp, 0, imgProp->width);
-	writeBMP_pixel(strcat(SOURCE_PATH, "reduced.bmp"), imgSrc, imgProp);
+	writeBMP_pixel("C:\\aa\\reduced.bmp", imgWithoutSeamSrc, imgProp);
 		
 	fclose(f);
 }
-
-
 
 int main(int argc, char** argv) {
 

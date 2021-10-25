@@ -5,20 +5,8 @@
 #include "cuda_runtime_api.h"
 #include "device_launch_parameters.h"
 #include "image_handler.h"
-#include "utils.h"
+#include "utils.cuh"
 #include "seam_carving.h"
-
-//static const int blockSize = 1024;
-
-void dummyMin(seam_t* energiesArray, seam_t &output, imgProp_t* imgProp) {
-    output = energiesArray[0];
-    for (int i = 0; i < imgProp->width; i++) {
-        if (output.total_energy > energiesArray[i].total_energy) {
-            output = energiesArray[i];
-        }
-    }
-
-}
 
 __global__ void min_(const seam_t* energiesArray, seam_t* outputArray, imgProp_t* imgProp, int nThreads) {
     int thIdx = threadIdx.x;

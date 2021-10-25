@@ -1,6 +1,6 @@
 ﻿#include "image_handler.h"
 #include "seam_carving.h"
-#include "utils.h"
+#include "utils.cuh"
 #include <windows.h>
 
 #include <stdio.h>
@@ -11,37 +11,58 @@
 #include "cuda_runtime_api.h"
 #include "device_launch_parameters.h"
 
-#define MAX_THREAD 1024
-
-
-__device__ void grayValue(energyPixel_t *res, pel_t r, pel_t g, pel_t b) {
+__device__ 
+void grayValue(energyPixel_t *energyPixel, pel_t r, pel_t g, pel_t b, int id) {
 	int grayVal = (r + g + b) / 3;
-	res->color = grayVal;
+	energyPixel->color = grayVal;
+	energyPixel->idPixel = id;
 }
 
-__global__ void toGrayScale_(pixel_t* img, energyPixel_t* imgGray, int imageSize)
+__global__ 
+void toGrayScale_(pixel_t* img, energyPixel_t* imgGray, int imageSize)
 {
 	int id = blockIdx.x * blockDim.x + threadIdx.x;
-	//if(id == gridDim.x * 1024 + 1)
-	//	printf("%d", gridDim.x);
 
 	if (id < imageSize) {
-		grayValue(&imgGray[id], img[id].R, img[id].G, img[id].B);
+		grayValue(&imgGray[id], img[id].R, img[id].G, img[id].B, id);
+	}
+}
+
+__global__
+void generateEnergyImg_(pixel_t* imgSrc, energyPixel_t* energyImg, imgProp_t* imgProp) {
+	int idThread = blockIdx.x * blockDim.x + threadIdx.x;
+	if (idThread < imgProp->imageSize) {
+		imgSrc[idThread].R = energyImg[idThread].energy;
+		imgSrc[idThread].G = energyImg[idThread].energy;
+		imgSrc[idThread].B = energyImg[idThread].energy;
+	}
+}
+
+__global__
+void energy2pixel_(pixel_t* imgSrc, energyPixel_t* energyImg, imgProp_t* imgProp) {
+	int idThread = blockIdx.x * blockDim.x + threadIdx.x;
+	if (idThread < imgProp->imageSize) {
+		imgSrc[idThread].R = energyImg[idThread].color;
+		imgSrc[idThread].G = energyImg[idThread].color;
+		imgSrc[idThread].B = energyImg[idThread].color;
+	}
+}
+
+__global__
+void colorSeamToRemove_(pixel_t* img, seam_t* seam, imgProp_t* imgProp) {
+	int idThread = blockIdx.x * blockDim.x + threadIdx.x;
+	if (idThread < imgProp->imageSize) {
+		img[seam->ids[idThread]].R = 0;
+		img[seam->ids[idThread]].G = 255;
+		img[seam->ids[idThread]].B = 0;
 	}
 }
 
 void toGrayScale(pixel_t* img, energyPixel_t* imgGray, imgProp_t* imgProp) {
-	dim3 blocks;
-	blocks.x = imgProp->imageSize / 1024 + 1;
+	int blocks = imgProp->imageSize / 1024 + 1;
 
 	toGrayScale_<< <blocks, 1024 >> > (img, imgGray, imgProp->imageSize);
 	gpuErrchk(cudaDeviceSynchronize());
-
-	/*pixel_t* img2convert = (pixel_t*)malloc(imgProp->imageSize * sizeof(pixel_t));
-	energy2pixel(img2convert, imgGray, imgProp);
-
-	writeBMP_pixel(strcat(SOURCE_PATH, "gray.bmp"), img2convert, imgProp);
-	free(img2convert);*/
 }
 
 void setupImgProp(imgProp_t* imgProp, FILE* f) {
@@ -74,12 +95,10 @@ void readBMP(FILE *f, pixel_t* img, imgProp_t* imgProp) {
 		fread(&img[r*imgProp->width], sizeof(pel_t), imgProp->width * sizeof(pixel_t), f);
 
 		int padding = 4 - ((imgProp->width * 3) % 4);
-		//int padding = (imgProp->width * 3) % 4;
 		if (padding != 0 && padding != 4) {
 			fseek(f, padding, SEEK_CUR);
 			
 		}
-		//printf("PADDING LETTO PER RIGA %d\n", padding % 4);
 	}
 
 }
@@ -104,59 +123,45 @@ void writeBMP_pixel(char* p, pixel_t* img, imgProp_t* ip) {
 				fputc(0, fw);
 			}
 		}
-		//printf("PADDING AGGIUNTO PER RIGA %d\n", count_padding_per_row);
-
-//		fwrite(&img[r * ip->width], sizeof(pixel_t), ip->width, fw);
-		//560
 	}
 	fflush(fw);
 
-	//printf("PADDING AGGIUNTO %d\n", count_padding);
-	//Sleep(1 * 1000);
-
-	//syncfs(fw);
 	fclose(fw);
 	printf("Immagine %s generata\n", p);
 }
-//
-//void writeBMP_energy(char* p, energyPixel_t* energyImg, imgProp_t* ip) {
-//	pixel_t* img;
-//	img = (pixel_t*)malloc(ip->imageSize * sizeof(pixel_t));
-//
-//	for (int i = 0; i < ip->imageSize; i++) {
-//		img[i].R = energyImg[i].energy;
-//		img[i].G = energyImg[i].energy;
-//		img[i].B = energyImg[i].energy;
-//	}
-//
-//	writeBMP_pixel(p, img, ip);
-//	free(img);
-//}
 
-//void writeBMP_minimumSeam(char* p, energyPixel_t* energyImg, seam_t* minSeam, imgProp_t* imgProp) {
-//	for (int y = 0; y < imgProp->height; y++) {
-//		printf("PATH: %d\n", minSeam[0].ids[y]);
-//		energyImg[minSeam[0].ids[y]].pixel.R = 0;
-//		energyImg[minSeam[0].ids[y]].pixel.G = 255;
-//		energyImg[minSeam[0].ids[y]].pixel.B = 0;
-//	}
-//
-//	pixel_t* img2convert = (pixel_t*)malloc(imgProp->imageSize * sizeof(pixel_t));
-//	energy2pixel(img2convert, energyImg, imgProp);
-//	writeBMP_pixel(strcat(SOURCE_PATH, "seams_map_minimum.bmp"), img2convert, imgProp);
-//	free(img2convert);
-//}
+void writeBMP_energy(char* p, energyPixel_t* energyImg, imgProp_t* imgProp) {
+	pixel_t* img;
+	cudaMallocManaged(&img, imgProp->imageSize * sizeof(pixel_t));
 
-//void energy2pixel(pixel_t* img2convert, energyPixel_t* energyImg, imgProp_t* ip) {
-//	//pixel_t* img;
-//	//img = (pixel_t*)malloc(ip->imageSize * sizeof(pixel_t));
-//
-//	for (int i = 0; i < ip->imageSize; i++) {
-//		img2convert[i] = energyImg[i].pixel;
-//	}
-//
-//	//return img;
-//}
+	generateEnergyImg_ << <imgProp->imageSize/1024 + 1, 1024>> > (img, energyImg, imgProp);
+	gpuErrchk(cudaDeviceSynchronize());
+
+	writeBMP_pixel(p, img, imgProp);
+
+	gpuErrchk(cudaFree(img));
+}
+
+void writeBMP_grayscale(energyPixel_t* imgGray, imgProp_t* imgProp) {
+	pixel_t* img2convert;
+
+	cudaMallocManaged(&img2convert, imgProp->imageSize * sizeof(pixel_t));
+
+	energy2pixel_ << <imgProp->imageSize/1024 + 1, 1024 >> > (img2convert, imgGray, imgProp);
+	gpuErrchk(cudaDeviceSynchronize());
+
+	writeBMP_pixel("C:/aa/gray.bmp", img2convert, imgProp);
+	gpuErrchk(cudaFree(img2convert));
+}
+
+void writeBMP_minimumSeam(char* p, pixel_t* img, seam_t* minSeam, imgProp_t* imgProp) {
+
+	colorSeamToRemove_ << <imgProp->height/1024 + 1, 1024>> > (img, minSeam, imgProp);
+	gpuErrchk(cudaDeviceSynchronize());
+
+	writeBMP_pixel("C:/aa/seams_map_minimum.bmp", img, imgProp);
+	gpuErrchk(cudaFree(img));
+}
 
 void setBMP_header(imgProp_t* imgProp, int fileSize, int width) {
 	imgProp->headerInfo[2] = (unsigned char)(fileSize >> 0) & 0xff;
@@ -169,64 +174,3 @@ void setBMP_header(imgProp_t* imgProp, int fileSize, int width) {
 	imgProp->headerInfo[20] = (unsigned char)(width >> 16) & 0xff;
 	imgProp->headerInfo[21] = (unsigned char)(width >> 24) & 0xff;
 }
-
-
-//void writeBMPHeader(char* p, energyPixel_t* energyImg, imgProp_t* ip, int newSize) {
-//
-//	//printf("Original image size = %d\n", ip->imageSize);
-//	//printf("new size byte= %d\n", newSize);
-//	pixel_t* img;
-//
-//	//printf("new image size = %d\n", (newSize -54 )/3);
-//	//printf("new image size 2 = %d\n", (ip->imageSize - ip->height));
-//
-//	
-//	ip->headerInfo[2] = (unsigned char)(newSize >> 0) & 0xff;
-//	ip->headerInfo[3] = (unsigned char)(newSize >> 8) & 0xff;
-//	ip->headerInfo[4] = (unsigned char)(newSize >> 16) & 0xff;
-//	ip->headerInfo[5] = (unsigned char)(newSize >> 24) & 0xff;
-//
-//
-//	
-//	//printf("#bytes: %x\n", *(int*)&(ip->headerInfo[2]));
-//
-//	int newWidth = ip->width - 1;
-//
-//	ip->imageSize =(newSize- 54) /3;
-//	ip->width = newWidth;
-//
-//	//ip->headerInfo[18] = newWidth;
-//
-//	ip->headerInfo[18] = (unsigned char)(newWidth >> 0) & 0xff;
-//	ip->headerInfo[19] = (unsigned char)(newWidth >> 8) & 0xff;
-//	ip->headerInfo[20] = (unsigned char)(newWidth >> 16) & 0xff;
-//	ip->headerInfo[21] = (unsigned char)(newWidth >> 24) & 0xff;
-//	
-//	//printf("newWidth  = %d\n", *(int*)&(ip->headerInfo[18]));
-//	img = (pixel_t*)malloc(ip->imageSize * sizeof(pixel_t));
-//
-//	for (int i = 0; i < ip->imageSize; i++) {
-//		img[i].R = energyImg[i].energy;
-//		img[i].G = energyImg[i].energy;
-//		img[i].B = energyImg[i].energy;
-//	}
-//
-//	writeBMP_pixel(p, img, ip);
-//	free(img);
-//}
-
-//void writeBMP_pel(char* p, imgProp imgProp, pel* img) {
-//	FILE* fw = fopen(p, "wb");
-//
-//	//0000 0000 0001 0101 0001 0111 1010 0000
-//	imgProp.headerInfo[34] = ip.imageSize >> 0;//0xa0;
-//	imgProp.headerInfo[35] = ip.imageSize >> 8;//0x17;
-//	imgProp.headerInfo[36] = ip.imageSize >> 16;//0x15;
-//	imgProp.headerInfo[37] = ip.imageSize >> 24;//0x0;
-//	
-//	printf("%ld; %d", imgProp.headerInfo[34], imgProp.height * imgProp.width);
-//	fwrite(imgProp.headerInfo, sizeof(pel), 54, fw);
-//	fwrite(img, sizeof(pel), imgProp.height * imgProp.width, fw);
-//
-//	fclose(fw);
-//}
