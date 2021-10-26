@@ -13,6 +13,12 @@ char* src_path;
 
 void applySeamCarving(char *p, int iterations) {
 
+	/// <summary>
+	/// Funzione principale Host che alloca la memoria necessaria all'algoritmo, legge l'immagine, lancia i vari step del seam carving e scrive la nuova immagine ottenuta.
+	/// </summary>
+	/// <param name="p">Il path dell'immagine in input</param>
+	/// <param name="iterations">Il numero di pixel orizzontali da rimuovere</param>
+
 	imgProp_t* imgProp;
 
 	pixel_t* imgSrc;
@@ -30,6 +36,9 @@ void applySeamCarving(char *p, int iterations) {
 		printf("*** FILE NOT FOUND %s ***\n", p);
 		exit(1);
 	}
+
+	// Si è deciso di utilizzare la cudaMallocManaged poichè è il metodo più avanzato e nuovo che CUDA mette a disposizione.
+	//Inoltre, nel caso si volesse e con opportune modifiche, è possibile estendere questo codice ad un sistema multi-GPU senza intaccare la gestione della memoria
 
 	gpuErrchk(cudaMallocManaged(&imgProp, sizeof(imgProp_t)));
 	setupImgProp(imgProp, f);
