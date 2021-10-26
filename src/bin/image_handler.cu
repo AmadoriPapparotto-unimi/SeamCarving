@@ -135,10 +135,6 @@ void setupImgProp(imgProp_t* imgProp, FILE* f) {
 }
 
 void readBMP(FILE *f, pixel_t* img, imgProp_t* imgProp) {
-	//img[0] = B
-	//img[1] = G
-	//img[2] = R
-	//BMP LEGGE I PIXEL NEL FORMATO BGR
 
 	/// <summary>
 	/// Legge un file BMP tenendo conto e conseguentemente scartando il padding all'interno di esso.
@@ -148,6 +144,10 @@ void readBMP(FILE *f, pixel_t* img, imgProp_t* imgProp) {
 	/// <param name="img">Immagine</param>
 	/// <param name="imgProp">Proprieta' dell'immagine</param>
 
+	//img[0] = B
+	//img[1] = G
+	//img[2] = R
+	//BMP LEGGE I PIXEL NEL FORMATO BGR
 	for (int r = 0; r < imgProp->height; r++) {
 		fread(&img[r*imgProp->width], sizeof(pel_t), imgProp->width * sizeof(pixel_t), f);
 
