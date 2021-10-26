@@ -65,7 +65,7 @@ void applySeamCarving(char *p, int iterations) {
 	gpuErrchk(cudaMallocManaged(&minSeam, sizeof(seam_t)));
 	gpuErrchk(cudaMallocManaged(&minSeam->ids, imgProp->height * sizeof(int)));
 
-	gpuErrchk(cudaMallocManaged(&mins, imgProp->imageSize * sizeof(int)));
+	gpuErrchk(cudaMallocManaged(&mins, (imgProp->imageSize - imgProp->width) * sizeof(int)));
 
 	//Si legge l'immagine
 	readBMP(f, imgSrc, imgProp);
