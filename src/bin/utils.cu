@@ -9,6 +9,17 @@
 #include "seam_carving.h"
 
 __global__ void min_(const seam_t* energiesArray, seam_t* outputArray, imgProp_t* imgProp, int nThreads) {
+
+    /// <summary>
+    /// Kernel GPU che permette di calcolare il seam minimo tra tutti quelli trovati.
+    /// Sfrutta la shared memory e la parallel reduction, al fine di massimizzare le performance
+    /// </summary>
+    /// <param name="energiesArray"></param>
+    /// <param name="outputArray"></param>
+    /// <param name="imgProp"></param>
+    /// <param name="nThreads"></param>
+    /// 
+    /// <returns></returns>
     int thIdx = threadIdx.x;
     const int myBlockSize = 1024;
     int gthIdx = thIdx + blockIdx.x * myBlockSize;
@@ -31,8 +42,8 @@ __global__ void min_(const seam_t* energiesArray, seam_t* outputArray, imgProp_t
 
     __syncthreads();
     
-    int size = seamsPerBlock / 2;
-    bool isOdd = seamsPerBlock % 2 == 1;
+    int size = seamsPerBlock / 2;   //ogni volta si dimezza la grandezza dell'array finale
+    bool isOdd = seamsPerBlock % 2 == 1; //bisogna distinguere se il numero di seam di cui trovare il minimo è pari o dispari, questo perchè un elemento ne rimarrebbe escluso
     if (isOdd) {
         size++;
         if (thIdx < seamsPerBlock / 2) {
@@ -66,6 +77,10 @@ void minArr(dim3 gridSize, dim3 blockSize, seam_t* energiesArray, seam_t* output
 
 void report_gpu_mem()
 {
+
+    /// <summary>
+    /// Funzione di supporto che permette di stampare la memoria GPU libera e occupata 
+    /// </summary>
     size_t free, total;
     cudaMemGetInfo(&free, &total);
     printf("Free = %zu, Total = %zu\n", free, total);

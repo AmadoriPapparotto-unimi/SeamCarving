@@ -166,6 +166,13 @@ void energyMap_(energyPixel_t* energyImg, imgProp_t* imgProp) {
 
 __global__
 void computeMinsPerPixel_(energyPixel_t* energyImg, imgProp_t* imgProp) {
+
+	/// <summary>
+	/// Kernel device che per ogni pixel indica quale sia il minimo tra i suoi possibili successori, prestanso attenzione alla sua posizione all'interno dell'immagine.
+	/// </summary>
+	/// <param name="energyImg">L'immagine di input</param>
+	/// <param name="imgProp">Le caratteristiche dell'immagine</param>
+	
 	int idThread = blockIdx.x * blockDim.x + threadIdx.x;
 
 
@@ -201,7 +208,8 @@ __global__
 void computeSeams_(energyPixel_t* energyImg, pixel_t* imgSrc, seam_t* seams, imgProp_t* imgProp, bool colorSeams = false) {
 
 	/// <summary>
-	/// Kernel device che calcola un path dal bordo inferiore a quello superiore. Vengono lanciati N thread pari al numero di pixel di lunghezza
+	/// Kernel device che calcola un path dal bordo inferiore a quello superiore. Vengono lanciati N thread pari al numero di pixel di lunghezza.
+	/// Questa implementazione si rifà ad una prima versione dell'algoritmo. Quella più ottimizzata è computeSeams2_
 	/// </summary>
 	/// <param name="energyImg">L'immagine di input di cui si vogliono trovare i seams</param>
 	/// <param name="imgSrc">L'immagine originaria di cui si vuole, eventualmente, colorare i seam trovati.</param>
@@ -286,6 +294,7 @@ void computeSeams2_(energyPixel_t* energyImg, pixel_t* imgSrc, seam_t* seams, im
 		seams[idThread].total_energy += energyImg[currentId].energy;
 		seams[idThread].ids[i] = currentId;
 
+		//crea il path andando a prendere, per ogni pixel, il successore minimo calcolato precedentemente.
 		currentId = energyImg[currentId].succ_min;
 
 	}
