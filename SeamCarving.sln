@@ -21,6 +21,8 @@ Global
 		castle|x86 = castle|x86
 		castleCPU|x64 = castleCPU|x64
 		castleCPU|x86 = castleCPU|x86
+		city|x64 = city|x64
+		city|x86 = city|x86
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
 		dog|x64 = dog|x64
@@ -49,6 +51,9 @@ Global
 		{3BBCC29F-CEE4-4849-9533-1F0A673FDB36}.castleCPU|x64.Build.0 = castle|x64
 		{3BBCC29F-CEE4-4849-9533-1F0A673FDB36}.castleCPU|x86.ActiveCfg = a|x64
 		{3BBCC29F-CEE4-4849-9533-1F0A673FDB36}.castleCPU|x86.Build.0 = a|x64
+		{3BBCC29F-CEE4-4849-9533-1F0A673FDB36}.city|x64.ActiveCfg = city|x64
+		{3BBCC29F-CEE4-4849-9533-1F0A673FDB36}.city|x64.Build.0 = city|x64
+		{3BBCC29F-CEE4-4849-9533-1F0A673FDB36}.city|x86.ActiveCfg = city|x64
 		{3BBCC29F-CEE4-4849-9533-1F0A673FDB36}.Debug|x64.ActiveCfg = Debug|x64
 		{3BBCC29F-CEE4-4849-9533-1F0A673FDB36}.Debug|x64.Build.0 = Debug|x64
 		{3BBCC29F-CEE4-4849-9533-1F0A673FDB36}.Debug|x86.ActiveCfg = Debug|x64
@@ -82,6 +87,10 @@ Global
 		{BEAEC75E-0257-44CB-93D0-D35FCBF7BF39}.castleCPU|x64.Build.0 = castleCPU|x64
 		{BEAEC75E-0257-44CB-93D0-D35FCBF7BF39}.castleCPU|x86.ActiveCfg = castleCPU|Win32
 		{BEAEC75E-0257-44CB-93D0-D35FCBF7BF39}.castleCPU|x86.Build.0 = castleCPU|Win32
+		{BEAEC75E-0257-44CB-93D0-D35FCBF7BF39}.city|x64.ActiveCfg = city|x64
+		{BEAEC75E-0257-44CB-93D0-D35FCBF7BF39}.city|x64.Build.0 = city|x64
+		{BEAEC75E-0257-44CB-93D0-D35FCBF7BF39}.city|x86.ActiveCfg = city|Win32
+		{BEAEC75E-0257-44CB-93D0-D35FCBF7BF39}.city|x86.Build.0 = city|Win32
 		{BEAEC75E-0257-44CB-93D0-D35FCBF7BF39}.Debug|x64.ActiveCfg = Debug|x64
 		{BEAEC75E-0257-44CB-93D0-D35FCBF7BF39}.Debug|x64.Build.0 = Debug|x64
 		{BEAEC75E-0257-44CB-93D0-D35FCBF7BF39}.Debug|x86.ActiveCfg = Debug|Win32

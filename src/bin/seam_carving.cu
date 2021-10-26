@@ -164,6 +164,39 @@ void energyMap_(energyPixel_t* energyImg, imgProp_t* imgProp) {
 	}
 }
 
+__global__
+void computeMinsPerPixel_(int* mins, energyPixel_t* energyImg, imgProp_t* imgProp) {
+	int idThread = blockIdx.x * blockDim.x + threadIdx.x;
+
+
+	if (idThread < imgProp->imageSize - imgProp->width) {
+		int pos = getPosition(idThread, imgProp);
+		switch (pos)
+		{
+		case 0: // angolo basso a sinistra
+		case 2: //colonna a sinistra
+			mins[idThread] = min(idThread + imgProp->width, idThread + 1 + imgProp->width, energyImg);
+
+			break;
+		case 3: //angolo basso a destra
+		case 5: //colonna di destra
+			mins[idThread] = min(idThread + imgProp->width, idThread - 1 + imgProp->width, energyImg);
+
+			break;
+		case 1: //angolo alto a sinistra
+		case 7: // bordo superiore
+			break;
+		default: //in mezzo o riga inferiore
+			mins[idThread] = min(min(idThread + imgProp->width, idThread - 1 + imgProp->width, energyImg),
+				idThread + 1 + imgProp->width, energyImg);
+
+			break;
+		}
+
+	}
+
+}
+
 __global__ 
 void computeSeams_(energyPixel_t* energyImg, pixel_t* imgSrc, seam_t* seams, imgProp_t* imgProp, bool colorSeams = false) {
 
@@ -227,6 +260,39 @@ void computeSeams_(energyPixel_t* energyImg, pixel_t* imgSrc, seam_t* seams, img
 }
 
 __global__
+void computeSeams2_(energyPixel_t* energyImg, pixel_t* imgSrc, seam_t* seams, imgProp_t* imgProp, int* mins, bool colorSeams = false) {
+
+	/// <summary>
+	/// Kernel device che calcola un path dal bordo inferiore a quello superiore. Vengono lanciati N thread pari al numero di pixel di lunghezza
+	/// </summary>
+	/// <param name="energyImg">L'immagine di input di cui si vogliono trovare i seams</param>
+	/// <param name="imgSrc">L'immagine originaria di cui si vuole, eventualmente, colorare i seam trovati.</param>
+	/// <param name="seams">Il seam di output trovato</param>
+	/// <param name="imgProp">Le caratteristiche dell'immagine trovata</param>
+	/// <param name="colorSeams">Se colorare o meno il seam</param>
+
+	int idThread = blockIdx.x * blockDim.x + threadIdx.x;
+
+	int currentId = idThread;
+	if (currentId > imgProp->width - 1)
+		return;
+
+	seams[idThread].total_energy = 0;
+
+
+	// ogni thread scorre tutta l'immagine in altezza. Avendo lanciato N thread pari alla larghezza, si ha la corretta copertura dell'immagine
+	for (int i = 0; i < imgProp->height; i++) {
+
+		seams[idThread].total_energy += energyImg[currentId].energy;
+		seams[idThread].ids[i] = currentId;
+
+		currentId = mins[currentId];
+
+	}
+}
+
+
+__global__
 void removeSeam_(energyPixel_t* energyImg, int* idsToRemove, imgProp_t* imgProp, energyPixel_t* newImageGray) {
 
 	/// <summary>
@@ -258,7 +324,7 @@ void removeSeam_(energyPixel_t* energyImg, int* idsToRemove, imgProp_t* imgProp,
 		//creazione della nuova immagine con path rimosso
 		newImageGray[newPosition].energy = energyImg[idThread].energy;
 		newImageGray[newPosition].color = energyImg[idThread].color;
-		newImageGray[newPosition].idPixel = energyImg[idThread].idPixel;
+		newImageGray[newPosition].id_pixel = energyImg[idThread].id_pixel;
 	}
 }
 
@@ -275,7 +341,7 @@ void updateImageGray_(energyPixel_t* imgGray, energyPixel_t* imgWithoutSeamGray,
 	int idThread = blockIdx.x * blockDim.x + threadIdx.x;
 	if (idThread < imgProp->imageSize) {
 		imgGray[idThread].color = imgWithoutSeamGray[idThread].color;
-		imgGray[idThread].idPixel = imgWithoutSeamGray[idThread].idPixel;
+		imgGray[idThread].id_pixel = imgWithoutSeamGray[idThread].id_pixel;
 	}
 }
 
@@ -311,9 +377,9 @@ void removePixelsFromSrc_(pixel_t* imgSrc, pixel_t* newImgSrc, energyPixel_t* im
 
 	int idThread = blockIdx.x * blockDim.x + threadIdx.x;
 	if (idThread < imgProp->imageSize) {
-		newImgSrc[idThread].R = imgSrc[imgGray[idThread].idPixel].R;
-		newImgSrc[idThread].G = imgSrc[imgGray[idThread].idPixel].G;
-		newImgSrc[idThread].B = imgSrc[imgGray[idThread].idPixel].B;
+		newImgSrc[idThread].R = imgSrc[imgGray[idThread].id_pixel].R;
+		newImgSrc[idThread].G = imgSrc[imgGray[idThread].id_pixel].G;
+		newImgSrc[idThread].B = imgSrc[imgGray[idThread].id_pixel].B;
 	}
 }
 
@@ -331,7 +397,7 @@ void energyMap(energyPixel_t* energyImg, imgProp_t* imgProp) {
 	//writeBMP_energy("src/assets/images/energy.bmp", energyImg, imgProp);
 }
 
-void findSeams(energyPixel_t* energyImg, pixel_t* imgSrc, imgProp_t* imgProp, seam_t *minSeam, seam_t* seams, seam_t* minSeamsPerBlock) {
+void findSeams(energyPixel_t* energyImg, pixel_t* imgSrc, imgProp_t* imgProp, seam_t *minSeam, seam_t* seams, seam_t* minSeamsPerBlock, int* mins) {
 	
 	/// <summary>
 	/// Funzione host che richiama i kernel computeSeams e min.
@@ -349,7 +415,13 @@ void findSeams(energyPixel_t* energyImg, pixel_t* imgSrc, imgProp_t* imgProp, se
 	int numBlocksMin = imgProp->width / 1024 + 1;
 
 	//computo tutti i seams
-	computeSeams_ << <numBlocksComputeSeams, nThreads >> > (energyImg, imgSrc, seams, imgProp);
+	computeMinsPerPixel_ << <(imgProp->imageSize - imgProp->width) / 1024 + 1, 1024 >> > (mins, energyImg, imgProp);
+	//gpuErrchk(cudaDeviceSynchronize());
+
+	computeSeams2_ << <numBlocksComputeSeams, nThreads >> > (energyImg, imgSrc, seams, imgProp, mins);
+	//gpuErrchk(cudaDeviceSynchronize());
+
+	//computeSeams_ << <numBlocksComputeSeams, nThreads >> > (energyImg, imgSrc, seams, imgProp, mins);
 
 	//per ogni blocco trovo il seam con peso minore
 	min_ <<<numBlocksMin, 1024, 1024 * (sizeof(int) + sizeof(int))>>>(seams, minSeamsPerBlock, imgProp, 1024);

@@ -31,15 +31,14 @@ typedef struct PixelStruct {
 
 typedef struct EnergyPixelStruct {
 	/// <summary>
-	/// Rappresenta un pixel di una immagine con energia. Si è scelto di usare long long per idPixel per due motivi:
+	/// Rappresenta un pixel di una immagine con energia. Si è scelto di usare long long per id_pixel per due motivi:
 	/// 1) E' possibile indicizzare immagini più grandi.
 	/// 2) Migliora le performance di utilizzo della memoria.
 	/// </summary>
 	
-	long long idPixel; //idOriginale dell'immagine iniziale
+	long long id_pixel; //idOriginale dell'immagine iniziale
 	float energy; //energia del pixel
 	pel_t color; //il colore in scala di grigi
-
 } energyPixel_t;
 
 typedef struct seamStruct {

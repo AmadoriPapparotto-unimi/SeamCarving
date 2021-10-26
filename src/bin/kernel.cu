@@ -31,6 +31,8 @@ void applySeamCarving(char *p, int iterations) {
 	seam_t* minSeamsPerBlock;
 	seam_t* minSeam;
 
+	int* mins;
+
 	FILE* f = fopen(p, "rb");
 	if (f == NULL) {
 		printf("*** FILE NOT FOUND %s ***\n", p);
@@ -38,7 +40,8 @@ void applySeamCarving(char *p, int iterations) {
 	}
 
 	// Si è deciso di utilizzare la cudaMallocManaged poichè è il metodo più nuovo che CUDA mette a disposizione.
-	// Inoltre possedendo una GPU abbastanza nuova (1080ti) abbiamo potuto sfruttare tutte le varie ottimizzazione che tale api supporta in questa architettura.	
+	// Inoltre possedendo una GPU abbastanza nuova (1080ti) abbiamo potuto sfruttare tutte le varie ottimizzazione che tale api supporta in questa architettura.
+	
 	gpuErrchk(cudaMallocManaged(&imgProp, sizeof(imgProp_t)));
 
 	//Si legge l'header dell'immagine e si estrapolano le caratteristiche utili
@@ -62,6 +65,8 @@ void applySeamCarving(char *p, int iterations) {
 	gpuErrchk(cudaMallocManaged(&minSeam, sizeof(seam_t)));
 	gpuErrchk(cudaMallocManaged(&minSeam->ids, imgProp->height * sizeof(int)));
 
+	gpuErrchk(cudaMallocManaged(&mins, imgProp->imageSize * sizeof(int)));
+
 	//Si legge l'immagine
 	readBMP(f, imgSrc, imgProp);
 
@@ -71,7 +76,7 @@ void applySeamCarving(char *p, int iterations) {
 	//Si itera l'algoritmo di seam carving per il numero di iterazioni richieste dall'utente
 	for (int i = 0; i < iterations; i++) {
 		energyMap(imgGray, imgProp);	//si calcola la mappa dell'energia	
-		findSeams(imgGray, imgSrc, imgProp, minSeam, seams, minSeamsPerBlock); // si trova il seam da rimuovere
+		findSeams(imgGray, imgSrc, imgProp, minSeam, seams, minSeamsPerBlock, mins); // si trova il seam da rimuovere
 		removeSeam(imgGray, imgWithoutSeamGray, minSeam, imgProp); // si rimuove il seam precedentemente trovato
 		printf("ITERAZIONE %d COMPLETATA\n", i);
 	}
@@ -92,6 +97,7 @@ int main(int argc, char** argv) {
 
 	// path dell'immagine 
 	char* path = argv[1];
+	// numero di iterazioni
 	int iterations = atoi(argv[2]);
 
 	applySeamCarving(path, iterations);

@@ -26,4 +26,8 @@
     <LocalDebuggerCommandArguments>"src\assets\images\dog.bmp" 300</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='city|x64'">
+    <LocalDebuggerCommandArguments>"src\assets\images\lake.bmp" 600</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
 </Project>
