@@ -227,14 +227,6 @@ void computeSeams_(energyPixel_t* energyImg, pixel_t* imgSrc, seam_t* seams, img
 }
 
 __global__
-void populatePixelsToRemove_(int* pixelsToRemove, int* currentMinSeamIds, int totalIterations, int currentIteration) {
-
-	int idThread = blockIdx.x * blockDim.x + threadIdx.x;
-
-	pixelsToRemove[idThread * totalIterations + currentIteration] = currentMinSeamIds[idThread];
-}
-
-__global__
 void removeSeam_(energyPixel_t* energyImg, int* idsToRemove, imgProp_t* imgProp, energyPixel_t* newImageGray) {
 
 	/// <summary>

@@ -9,7 +9,7 @@ typedef struct ImgPropStruct {
 	/// headerInfo contiene l'header dell'immagine
 	/// </summary>
 
-	int width; //l'arghezza dell'immagine
+	int width; //larghezza dell'immagine
 	int height; //altezza dell'immagine
 	int imageSize; //grandezza in byte dell'immagine
 	unsigned char headerInfo[54]; //header BMP dell'immagine
@@ -45,7 +45,7 @@ typedef struct EnergyPixelStruct {
 typedef struct seamStruct {
 
 	/// <summary>
-	///  Struttura che rappresenta un seam.
+	/// Struttura che rappresenta un seam.
 	/// Un seam è una path di pixel che collega il bordo inferiore a quello superiore.
 	/// Il pixel successivo appartenete al path sarà quello minore tra i vicini(superiori) del pixel preso in considerazione. 
 	/// </summary>
