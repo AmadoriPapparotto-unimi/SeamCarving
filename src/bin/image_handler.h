@@ -36,9 +36,10 @@ typedef struct EnergyPixelStruct {
 	/// 2) Migliora le performance di utilizzo della memoria.
 	/// </summary>
 	
-	long long id_pixel; //idOriginale dell'immagine iniziale
+	long id_pixel; //idOriginale dell'immagine iniziale
 	float energy; //energia del pixel
 	pel_t color; //il colore in scala di grigi
+	int succ_min;
 } energyPixel_t;
 
 typedef struct seamStruct {

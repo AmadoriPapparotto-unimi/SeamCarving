@@ -65,8 +65,6 @@ void applySeamCarving(char *p, int iterations) {
 	gpuErrchk(cudaMallocManaged(&minSeam, sizeof(seam_t)));
 	gpuErrchk(cudaMallocManaged(&minSeam->ids, imgProp->height * sizeof(int)));
 
-	gpuErrchk(cudaMallocManaged(&mins, (imgProp->imageSize - imgProp->width) * sizeof(int)));
-
 	//Si legge l'immagine
 	readBMP(f, imgSrc, imgProp);
 
@@ -76,7 +74,7 @@ void applySeamCarving(char *p, int iterations) {
 	//Si itera l'algoritmo di seam carving per il numero di iterazioni richieste dall'utente
 	for (int i = 0; i < iterations; i++) {
 		energyMap(imgGray, imgProp);	//si calcola la mappa dell'energia	
-		findSeams(imgGray, imgSrc, imgProp, minSeam, seams, minSeamsPerBlock, mins); // si trova il seam da rimuovere
+		findSeams(imgGray, imgSrc, imgProp, minSeam, seams, minSeamsPerBlock); // si trova il seam da rimuovere
 		removeSeam(imgGray, imgWithoutSeamGray, minSeam, imgProp); // si rimuove il seam precedentemente trovato
 		printf("ITERAZIONE %d COMPLETATA\n", i);
 	}
