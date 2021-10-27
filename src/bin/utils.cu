@@ -8,7 +8,8 @@
 #include "utils.cuh"
 #include "seam_carving.h"
 
-__global__ void min_(const seam_t* energiesArray, seam_t* outputArray, imgProp_t* imgProp, int nThreads) {
+__global__ 
+void min_(const seam_t* energiesArray, seam_t* outputArray, imgProp_t* imgProp, int nThreads) {
 
     /// <summary>
     /// Kernel GPU che permette di calcolare il seam minimo tra tutti quelli trovati.
@@ -42,21 +43,31 @@ __global__ void min_(const seam_t* energiesArray, seam_t* outputArray, imgProp_t
 
     __syncthreads();
     
-    int size = seamsPerBlock / 2;   //ogni volta si dimezza la grandezza dell'array finale
-    bool isOdd = seamsPerBlock % 2 == 1; //bisogna distinguere se il numero di seam di cui trovare il minimo è pari o dispari, questo perchè un elemento ne rimarrebbe escluso
-    if (isOdd) {
-        size++;
-        if (thIdx < seamsPerBlock / 2) {
-            if (shared_mins[thIdx] > shared_mins[thIdx + size]) {
-                shared_mins[thIdx] = shared_mins[thIdx + size];
-                shared_min_indices[thIdx] = shared_min_indices[thIdx + size];
-            }
-        }
-        size /= 2;
-    }
+    int size = seamsPerBlock;   //ogni volta si dimezza la grandezza dell'array finale
+    bool isOdd;
+    //if (isOdd) {
+    //    size++;
+    //    if (thIdx < seamsPerBlock / 2) {
+    //        if (shared_mins[thIdx] > shared_mins[thIdx + size]) {
+    //            shared_mins[thIdx] = shared_mins[thIdx + size];
+    //            shared_min_indices[thIdx] = shared_min_indices[thIdx + size];
+    //        }
+    //    }
+    //    size /= 2;
+    //}
     // get minimum
-    for (; size > 0; size /= 2) { //uniform
+    while (size > 0) { //uniform
+        
+        isOdd = size % 2 == 1 && size != 1; //bisogna distinguere se il numero di seam di cui trovare il minimo è pari o dispari, questo perchè un elemento ne rimarrebbe escluso
+        size /= 2;
+        if (isOdd) {
+            size++;
+        }
+
         if (thIdx < size) {
+            if (isOdd && thIdx == size - 1) {
+                continue;
+            }
             if (shared_mins[thIdx] > shared_mins[thIdx + size]) {
                 shared_mins[thIdx] = shared_mins[thIdx + size];
                 shared_min_indices[thIdx] = shared_min_indices[thIdx + size];
@@ -71,9 +82,7 @@ __global__ void min_(const seam_t* energiesArray, seam_t* outputArray, imgProp_t
     }
 }
 
-void minArr(dim3 gridSize, dim3 blockSize, seam_t* energiesArray, seam_t* outputArray, imgProp_t* imgProp, int nThreads) {
-    min_ << <gridSize, blockSize, 1024 * (sizeof(int) + sizeof(int)) >> > (energiesArray, outputArray, imgProp, nThreads);
-}
+
 
 void report_gpu_mem()
 {
