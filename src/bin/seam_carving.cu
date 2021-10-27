@@ -420,8 +420,15 @@ void findSeams(energyPixel_t* energyImg, pixel_t* imgSrc, imgProp_t* imgProp, se
 	/// <param name="minSeamsPerBlock">Lo spazio di memoria dedicato a tutti i minseam per ogni blocco del kernel</param>
 	
 	int nThreads = 128;
+
+	//numero di thread per blocco
+	//get the first num divisibile per 32 minore di imgProp->width / nSM
+	int nThreadsMin = imgProp->width / 20; //numSM
+	nThreadsMin /= 32;
+	nThreadsMin *= 32;
+
 	int numBlocksComputeSeams = imgProp->width / nThreads + 1;
-	int numBlocksMin = imgProp->width / 1024 + 1;
+	int numBlocksMin = imgProp->width / nThreadsMin + 1;
 
 	//computo tutti i seams
 	computeMinsPerPixel_ << <(imgProp->imageSize - imgProp->width) / nThreads + 1, nThreads >> > (energyImg, imgProp);
@@ -431,7 +438,7 @@ void findSeams(energyPixel_t* energyImg, pixel_t* imgSrc, imgProp_t* imgProp, se
 	//gpuErrchk(cudaDeviceSynchronize());
 
 	//per ogni blocco trovo il seam con peso minore
-	min_ <<<numBlocksMin, 1024, 1024 * (sizeof(int) + sizeof(int))>>>(seams, minSeamsPerBlock, imgProp, 1024);
+	min_ <<<numBlocksMin, nThreadsMin, nThreadsMin * (sizeof(int) + sizeof(int))>>>(seams, minSeamsPerBlock, imgProp, nThreadsMin);
 	gpuErrchk(cudaDeviceSynchronize());
 
 	// trovo il seam minore tra quelli dei vari blocchi. Essendo il numero di blocchi molto esiguo, abbiamo preferito eseguirlo lato CPU.

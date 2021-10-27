@@ -22,8 +22,9 @@ void min_(const seam_t* energiesArray, seam_t* outputArray, imgProp_t* imgProp, 
     /// 
     /// <returns></returns>
     int thIdx = threadIdx.x;
-    const int myBlockSize = 1024;
+    const int myBlockSize = nThreads;
     int gthIdx = thIdx + blockIdx.x * myBlockSize;
+
     extern __shared__ int shArr[];
     int* shared_mins = (int*)shArr;
     int* shared_min_indices = (int*)(&(shArr[nThreads]));
@@ -32,14 +33,15 @@ void min_(const seam_t* energiesArray, seam_t* outputArray, imgProp_t* imgProp, 
         shared_mins[thIdx] = energiesArray[gthIdx].total_energy;
         shared_min_indices[thIdx] = gthIdx;
     }
+    
 
     int seamsPerBlock = myBlockSize; // 0 < seamsPerBlock < 1024
     
-    // si ottiene il numero preciso di seams rimanenti da controllare:
+    // si ottiene il numero preciso di seams rimanenti da controllare:z
     // per ogni blocco che non sia l'ultimo -> seamsPerBlock = 1024
     // per ultimo blocco -> seamsPerBlock = differenza imgProp->width - (1024 * numBlocchi - 1)
-    if (1024 * (blockIdx.x + 1) > imgProp->width)
-        seamsPerBlock = imgProp->width - 1024 * blockIdx.x;
+    if (myBlockSize * (blockIdx.x + 1) > imgProp->width)
+        seamsPerBlock = imgProp->width - myBlockSize * blockIdx.x;
 
     __syncthreads();
     
@@ -74,7 +76,20 @@ void min_(const seam_t* energiesArray, seam_t* outputArray, imgProp_t* imgProp, 
             }
         }
         __syncthreads();
+
     }
+
+    //while (size > 32) ...
+    // ...
+    //if (thIdx < 32) {
+    //    volatile int* vmem = shared_min_indices;
+    //    vmem[thIdx] = shared_mins[thIdx] < shared_mins[thIdx + 32] ? shared_min_indices[thIdx] : shared_min_indices[thIdx + 32];
+    //    vmem[thIdx] = shared_mins[thIdx] < shared_mins[thIdx + 16] ? shared_min_indices[thIdx] : shared_min_indices[thIdx + 16];
+    //    vmem[thIdx] = shared_mins[thIdx] < shared_mins[thIdx + 8] ? shared_min_indices[thIdx] : shared_min_indices[thIdx + 8];
+    //    vmem[thIdx] = shared_mins[thIdx] < shared_mins[thIdx + 4] ? shared_min_indices[thIdx] : shared_min_indices[thIdx + 4];
+    //    vmem[thIdx] = shared_mins[thIdx] < shared_mins[thIdx + 2] ? shared_min_indices[thIdx] : shared_min_indices[thIdx + 2];
+    //    vmem[thIdx] = shared_mins[thIdx] < shared_mins[thIdx + 1] ? shared_min_indices[thIdx] : shared_min_indices[thIdx + 1];
+    //}
 
     //save current block's minimum
     if (thIdx == 0) {
