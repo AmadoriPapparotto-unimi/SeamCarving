@@ -8,6 +8,9 @@
 __global__
 void min_(const seam_t* energiesArray, seam_t* outputArray, imgProp_t* imgProp, int nThreads);
 
+__global__
+void sum_(energyPixel_t* energyImg, seam_t* seam, int* out, imgProp_t* imgProp);
+
 void report_gpu_mem();
 
 #define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }

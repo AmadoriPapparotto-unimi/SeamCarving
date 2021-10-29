@@ -25,9 +25,9 @@ void min_(const seam_t* energiesArray, seam_t* outputArray, imgProp_t* imgProp, 
     const int myBlockSize = nThreads;
     int gthIdx = thIdx + blockIdx.x * myBlockSize;
 
-    extern __shared__ int shArr[];
-    int* shared_mins = (int*)shArr;
-    int* shared_min_indices = (int*)(&(shArr[nThreads]));
+    extern __shared__ int shArrMin[];
+    int* shared_mins = (int*)shArrMin;
+    int* shared_min_indices = (int*)(&(shArrMin[nThreads]));
 
     if (gthIdx < imgProp->width) {
         shared_mins[thIdx] = energiesArray[gthIdx].total_energy;
@@ -94,10 +94,63 @@ void min_(const seam_t* energiesArray, seam_t* outputArray, imgProp_t* imgProp, 
     //save current block's minimum
     if (thIdx == 0) {
         outputArray[blockIdx.x] = energiesArray[shared_min_indices[0]];
+        //printf("seams %f\n", outputArray[blockIdx.x].total_energy);
+
     }
 }
 
+__global__
+void sum_(energyPixel_t* energyImg, seam_t* seam, int* out, imgProp_t* imgProp) {
 
+    int thIdx = threadIdx.x;
+    const int myBlockSize = blockDim.x;
+    int gthIdx = blockIdx.x * blockDim.x + threadIdx.x;
+
+    extern __shared__ int shArrSum[];
+    int* shared_sum = (int*)shArrSum;
+
+    if (gthIdx < imgProp->height) {
+        shared_sum[thIdx] = energyImg[seam->ids[gthIdx]].energy;
+        //printf("t: %d, %d\n", gthIdx, shared_sum[thIdx]);
+    }
+
+
+    int seamsPerBlock = myBlockSize; // 0 < seamsPerBlock < 1024
+
+    // si ottiene il numero preciso di seams rimanenti da controllare:z
+    // per ogni blocco che non sia l'ultimo -> seamsPerBlock = 1024
+    // per ultimo blocco -> seamsPerBlock = differenza imgProp->width - (1024 * numBlocchi - 1)
+    if (myBlockSize * (blockIdx.x + 1) > imgProp->height)
+        seamsPerBlock = imgProp->height - myBlockSize * blockIdx.x;
+
+    __syncthreads();
+
+    int size = seamsPerBlock;   //ogni volta si dimezza la grandezza dell'array finale
+    bool isOdd;
+
+    while (size > 0) { //uniform
+        isOdd = size % 2 == 1 && size != 1; //bisogna distinguere se il numero di seam di cui trovare il minimo è pari o dispari, questo perchè un elemento ne rimarrebbe escluso
+        size /= 2;
+        if (isOdd) {
+            size++;
+        }
+
+        if (thIdx < size) {
+            if (isOdd && thIdx == size - 1) {
+                continue;
+            }
+            shared_sum[thIdx] += shared_sum[thIdx + size];
+
+        }
+        __syncthreads();
+
+    }
+
+    //save current block's minimum
+    if (thIdx == 0) {
+        out[blockIdx.x] = shared_sum[0];
+    }
+}
 
 void report_gpu_mem()
 {

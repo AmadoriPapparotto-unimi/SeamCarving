@@ -37,7 +37,7 @@ typedef struct EnergyPixelStruct {
 	/// </summary>
 	
 	long id_pixel; //idOriginale dell'immagine iniziale
-	float energy; //energia del pixel
+	int energy; //energia del pixel
 	pel_t color; //il colore in scala di grigi
 	int succ_min;
 } energyPixel_t;
@@ -50,7 +50,7 @@ typedef struct seamStruct {
 	/// Il pixel successivo appartenete al path sarà quello minore tra i vicini(superiori) del pixel preso in considerazione. 
 	/// </summary>
 
-	float total_energy; //enerigia totale del seam
+	int total_energy; //enerigia totale del seam
 	int* ids; // id del seam, che corrisponde al pixel di partenza
 
 } seam_t;

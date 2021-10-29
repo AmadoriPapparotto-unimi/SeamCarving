@@ -103,9 +103,11 @@ void toGrayScale(pixel_t* img, energyPixel_t* imgGray, imgProp_t* imgProp) {
 	/// <param name="img">Immagine (input)</param>
 	/// <param name="imgGray">Immagine in scala di grigi (output)</param>
 	/// <param name="imgProp">Proprieta' dell'immagine</param>
-	int blocks = imgProp->imageSize / 1024 + 1;
+	
+	int numThreads = 64; // occupancy: 92%; time: 1.801 ms; lake 200
+	int numBlocks = imgProp->imageSize / numThreads + 1;
 
-	toGrayScale_<< <blocks, 1024 >> > (img, imgGray, imgProp->imageSize);
+	toGrayScale_<< <numBlocks, numThreads >> > (img, imgGray, imgProp->imageSize);
 	gpuErrchk(cudaDeviceSynchronize());
 }
 

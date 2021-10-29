@@ -181,7 +181,7 @@
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
       <GenerateRelocatableDeviceCode>true</GenerateRelocatableDeviceCode>
-      <AdditionalOptions>Xptxas -dlcm=cg %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-Xptxas -dlcm=ca %(AdditionalOptions)</AdditionalOptions>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='a|x64'">

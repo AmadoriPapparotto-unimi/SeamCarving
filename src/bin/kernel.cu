@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <sys\timeb.h> 
 
 #include "cuda_runtime.h"
 #include "cuda_runtime_api.h"
@@ -31,7 +32,7 @@ void applySeamCarving(char *p, int iterations) {
 	seam_t* minSeamsPerBlock;
 	seam_t* minSeam;
 
-	int* mins;
+	int* resIntermediateSeams;
 
 	FILE* f = fopen(p, "rb");
 	if (f == NULL) {
@@ -64,23 +65,31 @@ void applySeamCarving(char *p, int iterations) {
 
 	gpuErrchk(cudaMallocManaged(&minSeam, sizeof(seam_t)));
 	gpuErrchk(cudaMallocManaged(&minSeam->ids, imgProp->height * sizeof(int)));
-
+	
+	
+	gpuErrchk(cudaMallocManaged(&resIntermediateSeams, imgProp->width * (imgProp->height / 128 + 1) * sizeof(int)));
+	
 	//Si legge l'immagine
 	readBMP(f, imgSrc, imgProp);
-
+	struct timeb start, end;
+	ftime(&start);
 	//Si converte l'immagine in scala di grigi
 	toGrayScale(imgSrc, imgGray, imgProp);
 	
 	//Si itera l'algoritmo di seam carving per il numero di iterazioni richieste dall'utente
 	for (int i = 0; i < iterations; i++) {
 		energyMap(imgGray, imgProp);	//si calcola la mappa dell'energia	
-		findSeams(imgGray, imgSrc, imgProp, minSeam, seams, minSeamsPerBlock); // si trova il seam da rimuovere
+		findSeams(imgGray, imgSrc, imgProp, minSeam, seams, minSeamsPerBlock, resIntermediateSeams); // si trova il seam da rimuovere
 		removeSeam(imgGray, imgWithoutSeamGray, minSeam, imgProp); // si rimuove il seam precedentemente trovato
-		printf("ITERAZIONE %d COMPLETATA\n", i);
+		//printf("ITERAZIONE %d COMPLETATA\n", i);
 	}
 
-	//si rimuovono tutti i pixel nell'immagine a colori
+	// si rimuovono tutti i pixel nell'immagine a colori
 	removePixelsFromSrc(imgSrc, imgWithoutSeamSrc, imgGray, imgProp);
+	ftime(&end);
+	int diff = (int)(1000.0 * (end.time - start.time)
+		+ (end.millitm - start.millitm));;
+	printf("\nOperation took %u milliseconds\n", diff);
 
 	// si genera il nuovo header coerente con le caratteristiche dell'immagine finale
 	setBMP_header(imgProp, 0, imgProp->width);
@@ -97,6 +106,10 @@ int main(int argc, char** argv) {
 	char* path = argv[1];
 	// numero di iterazioni
 	int iterations = atoi(argv[2]);
+	int deviceID = 0;
+	cudaDeviceProp props;
+	cudaGetDevice(&deviceID);
+	cudaGetDeviceProperties(&props, deviceID);
 
 	applySeamCarving(path, iterations);
 	cudaDeviceReset();
