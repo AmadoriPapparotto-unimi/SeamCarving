@@ -15,10 +15,10 @@ void min_(const seam_t* energiesArray, seam_t* outputArray, imgProp_t* imgProp, 
     /// Kernel GPU che permette di calcolare il seam minimo tra tutti quelli trovati.
     /// Sfrutta la shared memory e la parallel reduction, al fine di massimizzare le performance
     /// </summary>
-    /// <param name="energiesArray"></param>
-    /// <param name="outputArray"></param>
-    /// <param name="imgProp"></param>
-    /// <param name="nThreads"></param>
+    /// <param name="energiesArray">I vari seam di cui trovare il minimo</param>
+    /// <param name="outputArray">L'output del blocco</param>
+    /// <param name="imgProp">Le caratteristiche dell'immagine</param>
+    /// <param name="nThreads">Il numero di thread nel blocco</param>
     /// 
     /// <returns></returns>
     int thIdx = threadIdx.x;
@@ -47,30 +47,20 @@ void min_(const seam_t* energiesArray, seam_t* outputArray, imgProp_t* imgProp, 
     
     int size = seamsPerBlock;   //ogni volta si dimezza la grandezza dell'array finale
     bool isOdd;
-    //if (isOdd) {
-    //    size++;
-    //    if (thIdx < seamsPerBlock / 2) {
-    //        if (shared_mins[thIdx] > shared_mins[thIdx + size]) {
-    //            shared_mins[thIdx] = shared_mins[thIdx + size];
-    //            shared_min_indices[thIdx] = shared_min_indices[thIdx + size];
-    //        }
-    //    }
-    //    size /= 2;
-    //}
-    // get minimum
-    while (size > 0) { //uniform
+ 
+    while (size > 0) {
         
         isOdd = size % 2 == 1 && size != 1; //bisogna distinguere se il numero di seam di cui trovare il minimo è pari o dispari, questo perchè un elemento ne rimarrebbe escluso
         size /= 2;
         if (isOdd) {
-            size++;
+            size++; // se è dispari, aumento la grandezza di output, in modo da prendere in cosiderazione anche l'ultimo elemento
         }
 
         if (thIdx < size) {
             if (isOdd && thIdx == size - 1) {
-                continue;
+                continue; // se la grandezza è dispari e il thread in questione è l'ultimo, allora non devo fare il confronto.
             }
-            if (shared_mins[thIdx] > shared_mins[thIdx + size]) {
+            if (shared_mins[thIdx] > shared_mins[thIdx + size]) { //confronto
                 shared_mins[thIdx] = shared_mins[thIdx + size];
                 shared_min_indices[thIdx] = shared_min_indices[thIdx + size];
             }
@@ -101,6 +91,13 @@ void min_(const seam_t* energiesArray, seam_t* outputArray, imgProp_t* imgProp, 
 
 __global__
 void sum_(energyPixel_t* energyImg, seam_t* seam, int* out, imgProp_t* imgProp) {
+    /// <summary>
+    /// Non utilizzata, tentativo di parallelizzare la somma delle energie di un seam. Pocco efficiente nonostante la shared
+    /// </summary>
+    /// <param name="energyImg"></param>
+    /// <param name="seam"></param>
+    /// <param name="out"></param>
+    /// <param name="imgProp"></param>
 
     int thIdx = threadIdx.x;
     const int myBlockSize = blockDim.x;
