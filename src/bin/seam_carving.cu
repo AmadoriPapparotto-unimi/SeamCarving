@@ -418,15 +418,12 @@ void ss(energyPixel_t* energyImg, seam_t *seams, int* res, imgProp_t* imgProp) {
 	int numBlocksPerSeam = imgProp->height / 128 + 1;
 	if (idThread < imgProp->width) {
 		sum_ << <numBlocksPerSeam, 128, 128 * sizeof(int) >> > (energyImg, &seams[idThread], &res[idThread], imgProp);
-		//cudaDeviceSynchronize();
+		cudaDeviceSynchronize();
 
-		//for (int i = idThread * numBlocksPerSeam; i < idThread * numBlocksPerSeam + numBlocksPerSeam; i++) {
-		//	seams[idThread].total_energy += res[i];
-		//	//printf("res %d %d %f totene %f\n", idThread, i, res[i], seams[idThread].total_energy);
-		//}
+		for (int i = idThread * numBlocksPerSeam; i < idThread * numBlocksPerSeam + numBlocksPerSeam; i++) {
+			seams[idThread].total_energy += res[i];
+		}
 		
-		//printf("totene %d\n", seams[idThread].total_energy);
-
 	}
 	
 
@@ -448,7 +445,7 @@ void energyMap(energyPixel_t* energyImg, imgProp_t* imgProp) {
 	//writeBMP_energy("src/assets/images/energy.bmp", energyImg, imgProp);
 }
 
-void findSeams(energyPixel_t* energyImg, pixel_t* imgSrc, imgProp_t* imgProp, seam_t* minSeam, seam_t* seams, seam_t* minSeamsPerBlock, int* res) {
+void findSeams(energyPixel_t* energyImg, pixel_t* imgSrc, imgProp_t* imgProp, seam_t* minSeam, seam_t* seams, seam_t* minSeamsPerBlock) {
 
 	/// <summary>
 	/// Funzione host che richiama i kernel computeSeams e min.
@@ -473,33 +470,6 @@ void findSeams(energyPixel_t* energyImg, pixel_t* imgSrc, imgProp_t* imgProp, se
 	computeMinsPerPixel_ << <numBlocksMinPerPixel, nThreadsMinPerPixel >> > (energyImg, imgProp);
 	computeSeams2_ << <numBlocksComputeSeams, nThreadsComputeSeams >> > (energyImg, imgSrc, seams, imgProp);
 	gpuErrchk(cudaDeviceSynchronize());
-
-	//int numBlocksPerSeam = imgProp->height / 128 + 1;
-	////for (int i = 0; i < imgProp->width; i++) {
-	////	sum_ << <numBlocksPerSeam, 128, 128 * sizeof(int) >> > (energyImg, &seams[i], &res[i], imgProp);
-	////	gpuErrchk(cudaDeviceSynchronize());
-	////}
-	//cudaStream_t cudaStream[32];
-	//for (int i = 0; i < 32; i++)
-	//	cudaStreamCreateWithFlags(&cudaStream[i], cudaStreamNonBlocking);
-
-	//for (int i = 0; i < imgProp->width; i++)
-	//	sum_ << <numBlocksPerSeam, 128, 128 * sizeof(int), cudaStream[i%32]>> > (energyImg, &seams[i], &res[i], imgProp);
-	//
-	//gpuErrchk(cudaDeviceSynchronize());
-
-
-	//ss << <imgProp->width/128 + 1, 128>> > (energyImg, seams, res, imgProp);
-	//gpuErrchk(cudaDeviceSynchronize());
-
-	//for (int i = 0; i < imgProp->width; i += imgProp->height / 128 + 1) {
-	//	//if(seams[i].total_energy < 4000)
-	//	//printf("seams [%d] %d\n", i, seams[i].total_energy);
-	//}
-	//writeBMP_pixel("C:/aa/tt.bmp", imgSrc, imgProp);
-
-	//computeSeams2_ << <numBlocksComputeSeams, nThreads >> > (energyImg, imgSrc, seams, imgProp);
-	////gpuErrchk(cudaDeviceSynchronize());
 
 	// per ogni blocco trovo il seam con peso minore
 	min_ <<<numBlocksMin, nThreadsMin, nThreadsMin * (sizeof(int) + sizeof(int))>>>(seams, minSeamsPerBlock, imgProp, nThreadsMin);

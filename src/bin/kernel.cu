@@ -32,8 +32,6 @@ void applySeamCarving(char *p, int iterations) {
 	seam_t* minSeamsPerBlock;
 	seam_t* minSeam;
 
-	int* resIntermediateSeams;
-
 	FILE* f = fopen(p, "rb");
 	if (f == NULL) {
 		printf("*** FILE NOT FOUND %s ***\n", p);
@@ -65,10 +63,7 @@ void applySeamCarving(char *p, int iterations) {
 
 	gpuErrchk(cudaMallocManaged(&minSeam, sizeof(seam_t)));
 	gpuErrchk(cudaMallocManaged(&minSeam->ids, imgProp->height * sizeof(int)));
-	
-	
-	gpuErrchk(cudaMallocManaged(&resIntermediateSeams, imgProp->width * (imgProp->height / 128 + 1) * sizeof(int)));
-	
+		
 	//Si legge l'immagine
 	readBMP(f, imgSrc, imgProp);
 	struct timeb start, end;
@@ -79,7 +74,7 @@ void applySeamCarving(char *p, int iterations) {
 	//Si itera l'algoritmo di seam carving per il numero di iterazioni richieste dall'utente
 	for (int i = 0; i < iterations; i++) {
 		energyMap(imgGray, imgProp);	//si calcola la mappa dell'energia	
-		findSeams(imgGray, imgSrc, imgProp, minSeam, seams, minSeamsPerBlock, resIntermediateSeams); // si trova il seam da rimuovere
+		findSeams(imgGray, imgSrc, imgProp, minSeam, seams, minSeamsPerBlock); // si trova il seam da rimuovere
 		removeSeam(imgGray, imgWithoutSeamGray, minSeam, imgProp); // si rimuove il seam precedentemente trovato
 		//printf("ITERAZIONE %d COMPLETATA\n", i);
 	}
