@@ -1,0 +1,57 @@
+\hypertarget{kernel_8cu}{}\doxysection{kernel.\+cu File Reference}
+\label{kernel_8cu}\index{kernel.cu@{kernel.cu}}
+{\ttfamily \#include \char`\"{}image\+\_\+handler.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}seam\+\_\+carving.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}utils.\+cuh\char`\"{}}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$sys\textbackslash{}timeb.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}cuda\+\_\+runtime.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}cuda\+\_\+runtime\+\_\+api.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}device\+\_\+launch\+\_\+parameters.\+h\char`\"{}}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{kernel_8cu_abca81d4baffad726ce1ad3ff034f3835}{apply\+Seam\+Carving}} (char $\ast$p, int iterations)
+\item 
+int \mbox{\hyperlink{kernel_8cu_a3c04138a5bfe5d72780bb7e82a18e627}{main}} (int argc, char $\ast$$\ast$argv)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+char $\ast$ \mbox{\hyperlink{kernel_8cu_a311337de6bf365a42ec130beb66640cb}{src\+\_\+path}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{kernel_8cu_abca81d4baffad726ce1ad3ff034f3835}\label{kernel_8cu_abca81d4baffad726ce1ad3ff034f3835}} 
+\index{kernel.cu@{kernel.cu}!applySeamCarving@{applySeamCarving}}
+\index{applySeamCarving@{applySeamCarving}!kernel.cu@{kernel.cu}}
+\doxysubsubsection{\texorpdfstring{applySeamCarving()}{applySeamCarving()}}
+{\footnotesize\ttfamily void apply\+Seam\+Carving (\begin{DoxyParamCaption}\item[{char $\ast$}]{p,  }\item[{int}]{iterations }\end{DoxyParamCaption})}
+
+Funzione principale Host che alloca la memoria necessaria all\textquotesingle{}algoritmo, legge l\textquotesingle{}immagine, lancia i vari step del seam carving e scrive la nuova immagine ottenuta. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & Il path dell\textquotesingle{}immagine in input\\
+\hline
+{\em iterations} & Il numero di pixel orizzontali da rimuovere su ogni riga\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{kernel_8cu_a3c04138a5bfe5d72780bb7e82a18e627}\label{kernel_8cu_a3c04138a5bfe5d72780bb7e82a18e627}} 
+\index{kernel.cu@{kernel.cu}!main@{main}}
+\index{main@{main}!kernel.cu@{kernel.cu}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{char $\ast$$\ast$}]{argv }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{kernel_8cu_a311337de6bf365a42ec130beb66640cb}\label{kernel_8cu_a311337de6bf365a42ec130beb66640cb}} 
+\index{kernel.cu@{kernel.cu}!src\_path@{src\_path}}
+\index{src\_path@{src\_path}!kernel.cu@{kernel.cu}}
+\doxysubsubsection{\texorpdfstring{src\_path}{src\_path}}
+{\footnotesize\ttfamily char$\ast$ src\+\_\+path}
+

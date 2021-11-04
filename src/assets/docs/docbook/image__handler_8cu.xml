@@ -1,0 +1,559 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_image__handler_8cu" xml:lang="en-US">
+<title>image_handler.cu File Reference</title>
+<indexterm><primary>image_handler.cu</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &quot;image_handler.h&quot;
+#include &quot;seam_carving.h&quot;
+#include &quot;utils.cuh&quot;
+#include &lt;windows.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;iostream&gt;
+#include &quot;cuda_runtime.h&quot;
+#include &quot;cuda_runtime_api.h&quot;
+#include &quot;device_launch_parameters.h&quot;
+</programlisting><simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>__device__ void <link linkend="_image__handler_8cu_1a45fc52d04d8e73fc3da6f5728653a96b">grayValue</link> (<link linkend="_image__handler_8h_1a6239917a28b62ca5e3c3cd981f41944c">energyPixel_t</link> *energyPixel, <link linkend="_image__handler_8h_1a5661cb3c75abb43619cf0f82ecf972c2">pel_t</link> r, <link linkend="_image__handler_8h_1a5661cb3c75abb43619cf0f82ecf972c2">pel_t</link> g, <link linkend="_image__handler_8h_1a5661cb3c75abb43619cf0f82ecf972c2">pel_t</link> b, int id)</para>
+</listitem>
+            <listitem><para>__global__ void <link linkend="_image__handler_8cu_1a5ae51485a0b8d4d45650fc9b38d2f45f">toGrayScale_</link> (<link linkend="_image__handler_8h_1a2ecda34a1bdbf33933e5e61b64cb3fa4">pixel_t</link> *img, <link linkend="_image__handler_8h_1a6239917a28b62ca5e3c3cd981f41944c">energyPixel_t</link> *imgGray, int imageSize)</para>
+</listitem>
+            <listitem><para>__global__ void <link linkend="_image__handler_8cu_1a7a393dd4920397ce945d3c8d536d7e50">generateEnergyImg_</link> (<link linkend="_image__handler_8h_1a2ecda34a1bdbf33933e5e61b64cb3fa4">pixel_t</link> *imgSrc, <link linkend="_image__handler_8h_1a6239917a28b62ca5e3c3cd981f41944c">energyPixel_t</link> *energyImg, <link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> *imgProp)</para>
+</listitem>
+            <listitem><para>__global__ void <link linkend="_image__handler_8cu_1a93f524f6ef65e3ace992d64ac39fd741">energy2pixel_</link> (<link linkend="_image__handler_8h_1a2ecda34a1bdbf33933e5e61b64cb3fa4">pixel_t</link> *imgSrc, <link linkend="_image__handler_8h_1a6239917a28b62ca5e3c3cd981f41944c">energyPixel_t</link> *energyImg, <link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> *imgProp)</para>
+</listitem>
+            <listitem><para>__global__ void <link linkend="_image__handler_8cu_1aaa4405f21b5a42bea729ddd35be84f06">colorSeamToRemove_</link> (<link linkend="_image__handler_8h_1a2ecda34a1bdbf33933e5e61b64cb3fa4">pixel_t</link> *img, <link linkend="_image__handler_8h_1afa036bc04d925ac554f8714304c2131b">seam_t</link> *seam, <link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> *imgProp)</para>
+</listitem>
+            <listitem><para>void <link linkend="_image__handler_8cu_1a8a49ee9a31f899e97cca69db5e271047">toGrayScale</link> (<link linkend="_image__handler_8h_1a2ecda34a1bdbf33933e5e61b64cb3fa4">pixel_t</link> *img, <link linkend="_image__handler_8h_1a6239917a28b62ca5e3c3cd981f41944c">energyPixel_t</link> *imgGray, <link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> *imgProp)</para>
+</listitem>
+            <listitem><para>void <link linkend="_image__handler_8cu_1a746610b603577ab914aaa735531566cc">setupImgProp</link> (<link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> *imgProp, FILE *f)</para>
+</listitem>
+            <listitem><para>void <link linkend="_image__handler_8cu_1a5e2e3b7222b00bb25d5d015165cca7e9">readBMP</link> (FILE *f, <link linkend="_image__handler_8h_1a2ecda34a1bdbf33933e5e61b64cb3fa4">pixel_t</link> *img, <link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> *imgProp)</para>
+</listitem>
+            <listitem><para>void <link linkend="_image__handler_8cu_1a962807b061549b46899d4e9af64b7e37">writeBMP_pixel</link> (char *p, <link linkend="_image__handler_8h_1a2ecda34a1bdbf33933e5e61b64cb3fa4">pixel_t</link> *img, <link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> *ip)</para>
+</listitem>
+            <listitem><para>void <link linkend="_image__handler_8cu_1a9324470e5e348e6a8d5097a210293d05">writeBMP_energy</link> (char *p, <link linkend="_image__handler_8h_1a6239917a28b62ca5e3c3cd981f41944c">energyPixel_t</link> *energyImg, <link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> *imgProp)</para>
+</listitem>
+            <listitem><para>void <link linkend="_image__handler_8cu_1a1e8f4613f134ad204a0db4f814f697e3">writeBMP_grayscale</link> (<link linkend="_image__handler_8h_1a6239917a28b62ca5e3c3cd981f41944c">energyPixel_t</link> *imgGray, <link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> *imgProp)</para>
+</listitem>
+            <listitem><para>void <link linkend="_image__handler_8cu_1af1a035335d9b3bb3b0cee65f7a546fe3">writeBMP_minimumSeam</link> (char *p, <link linkend="_image__handler_8h_1a2ecda34a1bdbf33933e5e61b64cb3fa4">pixel_t</link> *img, <link linkend="_image__handler_8h_1afa036bc04d925ac554f8714304c2131b">seam_t</link> *minSeam, <link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> *imgProp)</para>
+</listitem>
+            <listitem><para>void <link linkend="_image__handler_8cu_1a2bd2715f05c3213b13f1a1d666920261">setBMP_header</link> (<link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> *imgProp, int fileSize, int width)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="_image__handler_8cu_1aaa4405f21b5a42bea729ddd35be84f06"/><section>
+    <title>colorSeamToRemove_()</title>
+<indexterm><primary>colorSeamToRemove_</primary><secondary>image_handler.cu</secondary></indexterm>
+<indexterm><primary>image_handler.cu</primary><secondary>colorSeamToRemove_</secondary></indexterm>
+<para><computeroutput>__global__ void colorSeamToRemove_ (<link linkend="_image__handler_8h_1a2ecda34a1bdbf33933e5e61b64cb3fa4">pixel_t</link> * img, <link linkend="_image__handler_8h_1afa036bc04d925ac554f8714304c2131b">seam_t</link> * seam, <link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> * imgProp)</computeroutput></para>
+<para>Kernel GPU per colorare un seam dell&apos;immagine </para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>img</entry><entry>
+<para>Immagine (output)</para>
+</entry>
+                            </row>
+                            <row>
+<entry>seam</entry><entry>
+<para>Seam da colorare (input)</para>
+</entry>
+                            </row>
+                            <row>
+<entry>imgProp</entry><entry>
+<para>Proprieta&apos; dell&apos;immagine</para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="_image__handler_8cu_1a93f524f6ef65e3ace992d64ac39fd741"/><section>
+    <title>energy2pixel_()</title>
+<indexterm><primary>energy2pixel_</primary><secondary>image_handler.cu</secondary></indexterm>
+<indexterm><primary>image_handler.cu</primary><secondary>energy2pixel_</secondary></indexterm>
+<para><computeroutput>__global__ void energy2pixel_ (<link linkend="_image__handler_8h_1a2ecda34a1bdbf33933e5e61b64cb3fa4">pixel_t</link> * imgSrc, <link linkend="_image__handler_8h_1a6239917a28b62ca5e3c3cd981f41944c">energyPixel_t</link> * energyImg, <link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> * imgProp)</computeroutput></para>
+<para>Kernel di supporto non utilizzato nell&apos;algoritmo. Serve per convertire una immagine di tipo energyPixel_t in una pixel_t. E&apos; stata utilizzata per ottenere le immagini delle fasi intermedie dell&apos;algoritmo </para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>imgSrc</entry><entry>
+<para>Immagine di output</para>
+</entry>
+                            </row>
+                            <row>
+<entry>energyImg</entry><entry>
+<para>Immagine input da convertire</para>
+</entry>
+                            </row>
+                            <row>
+<entry>imgProp</entry><entry>
+<para>Proprietà della imamgine</para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="_image__handler_8cu_1a7a393dd4920397ce945d3c8d536d7e50"/><section>
+    <title>generateEnergyImg_()</title>
+<indexterm><primary>generateEnergyImg_</primary><secondary>image_handler.cu</secondary></indexterm>
+<indexterm><primary>image_handler.cu</primary><secondary>generateEnergyImg_</secondary></indexterm>
+<para><computeroutput>__global__ void generateEnergyImg_ (<link linkend="_image__handler_8h_1a2ecda34a1bdbf33933e5e61b64cb3fa4">pixel_t</link> * imgSrc, <link linkend="_image__handler_8h_1a6239917a28b62ca5e3c3cd981f41944c">energyPixel_t</link> * energyImg, <link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> * imgProp)</computeroutput></para>
+<para>Kernel GPU per generare una immagine di tipo pixel_t raffigurante la mappa di energia a partire dall&apos;immagine in scala di grigi </para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>imgSrc</entry><entry>
+<para>Immagine (output)</para>
+</entry>
+                            </row>
+                            <row>
+<entry>energyImg</entry><entry>
+<para>Immagine con mappa di energia (input)</para>
+</entry>
+                            </row>
+                            <row>
+<entry>imgProp</entry><entry>
+<para>Proprieta&apos; dell&apos;immagine</para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="_image__handler_8cu_1a45fc52d04d8e73fc3da6f5728653a96b"/><section>
+    <title>grayValue()</title>
+<indexterm><primary>grayValue</primary><secondary>image_handler.cu</secondary></indexterm>
+<indexterm><primary>image_handler.cu</primary><secondary>grayValue</secondary></indexterm>
+<para><computeroutput>__device__ void grayValue (<link linkend="_image__handler_8h_1a6239917a28b62ca5e3c3cd981f41944c">energyPixel_t</link> * energyPixel, <link linkend="_image__handler_8h_1a5661cb3c75abb43619cf0f82ecf972c2">pel_t</link> r, <link linkend="_image__handler_8h_1a5661cb3c75abb43619cf0f82ecf972c2">pel_t</link> g, <link linkend="_image__handler_8h_1a5661cb3c75abb43619cf0f82ecf972c2">pel_t</link> b, int id)</computeroutput></para>
+<para>Funione GPU che si occupa di convertire l&apos;immagine a colori in scala di grigi</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>energyPixel</entry><entry>
+<para>L&apos;immagine da convertire</para>
+</entry>
+                            </row>
+                            <row>
+<entry>r</entry><entry>
+<para>Valore ROSSO del pixel id</para>
+</entry>
+                            </row>
+                            <row>
+<entry>g</entry><entry>
+<para>Valore VERDE del pixel id</para>
+</entry>
+                            </row>
+                            <row>
+<entry>b</entry><entry>
+<para>Valore BLUE del pixel id</para>
+</entry>
+                            </row>
+                            <row>
+<entry>id</entry><entry>
+<para>Id del pixel da convertire</para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="_image__handler_8cu_1a5e2e3b7222b00bb25d5d015165cca7e9"/><section>
+    <title>readBMP()</title>
+<indexterm><primary>readBMP</primary><secondary>image_handler.cu</secondary></indexterm>
+<indexterm><primary>image_handler.cu</primary><secondary>readBMP</secondary></indexterm>
+<para><computeroutput>void readBMP (FILE * f, <link linkend="_image__handler_8h_1a2ecda34a1bdbf33933e5e61b64cb3fa4">pixel_t</link> * img, <link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> * imgProp)</computeroutput></para>
+<para>Legge un file BMP tenendo conto e conseguentemente scartando il padding all&apos;interno di esso. Il formato BMP prevede l&apos;inserimento di N byte a fine riga in modo tale che ogni indirizzo di inizio riga sia allineato mod 4 byte. </para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>f</entry><entry>
+<para>File BMP</para>
+</entry>
+                            </row>
+                            <row>
+<entry>img</entry><entry>
+<para>Immagine</para>
+</entry>
+                            </row>
+                            <row>
+<entry>imgProp</entry><entry>
+<para>Proprieta&apos; dell&apos;immagine</para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="_image__handler_8cu_1a2bd2715f05c3213b13f1a1d666920261"/><section>
+    <title>setBMP_header()</title>
+<indexterm><primary>setBMP_header</primary><secondary>image_handler.cu</secondary></indexterm>
+<indexterm><primary>image_handler.cu</primary><secondary>setBMP_header</secondary></indexterm>
+<para><computeroutput>void setBMP_header (<link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> * imgProp, int fileSize, int width)</computeroutput></para>
+<para>Setup dell&apos;header di un file BMP per i seguenti parametri:<itemizedlist>
+<listitem>
+<para>dimensione totale del file</para>
+</listitem><listitem>
+<para>altezza (in pixel) dell&apos;immagine </para>
+</listitem></itemizedlist>
+</para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>imgProp</entry><entry>
+<para>Proprieta&apos; dell&apos;immagine</para>
+</entry>
+                            </row>
+                            <row>
+<entry>fileSize</entry><entry>
+<para>Dimensione (in byte) del file</para>
+</entry>
+                            </row>
+                            <row>
+<entry>width</entry><entry>
+<para>Larghezza dell&apos;immagine </para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="_image__handler_8cu_1a746610b603577ab914aaa735531566cc"/><section>
+    <title>setupImgProp()</title>
+<indexterm><primary>setupImgProp</primary><secondary>image_handler.cu</secondary></indexterm>
+<indexterm><primary>image_handler.cu</primary><secondary>setupImgProp</secondary></indexterm>
+<para><computeroutput>void setupImgProp (<link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> * imgProp, FILE * f)</computeroutput></para>
+<para>Funzione host che permette di estrapolare le proprietà dell&apos;immagine di input mediante la lettura del suo header </para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>imgProp</entry><entry>
+<para>Output</para>
+</entry>
+                            </row>
+                            <row>
+<entry>f</entry><entry>
+<para>File dell&apos;immagine di input</para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="_image__handler_8cu_1a8a49ee9a31f899e97cca69db5e271047"/><section>
+    <title>toGrayScale()</title>
+<indexterm><primary>toGrayScale</primary><secondary>image_handler.cu</secondary></indexterm>
+<indexterm><primary>image_handler.cu</primary><secondary>toGrayScale</secondary></indexterm>
+<para><computeroutput>void toGrayScale (<link linkend="_image__handler_8h_1a2ecda34a1bdbf33933e5e61b64cb3fa4">pixel_t</link> * img, <link linkend="_image__handler_8h_1a6239917a28b62ca5e3c3cd981f41944c">energyPixel_t</link> * imgGray, <link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> * imgProp)</computeroutput></para>
+<para>Funzione host che richiama il kernel GPU per la colorazione in scala di grigi </para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>img</entry><entry>
+<para>Immagine (input)</para>
+</entry>
+                            </row>
+                            <row>
+<entry>imgGray</entry><entry>
+<para>Immagine in scala di grigi (output)</para>
+</entry>
+                            </row>
+                            <row>
+<entry>imgProp</entry><entry>
+<para>Proprieta&apos; dell&apos;immagine</para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="_image__handler_8cu_1a5ae51485a0b8d4d45650fc9b38d2f45f"/><section>
+    <title>toGrayScale_()</title>
+<indexterm><primary>toGrayScale_</primary><secondary>image_handler.cu</secondary></indexterm>
+<indexterm><primary>image_handler.cu</primary><secondary>toGrayScale_</secondary></indexterm>
+<para><computeroutput>__global__ void toGrayScale_ (<link linkend="_image__handler_8h_1a2ecda34a1bdbf33933e5e61b64cb3fa4">pixel_t</link> * img, <link linkend="_image__handler_8h_1a6239917a28b62ca5e3c3cd981f41944c">energyPixel_t</link> * imgGray, int imageSize)</computeroutput></para>
+<para>Kernel GPU per applicare il calcolo del grayscale su ogni pixel </para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>img</entry><entry>
+<para>Immagine (input)</para>
+</entry>
+                            </row>
+                            <row>
+<entry>imgGray</entry><entry>
+<para>Immagine in scala di grigi (output)</para>
+</entry>
+                            </row>
+                            <row>
+<entry>imageSize</entry><entry>
+<para>Numero totale di pixel dell&apos;immagine</para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="_image__handler_8cu_1a9324470e5e348e6a8d5097a210293d05"/><section>
+    <title>writeBMP_energy()</title>
+<indexterm><primary>writeBMP_energy</primary><secondary>image_handler.cu</secondary></indexterm>
+<indexterm><primary>image_handler.cu</primary><secondary>writeBMP_energy</secondary></indexterm>
+<para><computeroutput>void writeBMP_energy (char * p, <link linkend="_image__handler_8h_1a6239917a28b62ca5e3c3cd981f41944c">energyPixel_t</link> * energyImg, <link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> * imgProp)</computeroutput></para>
+<para>Scrittura di un file BMP a partire da una immagine di tipo energyPixel_t. Funzione non utilizzata dall&apos;algoritmo, ma necessaria ad ottenere le stampe intermedie </para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>p</entry><entry>
+<para>Path del file</para>
+</entry>
+                            </row>
+                            <row>
+<entry>energyImg</entry><entry>
+<para>Immagine energyPixel_t da scrivere</para>
+</entry>
+                            </row>
+                            <row>
+<entry>imgProp</entry><entry>
+<para>Prorpieta&apos; dell&apos;immagine</para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="_image__handler_8cu_1a1e8f4613f134ad204a0db4f814f697e3"/><section>
+    <title>writeBMP_grayscale()</title>
+<indexterm><primary>writeBMP_grayscale</primary><secondary>image_handler.cu</secondary></indexterm>
+<indexterm><primary>image_handler.cu</primary><secondary>writeBMP_grayscale</secondary></indexterm>
+<para><computeroutput>void writeBMP_grayscale (<link linkend="_image__handler_8h_1a6239917a28b62ca5e3c3cd981f41944c">energyPixel_t</link> * imgGray, <link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> * imgProp)</computeroutput></para>
+<para>Scrittura di un file BMP a partire da una immagine di tipo energyPixel_t (raffigurante l&apos;immagine in scala di grigi). Funzione non utilizzata dall&apos;algoritmo, ma necessaria ad ottenere le stampe intermedie </para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>imgGray</entry><entry>
+<para>Immagine in scala di grigi</para>
+</entry>
+                            </row>
+                            <row>
+<entry>imgProp</entry><entry>
+<para>Proprieta&apos; dell&apos;immagine</para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="_image__handler_8cu_1af1a035335d9b3bb3b0cee65f7a546fe3"/><section>
+    <title>writeBMP_minimumSeam()</title>
+<indexterm><primary>writeBMP_minimumSeam</primary><secondary>image_handler.cu</secondary></indexterm>
+<indexterm><primary>image_handler.cu</primary><secondary>writeBMP_minimumSeam</secondary></indexterm>
+<para><computeroutput>void writeBMP_minimumSeam (char * p, <link linkend="_image__handler_8h_1a2ecda34a1bdbf33933e5e61b64cb3fa4">pixel_t</link> * img, <link linkend="_image__handler_8h_1afa036bc04d925ac554f8714304c2131b">seam_t</link> * minSeam, <link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> * imgProp)</computeroutput></para>
+<para>Scrittura di un file BMP con colorazione del minSeam. Funzione non utilizzata dall&apos;algoritmo, ma necessaria ad ottenere le stampe intermedie </para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>p</entry><entry></entry>
+                            </row>
+                            <row>
+<entry>img</entry><entry></entry>
+                            </row>
+                            <row>
+<entry>minSeam</entry><entry></entry>
+                            </row>
+                            <row>
+<entry>imgProp</entry><entry></entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="_image__handler_8cu_1a962807b061549b46899d4e9af64b7e37"/><section>
+    <title>writeBMP_pixel()</title>
+<indexterm><primary>writeBMP_pixel</primary><secondary>image_handler.cu</secondary></indexterm>
+<indexterm><primary>image_handler.cu</primary><secondary>writeBMP_pixel</secondary></indexterm>
+<para><computeroutput>void writeBMP_pixel (char * p, <link linkend="_image__handler_8h_1a2ecda34a1bdbf33933e5e61b64cb3fa4">pixel_t</link> * img, <link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> * ip)</computeroutput></para>
+<para>Scrittura di un file BMP, che tiene conto del numero di byte padding da aggiungere. </para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>p</entry><entry>
+<para>Path del file</para>
+</entry>
+                            </row>
+                            <row>
+<entry>img</entry><entry>
+<para>Immagine da scrivere</para>
+</entry>
+                            </row>
+                            <row>
+<entry>ip</entry><entry>
+<para>Proprieta&apos; dell&apos;immagine</para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+</section>
+</section>

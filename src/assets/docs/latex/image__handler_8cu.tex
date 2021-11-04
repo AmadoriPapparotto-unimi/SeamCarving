@@ -1,0 +1,271 @@
+\hypertarget{image__handler_8cu}{}\doxysection{image\+\_\+handler.\+cu File Reference}
+\label{image__handler_8cu}\index{image\_handler.cu@{image\_handler.cu}}
+{\ttfamily \#include \char`\"{}image\+\_\+handler.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}seam\+\_\+carving.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}utils.\+cuh\char`\"{}}\newline
+{\ttfamily \#include $<$windows.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include \char`\"{}cuda\+\_\+runtime.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}cuda\+\_\+runtime\+\_\+api.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}device\+\_\+launch\+\_\+parameters.\+h\char`\"{}}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\+\_\+\+\_\+device\+\_\+\+\_\+ void \mbox{\hyperlink{image__handler_8cu_a45fc52d04d8e73fc3da6f5728653a96b}{gray\+Value}} (\mbox{\hyperlink{image__handler_8h_a6239917a28b62ca5e3c3cd981f41944c}{energy\+Pixel\+\_\+t}} $\ast$energy\+Pixel, \mbox{\hyperlink{image__handler_8h_a5661cb3c75abb43619cf0f82ecf972c2}{pel\+\_\+t}} r, \mbox{\hyperlink{image__handler_8h_a5661cb3c75abb43619cf0f82ecf972c2}{pel\+\_\+t}} g, \mbox{\hyperlink{image__handler_8h_a5661cb3c75abb43619cf0f82ecf972c2}{pel\+\_\+t}} b, int id)
+\item 
+\+\_\+\+\_\+global\+\_\+\+\_\+ void \mbox{\hyperlink{image__handler_8cu_a5ae51485a0b8d4d45650fc9b38d2f45f}{to\+Gray\+Scale\+\_\+}} (\mbox{\hyperlink{image__handler_8h_a2ecda34a1bdbf33933e5e61b64cb3fa4}{pixel\+\_\+t}} $\ast$img, \mbox{\hyperlink{image__handler_8h_a6239917a28b62ca5e3c3cd981f41944c}{energy\+Pixel\+\_\+t}} $\ast$img\+Gray, int image\+Size)
+\item 
+\+\_\+\+\_\+global\+\_\+\+\_\+ void \mbox{\hyperlink{image__handler_8cu_a7a393dd4920397ce945d3c8d536d7e50}{generate\+Energy\+Img\+\_\+}} (\mbox{\hyperlink{image__handler_8h_a2ecda34a1bdbf33933e5e61b64cb3fa4}{pixel\+\_\+t}} $\ast$img\+Src, \mbox{\hyperlink{image__handler_8h_a6239917a28b62ca5e3c3cd981f41944c}{energy\+Pixel\+\_\+t}} $\ast$energy\+Img, \mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$img\+Prop)
+\item 
+\+\_\+\+\_\+global\+\_\+\+\_\+ void \mbox{\hyperlink{image__handler_8cu_a93f524f6ef65e3ace992d64ac39fd741}{energy2pixel\+\_\+}} (\mbox{\hyperlink{image__handler_8h_a2ecda34a1bdbf33933e5e61b64cb3fa4}{pixel\+\_\+t}} $\ast$img\+Src, \mbox{\hyperlink{image__handler_8h_a6239917a28b62ca5e3c3cd981f41944c}{energy\+Pixel\+\_\+t}} $\ast$energy\+Img, \mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$img\+Prop)
+\item 
+\+\_\+\+\_\+global\+\_\+\+\_\+ void \mbox{\hyperlink{image__handler_8cu_aaa4405f21b5a42bea729ddd35be84f06}{color\+Seam\+To\+Remove\+\_\+}} (\mbox{\hyperlink{image__handler_8h_a2ecda34a1bdbf33933e5e61b64cb3fa4}{pixel\+\_\+t}} $\ast$img, \mbox{\hyperlink{image__handler_8h_afa036bc04d925ac554f8714304c2131b}{seam\+\_\+t}} $\ast$seam, \mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$img\+Prop)
+\item 
+void \mbox{\hyperlink{image__handler_8cu_a8a49ee9a31f899e97cca69db5e271047}{to\+Gray\+Scale}} (\mbox{\hyperlink{image__handler_8h_a2ecda34a1bdbf33933e5e61b64cb3fa4}{pixel\+\_\+t}} $\ast$img, \mbox{\hyperlink{image__handler_8h_a6239917a28b62ca5e3c3cd981f41944c}{energy\+Pixel\+\_\+t}} $\ast$img\+Gray, \mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$img\+Prop)
+\item 
+void \mbox{\hyperlink{image__handler_8cu_a746610b603577ab914aaa735531566cc}{setup\+Img\+Prop}} (\mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$img\+Prop, FILE $\ast$f)
+\item 
+void \mbox{\hyperlink{image__handler_8cu_a5e2e3b7222b00bb25d5d015165cca7e9}{read\+BMP}} (FILE $\ast$f, \mbox{\hyperlink{image__handler_8h_a2ecda34a1bdbf33933e5e61b64cb3fa4}{pixel\+\_\+t}} $\ast$img, \mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$img\+Prop)
+\item 
+void \mbox{\hyperlink{image__handler_8cu_a962807b061549b46899d4e9af64b7e37}{write\+BMP\+\_\+pixel}} (char $\ast$p, \mbox{\hyperlink{image__handler_8h_a2ecda34a1bdbf33933e5e61b64cb3fa4}{pixel\+\_\+t}} $\ast$img, \mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$ip)
+\item 
+void \mbox{\hyperlink{image__handler_8cu_a9324470e5e348e6a8d5097a210293d05}{write\+BMP\+\_\+energy}} (char $\ast$p, \mbox{\hyperlink{image__handler_8h_a6239917a28b62ca5e3c3cd981f41944c}{energy\+Pixel\+\_\+t}} $\ast$energy\+Img, \mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$img\+Prop)
+\item 
+void \mbox{\hyperlink{image__handler_8cu_a1e8f4613f134ad204a0db4f814f697e3}{write\+BMP\+\_\+grayscale}} (\mbox{\hyperlink{image__handler_8h_a6239917a28b62ca5e3c3cd981f41944c}{energy\+Pixel\+\_\+t}} $\ast$img\+Gray, \mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$img\+Prop)
+\item 
+void \mbox{\hyperlink{image__handler_8cu_af1a035335d9b3bb3b0cee65f7a546fe3}{write\+BMP\+\_\+minimum\+Seam}} (char $\ast$p, \mbox{\hyperlink{image__handler_8h_a2ecda34a1bdbf33933e5e61b64cb3fa4}{pixel\+\_\+t}} $\ast$img, \mbox{\hyperlink{image__handler_8h_afa036bc04d925ac554f8714304c2131b}{seam\+\_\+t}} $\ast$min\+Seam, \mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$img\+Prop)
+\item 
+void \mbox{\hyperlink{image__handler_8cu_a2bd2715f05c3213b13f1a1d666920261}{set\+BMP\+\_\+header}} (\mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$img\+Prop, int file\+Size, int width)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{image__handler_8cu_aaa4405f21b5a42bea729ddd35be84f06}\label{image__handler_8cu_aaa4405f21b5a42bea729ddd35be84f06}} 
+\index{image\_handler.cu@{image\_handler.cu}!colorSeamToRemove\_@{colorSeamToRemove\_}}
+\index{colorSeamToRemove\_@{colorSeamToRemove\_}!image\_handler.cu@{image\_handler.cu}}
+\doxysubsubsection{\texorpdfstring{colorSeamToRemove\_()}{colorSeamToRemove\_()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+global\+\_\+\+\_\+ void color\+Seam\+To\+Remove\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{image__handler_8h_a2ecda34a1bdbf33933e5e61b64cb3fa4}{pixel\+\_\+t}} $\ast$}]{img,  }\item[{\mbox{\hyperlink{image__handler_8h_afa036bc04d925ac554f8714304c2131b}{seam\+\_\+t}} $\ast$}]{seam,  }\item[{\mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$}]{img\+Prop }\end{DoxyParamCaption})}
+
+Kernel GPU per colorare un seam dell\textquotesingle{}immagine 
+
+
+\begin{DoxyParams}{Parameters}
+{\em img} & Immagine (output)\\
+\hline
+{\em seam} & Seam da colorare (input)\\
+\hline
+{\em img\+Prop} & Proprieta\textquotesingle{} dell\textquotesingle{}immagine\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{image__handler_8cu_a93f524f6ef65e3ace992d64ac39fd741}\label{image__handler_8cu_a93f524f6ef65e3ace992d64ac39fd741}} 
+\index{image\_handler.cu@{image\_handler.cu}!energy2pixel\_@{energy2pixel\_}}
+\index{energy2pixel\_@{energy2pixel\_}!image\_handler.cu@{image\_handler.cu}}
+\doxysubsubsection{\texorpdfstring{energy2pixel\_()}{energy2pixel\_()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+global\+\_\+\+\_\+ void energy2pixel\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{image__handler_8h_a2ecda34a1bdbf33933e5e61b64cb3fa4}{pixel\+\_\+t}} $\ast$}]{img\+Src,  }\item[{\mbox{\hyperlink{image__handler_8h_a6239917a28b62ca5e3c3cd981f41944c}{energy\+Pixel\+\_\+t}} $\ast$}]{energy\+Img,  }\item[{\mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$}]{img\+Prop }\end{DoxyParamCaption})}
+
+Kernel di supporto non utilizzato nell\textquotesingle{}algoritmo. Serve per convertire una immagine di tipo energy\+Pixel\+\_\+t in una pixel\+\_\+t. E\textquotesingle{} stata utilizzata per ottenere le immagini delle fasi intermedie dell\textquotesingle{}algoritmo 
+
+
+\begin{DoxyParams}{Parameters}
+{\em img\+Src} & Immagine di output\\
+\hline
+{\em energy\+Img} & Immagine input da convertire\\
+\hline
+{\em img\+Prop} & Proprietà della imamgine\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{image__handler_8cu_a7a393dd4920397ce945d3c8d536d7e50}\label{image__handler_8cu_a7a393dd4920397ce945d3c8d536d7e50}} 
+\index{image\_handler.cu@{image\_handler.cu}!generateEnergyImg\_@{generateEnergyImg\_}}
+\index{generateEnergyImg\_@{generateEnergyImg\_}!image\_handler.cu@{image\_handler.cu}}
+\doxysubsubsection{\texorpdfstring{generateEnergyImg\_()}{generateEnergyImg\_()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+global\+\_\+\+\_\+ void generate\+Energy\+Img\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{image__handler_8h_a2ecda34a1bdbf33933e5e61b64cb3fa4}{pixel\+\_\+t}} $\ast$}]{img\+Src,  }\item[{\mbox{\hyperlink{image__handler_8h_a6239917a28b62ca5e3c3cd981f41944c}{energy\+Pixel\+\_\+t}} $\ast$}]{energy\+Img,  }\item[{\mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$}]{img\+Prop }\end{DoxyParamCaption})}
+
+Kernel GPU per generare una immagine di tipo pixel\+\_\+t raffigurante la mappa di energia a partire dall\textquotesingle{}immagine in scala di grigi 
+
+
+\begin{DoxyParams}{Parameters}
+{\em img\+Src} & Immagine (output)\\
+\hline
+{\em energy\+Img} & Immagine con mappa di energia (input)\\
+\hline
+{\em img\+Prop} & Proprieta\textquotesingle{} dell\textquotesingle{}immagine\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{image__handler_8cu_a45fc52d04d8e73fc3da6f5728653a96b}\label{image__handler_8cu_a45fc52d04d8e73fc3da6f5728653a96b}} 
+\index{image\_handler.cu@{image\_handler.cu}!grayValue@{grayValue}}
+\index{grayValue@{grayValue}!image\_handler.cu@{image\_handler.cu}}
+\doxysubsubsection{\texorpdfstring{grayValue()}{grayValue()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+device\+\_\+\+\_\+ void gray\+Value (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{image__handler_8h_a6239917a28b62ca5e3c3cd981f41944c}{energy\+Pixel\+\_\+t}} $\ast$}]{energy\+Pixel,  }\item[{\mbox{\hyperlink{image__handler_8h_a5661cb3c75abb43619cf0f82ecf972c2}{pel\+\_\+t}}}]{r,  }\item[{\mbox{\hyperlink{image__handler_8h_a5661cb3c75abb43619cf0f82ecf972c2}{pel\+\_\+t}}}]{g,  }\item[{\mbox{\hyperlink{image__handler_8h_a5661cb3c75abb43619cf0f82ecf972c2}{pel\+\_\+t}}}]{b,  }\item[{int}]{id }\end{DoxyParamCaption})}
+
+Funione GPU che si occupa di convertire l\textquotesingle{}immagine a colori in scala di grigi
+
+
+\begin{DoxyParams}{Parameters}
+{\em energy\+Pixel} & L\textquotesingle{}immagine da convertire\\
+\hline
+{\em r} & Valore ROSSO del pixel id\\
+\hline
+{\em g} & Valore VERDE del pixel id\\
+\hline
+{\em b} & Valore BLUE del pixel id\\
+\hline
+{\em id} & Id del pixel da convertire\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{image__handler_8cu_a5e2e3b7222b00bb25d5d015165cca7e9}\label{image__handler_8cu_a5e2e3b7222b00bb25d5d015165cca7e9}} 
+\index{image\_handler.cu@{image\_handler.cu}!readBMP@{readBMP}}
+\index{readBMP@{readBMP}!image\_handler.cu@{image\_handler.cu}}
+\doxysubsubsection{\texorpdfstring{readBMP()}{readBMP()}}
+{\footnotesize\ttfamily void read\+BMP (\begin{DoxyParamCaption}\item[{FILE $\ast$}]{f,  }\item[{\mbox{\hyperlink{image__handler_8h_a2ecda34a1bdbf33933e5e61b64cb3fa4}{pixel\+\_\+t}} $\ast$}]{img,  }\item[{\mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$}]{img\+Prop }\end{DoxyParamCaption})}
+
+Legge un file BMP tenendo conto e conseguentemente scartando il padding all\textquotesingle{}interno di esso. Il formato BMP prevede l\textquotesingle{}inserimento di N byte a fine riga in modo tale che ogni indirizzo di inizio riga sia allineato mod 4 byte. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em f} & File BMP\\
+\hline
+{\em img} & Immagine\\
+\hline
+{\em img\+Prop} & Proprieta\textquotesingle{} dell\textquotesingle{}immagine\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{image__handler_8cu_a2bd2715f05c3213b13f1a1d666920261}\label{image__handler_8cu_a2bd2715f05c3213b13f1a1d666920261}} 
+\index{image\_handler.cu@{image\_handler.cu}!setBMP\_header@{setBMP\_header}}
+\index{setBMP\_header@{setBMP\_header}!image\_handler.cu@{image\_handler.cu}}
+\doxysubsubsection{\texorpdfstring{setBMP\_header()}{setBMP\_header()}}
+{\footnotesize\ttfamily void set\+BMP\+\_\+header (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$}]{img\+Prop,  }\item[{int}]{file\+Size,  }\item[{int}]{width }\end{DoxyParamCaption})}
+
+Setup dell\textquotesingle{}header di un file BMP per i seguenti parametri\+:
+\begin{DoxyItemize}
+\item dimensione totale del file
+\item altezza (in pixel) dell\textquotesingle{}immagine 
+\end{DoxyItemize}
+
+
+\begin{DoxyParams}{Parameters}
+{\em img\+Prop} & Proprieta\textquotesingle{} dell\textquotesingle{}immagine\\
+\hline
+{\em file\+Size} & Dimensione (in byte) del file\\
+\hline
+{\em width} & Larghezza dell\textquotesingle{}immagine \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{image__handler_8cu_a746610b603577ab914aaa735531566cc}\label{image__handler_8cu_a746610b603577ab914aaa735531566cc}} 
+\index{image\_handler.cu@{image\_handler.cu}!setupImgProp@{setupImgProp}}
+\index{setupImgProp@{setupImgProp}!image\_handler.cu@{image\_handler.cu}}
+\doxysubsubsection{\texorpdfstring{setupImgProp()}{setupImgProp()}}
+{\footnotesize\ttfamily void setup\+Img\+Prop (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$}]{img\+Prop,  }\item[{FILE $\ast$}]{f }\end{DoxyParamCaption})}
+
+Funzione host che permette di estrapolare le proprietà dell\textquotesingle{}immagine di input mediante la lettura del suo header 
+
+
+\begin{DoxyParams}{Parameters}
+{\em img\+Prop} & Output\\
+\hline
+{\em f} & File dell\textquotesingle{}immagine di input\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{image__handler_8cu_a8a49ee9a31f899e97cca69db5e271047}\label{image__handler_8cu_a8a49ee9a31f899e97cca69db5e271047}} 
+\index{image\_handler.cu@{image\_handler.cu}!toGrayScale@{toGrayScale}}
+\index{toGrayScale@{toGrayScale}!image\_handler.cu@{image\_handler.cu}}
+\doxysubsubsection{\texorpdfstring{toGrayScale()}{toGrayScale()}}
+{\footnotesize\ttfamily void to\+Gray\+Scale (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{image__handler_8h_a2ecda34a1bdbf33933e5e61b64cb3fa4}{pixel\+\_\+t}} $\ast$}]{img,  }\item[{\mbox{\hyperlink{image__handler_8h_a6239917a28b62ca5e3c3cd981f41944c}{energy\+Pixel\+\_\+t}} $\ast$}]{img\+Gray,  }\item[{\mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$}]{img\+Prop }\end{DoxyParamCaption})}
+
+Funzione host che richiama il kernel GPU per la colorazione in scala di grigi 
+
+
+\begin{DoxyParams}{Parameters}
+{\em img} & Immagine (input)\\
+\hline
+{\em img\+Gray} & Immagine in scala di grigi (output)\\
+\hline
+{\em img\+Prop} & Proprieta\textquotesingle{} dell\textquotesingle{}immagine\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{image__handler_8cu_a5ae51485a0b8d4d45650fc9b38d2f45f}\label{image__handler_8cu_a5ae51485a0b8d4d45650fc9b38d2f45f}} 
+\index{image\_handler.cu@{image\_handler.cu}!toGrayScale\_@{toGrayScale\_}}
+\index{toGrayScale\_@{toGrayScale\_}!image\_handler.cu@{image\_handler.cu}}
+\doxysubsubsection{\texorpdfstring{toGrayScale\_()}{toGrayScale\_()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+global\+\_\+\+\_\+ void to\+Gray\+Scale\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{image__handler_8h_a2ecda34a1bdbf33933e5e61b64cb3fa4}{pixel\+\_\+t}} $\ast$}]{img,  }\item[{\mbox{\hyperlink{image__handler_8h_a6239917a28b62ca5e3c3cd981f41944c}{energy\+Pixel\+\_\+t}} $\ast$}]{img\+Gray,  }\item[{int}]{image\+Size }\end{DoxyParamCaption})}
+
+Kernel GPU per applicare il calcolo del grayscale su ogni pixel 
+
+
+\begin{DoxyParams}{Parameters}
+{\em img} & Immagine (input)\\
+\hline
+{\em img\+Gray} & Immagine in scala di grigi (output)\\
+\hline
+{\em image\+Size} & Numero totale di pixel dell\textquotesingle{}immagine\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{image__handler_8cu_a9324470e5e348e6a8d5097a210293d05}\label{image__handler_8cu_a9324470e5e348e6a8d5097a210293d05}} 
+\index{image\_handler.cu@{image\_handler.cu}!writeBMP\_energy@{writeBMP\_energy}}
+\index{writeBMP\_energy@{writeBMP\_energy}!image\_handler.cu@{image\_handler.cu}}
+\doxysubsubsection{\texorpdfstring{writeBMP\_energy()}{writeBMP\_energy()}}
+{\footnotesize\ttfamily void write\+BMP\+\_\+energy (\begin{DoxyParamCaption}\item[{char $\ast$}]{p,  }\item[{\mbox{\hyperlink{image__handler_8h_a6239917a28b62ca5e3c3cd981f41944c}{energy\+Pixel\+\_\+t}} $\ast$}]{energy\+Img,  }\item[{\mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$}]{img\+Prop }\end{DoxyParamCaption})}
+
+Scrittura di un file BMP a partire da una immagine di tipo energy\+Pixel\+\_\+t. Funzione non utilizzata dall\textquotesingle{}algoritmo, ma necessaria ad ottenere le stampe intermedie 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & Path del file\\
+\hline
+{\em energy\+Img} & Immagine energy\+Pixel\+\_\+t da scrivere\\
+\hline
+{\em img\+Prop} & Prorpieta\textquotesingle{} dell\textquotesingle{}immagine\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{image__handler_8cu_a1e8f4613f134ad204a0db4f814f697e3}\label{image__handler_8cu_a1e8f4613f134ad204a0db4f814f697e3}} 
+\index{image\_handler.cu@{image\_handler.cu}!writeBMP\_grayscale@{writeBMP\_grayscale}}
+\index{writeBMP\_grayscale@{writeBMP\_grayscale}!image\_handler.cu@{image\_handler.cu}}
+\doxysubsubsection{\texorpdfstring{writeBMP\_grayscale()}{writeBMP\_grayscale()}}
+{\footnotesize\ttfamily void write\+BMP\+\_\+grayscale (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{image__handler_8h_a6239917a28b62ca5e3c3cd981f41944c}{energy\+Pixel\+\_\+t}} $\ast$}]{img\+Gray,  }\item[{\mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$}]{img\+Prop }\end{DoxyParamCaption})}
+
+Scrittura di un file BMP a partire da una immagine di tipo energy\+Pixel\+\_\+t (raffigurante l\textquotesingle{}immagine in scala di grigi). Funzione non utilizzata dall\textquotesingle{}algoritmo, ma necessaria ad ottenere le stampe intermedie 
+
+
+\begin{DoxyParams}{Parameters}
+{\em img\+Gray} & Immagine in scala di grigi\\
+\hline
+{\em img\+Prop} & Proprieta\textquotesingle{} dell\textquotesingle{}immagine\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{image__handler_8cu_af1a035335d9b3bb3b0cee65f7a546fe3}\label{image__handler_8cu_af1a035335d9b3bb3b0cee65f7a546fe3}} 
+\index{image\_handler.cu@{image\_handler.cu}!writeBMP\_minimumSeam@{writeBMP\_minimumSeam}}
+\index{writeBMP\_minimumSeam@{writeBMP\_minimumSeam}!image\_handler.cu@{image\_handler.cu}}
+\doxysubsubsection{\texorpdfstring{writeBMP\_minimumSeam()}{writeBMP\_minimumSeam()}}
+{\footnotesize\ttfamily void write\+BMP\+\_\+minimum\+Seam (\begin{DoxyParamCaption}\item[{char $\ast$}]{p,  }\item[{\mbox{\hyperlink{image__handler_8h_a2ecda34a1bdbf33933e5e61b64cb3fa4}{pixel\+\_\+t}} $\ast$}]{img,  }\item[{\mbox{\hyperlink{image__handler_8h_afa036bc04d925ac554f8714304c2131b}{seam\+\_\+t}} $\ast$}]{min\+Seam,  }\item[{\mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$}]{img\+Prop }\end{DoxyParamCaption})}
+
+Scrittura di un file BMP con colorazione del min\+Seam. Funzione non utilizzata dall\textquotesingle{}algoritmo, ma necessaria ad ottenere le stampe intermedie 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & \\
+\hline
+{\em img} & \\
+\hline
+{\em min\+Seam} & \\
+\hline
+{\em img\+Prop} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{image__handler_8cu_a962807b061549b46899d4e9af64b7e37}\label{image__handler_8cu_a962807b061549b46899d4e9af64b7e37}} 
+\index{image\_handler.cu@{image\_handler.cu}!writeBMP\_pixel@{writeBMP\_pixel}}
+\index{writeBMP\_pixel@{writeBMP\_pixel}!image\_handler.cu@{image\_handler.cu}}
+\doxysubsubsection{\texorpdfstring{writeBMP\_pixel()}{writeBMP\_pixel()}}
+{\footnotesize\ttfamily void write\+BMP\+\_\+pixel (\begin{DoxyParamCaption}\item[{char $\ast$}]{p,  }\item[{\mbox{\hyperlink{image__handler_8h_a2ecda34a1bdbf33933e5e61b64cb3fa4}{pixel\+\_\+t}} $\ast$}]{img,  }\item[{\mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$}]{ip }\end{DoxyParamCaption})}
+
+Scrittura di un file BMP, che tiene conto del numero di byte padding da aggiungere. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & Path del file\\
+\hline
+{\em img} & Immagine da scrivere\\
+\hline
+{\em ip} & Proprieta\textquotesingle{} dell\textquotesingle{}immagine\\
+\hline
+\end{DoxyParams}

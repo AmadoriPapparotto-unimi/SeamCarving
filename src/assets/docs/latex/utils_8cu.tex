@@ -1,0 +1,71 @@
+\hypertarget{utils_8cu}{}\doxysection{utils.\+cu File Reference}
+\label{utils_8cu}\index{utils.cu@{utils.cu}}
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include \char`\"{}cuda\+\_\+runtime.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}cuda\+\_\+runtime\+\_\+api.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}device\+\_\+launch\+\_\+parameters.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}image\+\_\+handler.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}utils.\+cuh\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}seam\+\_\+carving.\+h\char`\"{}}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\+\_\+\+\_\+global\+\_\+\+\_\+ void \mbox{\hyperlink{utils_8cu_a32fa945669a6ab3f94e435f91fc4e185}{min\+\_\+}} (const \mbox{\hyperlink{image__handler_8h_afa036bc04d925ac554f8714304c2131b}{seam\+\_\+t}} $\ast$energies\+Array, \mbox{\hyperlink{image__handler_8h_afa036bc04d925ac554f8714304c2131b}{seam\+\_\+t}} $\ast$output\+Array, \mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$img\+Prop, int n\+Threads)
+\item 
+\+\_\+\+\_\+global\+\_\+\+\_\+ void \mbox{\hyperlink{utils_8cu_a32b9c58ec26829357d27c2231246786b}{sum\+\_\+}} (\mbox{\hyperlink{image__handler_8h_a6239917a28b62ca5e3c3cd981f41944c}{energy\+Pixel\+\_\+t}} $\ast$energy\+Img, \mbox{\hyperlink{image__handler_8h_afa036bc04d925ac554f8714304c2131b}{seam\+\_\+t}} $\ast$seam, int $\ast$out, \mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$img\+Prop)
+\item 
+void \mbox{\hyperlink{utils_8cu_a153a75fcad148c75d885f60f68036af9}{report\+\_\+gpu\+\_\+mem}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{utils_8cu_a32fa945669a6ab3f94e435f91fc4e185}\label{utils_8cu_a32fa945669a6ab3f94e435f91fc4e185}} 
+\index{utils.cu@{utils.cu}!min\_@{min\_}}
+\index{min\_@{min\_}!utils.cu@{utils.cu}}
+\doxysubsubsection{\texorpdfstring{min\_()}{min\_()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+global\+\_\+\+\_\+ void min\+\_\+ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{image__handler_8h_afa036bc04d925ac554f8714304c2131b}{seam\+\_\+t}} $\ast$}]{energies\+Array,  }\item[{\mbox{\hyperlink{image__handler_8h_afa036bc04d925ac554f8714304c2131b}{seam\+\_\+t}} $\ast$}]{output\+Array,  }\item[{\mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$}]{img\+Prop,  }\item[{int}]{n\+Threads }\end{DoxyParamCaption})}
+
+Kernel GPU che permette di calcolare il seam minimo tra tutti quelli trovati. Sfrutta la shared memory e la parallel reduction, al fine di massimizzare le performance 
+
+
+\begin{DoxyParams}{Parameters}
+{\em energies\+Array} & I vari seam di cui trovare il minimo\\
+\hline
+{\em output\+Array} & L\textquotesingle{}output del blocco\\
+\hline
+{\em img\+Prop} & Le caratteristiche dell\textquotesingle{}immagine\\
+\hline
+{\em n\+Threads} & Il numero di thread nel blocco\\
+\hline
+\end{DoxyParams}
+
+
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\mbox{\Hypertarget{utils_8cu_a153a75fcad148c75d885f60f68036af9}\label{utils_8cu_a153a75fcad148c75d885f60f68036af9}} 
+\index{utils.cu@{utils.cu}!report\_gpu\_mem@{report\_gpu\_mem}}
+\index{report\_gpu\_mem@{report\_gpu\_mem}!utils.cu@{utils.cu}}
+\doxysubsubsection{\texorpdfstring{report\_gpu\_mem()}{report\_gpu\_mem()}}
+{\footnotesize\ttfamily void report\+\_\+gpu\+\_\+mem (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Funzione di supporto che permette di stampare la memoria GPU libera e occupata \mbox{\Hypertarget{utils_8cu_a32b9c58ec26829357d27c2231246786b}\label{utils_8cu_a32b9c58ec26829357d27c2231246786b}} 
+\index{utils.cu@{utils.cu}!sum\_@{sum\_}}
+\index{sum\_@{sum\_}!utils.cu@{utils.cu}}
+\doxysubsubsection{\texorpdfstring{sum\_()}{sum\_()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+global\+\_\+\+\_\+ void sum\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{image__handler_8h_a6239917a28b62ca5e3c3cd981f41944c}{energy\+Pixel\+\_\+t}} $\ast$}]{energy\+Img,  }\item[{\mbox{\hyperlink{image__handler_8h_afa036bc04d925ac554f8714304c2131b}{seam\+\_\+t}} $\ast$}]{seam,  }\item[{int $\ast$}]{out,  }\item[{\mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$}]{img\+Prop }\end{DoxyParamCaption})}
+
+Non utilizzata, tentativo di parallelizzare la somma delle energie di un seam. Pocco efficiente nonostante la shared 
+
+
+\begin{DoxyParams}{Parameters}
+{\em energy\+Img} & \\
+\hline
+{\em seam} & \\
+\hline
+{\em out} & \\
+\hline
+{\em img\+Prop} & \\
+\hline
+\end{DoxyParams}
