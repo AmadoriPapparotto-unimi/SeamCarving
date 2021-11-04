@@ -1,0 +1,92 @@
+.TH "seam_carving.h" 3 "Thu Nov 4 2021" "My Project" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+seam_carving.h
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'image_handler\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBenergyMap\fP (\fBenergyPixel_t\fP *energyImg, \fBimgProp_t\fP *imgProp)"
+.br
+.ti -1c
+.RI "void \fBfindSeams\fP (\fBenergyPixel_t\fP *energyImg, \fBpixel_t\fP *imgSrc, \fBimgProp_t\fP *imgProp, \fBseam_t\fP *minSeam, \fBseam_t\fP *seams, \fBseam_t\fP *minSeamsPerBlock)"
+.br
+.ti -1c
+.RI "void \fBremoveSeam\fP (\fBenergyPixel_t\fP *imgGray, \fBenergyPixel_t\fP *imgWithoutSeamGray, \fBseam_t\fP *idsToRemove, \fBimgProp_t\fP *imgProp)"
+.br
+.ti -1c
+.RI "void \fBremovePixelsFromSrc\fP (\fBpixel_t\fP *imgSrc, \fBpixel_t\fP *newImgSrc, \fBenergyPixel_t\fP *imgGray, \fBimgProp_t\fP *imgProp)"
+.br
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "void energyMap (\fBenergyPixel_t\fP * energyImg, \fBimgProp_t\fP * imgProp)"
+Funzione che chiama il kernel GPU che genera la mappa dell'energia 
+.PP
+\fBParameters\fP
+.RS 4
+\fIenergyImg\fP L'Immagine di input di cui si vuole calcolare l'energia
+.br
+\fIimgProp\fP Le caratteristiche dell'immagine
+.RE
+.PP
+
+.SS "void findSeams (\fBenergyPixel_t\fP * energyImg, \fBpixel_t\fP * imgSrc, \fBimgProp_t\fP * imgProp, \fBseam_t\fP * minSeam, \fBseam_t\fP * seams, \fBseam_t\fP * minSeamsPerBlock)"
+Funzione host che richiama i kernel computeSeams e min\&. Questa funzione permette di trovare il seam da rimuovere mediante la computazione di tutti i seams e della risoluzione di quello minimo\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIenergyImg\fP L'immagine di input di cui si vuole trovare il seam da rimuovere
+.br
+\fIimgSrc\fP L'immagine a colori di cui si vogliono colorare i seam
+.br
+\fIimgProp\fP Le caratteristiche dell'immagine di input
+.br
+\fIminSeam\fP Il seam con peso minore da rimuovere
+.br
+\fIseams\fP Lo spazio di memoria dedicato ai seams da trovare
+.br
+\fIminSeamsPerBlock\fP Lo spazio di memoria dedicato a tutti i minseam per ogni blocco del kernel
+.RE
+.PP
+
+.SS "void removePixelsFromSrc (\fBpixel_t\fP * imgSrc, \fBpixel_t\fP * newImgSrc, \fBenergyPixel_t\fP * imgGray, \fBimgProp_t\fP * imgProp)"
+Funzione host che lancia il kernel GPU utile alla rimozione di tutti i pixel non necessari nell'immagine a colori originale\&. Il risultato sarà un immagine ridotta del numero di pixel inseriti dall'utente\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIimgSrc\fP L'immagine originale di input
+.br
+\fIimgWithoutSeamSrc\fP L'immagine finale in output
+.br
+\fIimgGray\fP L'immagine in GS utilizzata per rimuovere i pixel
+.br
+\fIimgProp\fP Le caratteristiche dell'immagine finale\&.
+.RE
+.PP
+
+.SS "void removeSeam (\fBenergyPixel_t\fP * imgGray, \fBenergyPixel_t\fP * imgWithoutSeamGray, \fBseam_t\fP * idsToRemove, \fBimgProp_t\fP * imgProp)"
+Funzione host che lancia il kernel GPU che rimuove il seam dall'immagine\&. Verranno lanciati tanti thread quanti sono i pixel dell'immagine finale\&. Infine aggiorno l'immagine in GS 
+.PP
+\fBParameters\fP
+.RS 4
+\fIimgGray\fP 
+.br
+\fIimgWithoutSeamGray\fP 
+.br
+\fIidsToRemove\fP 
+.br
+\fIimgProp\fP 
+.RE
+.PP
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for My Project from the source code\&.

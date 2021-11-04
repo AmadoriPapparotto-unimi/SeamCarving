@@ -1,0 +1,57 @@
+\hypertarget{image__handler_8h_source}{}\doxysection{image\+\_\+handler.\+h}
+\mbox{\hyperlink{image__handler_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#ifndef IMAGEHANDLER\_H\_INCLUDED}}
+\DoxyCodeLine{2 \textcolor{preprocessor}{\#define IMAGEHANDLER\_H\_INCLUDED}}
+\DoxyCodeLine{3 \textcolor{preprocessor}{\#include <stdio.h>}}
+\DoxyCodeLine{4 \textcolor{preprocessor}{\#include <stdlib.h>}}
+\DoxyCodeLine{5 }
+\DoxyCodeLine{6 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{struct_img_prop_struct}{ImgPropStruct}} \{}
+\DoxyCodeLine{11 }
+\DoxyCodeLine{12     \textcolor{keywordtype}{int} \mbox{\hyperlink{struct_img_prop_struct_a7f20866b4296c5b34d214ff1ecdbe508}{width}}; \textcolor{comment}{//larghezza dell'immagine}}
+\DoxyCodeLine{13     \textcolor{keywordtype}{int} \mbox{\hyperlink{struct_img_prop_struct_a92a42a4ae2faeae8100bf4337aef42eb}{height}}; \textcolor{comment}{//altezza dell'immagine}}
+\DoxyCodeLine{14     \textcolor{keywordtype}{int} \mbox{\hyperlink{struct_img_prop_struct_ad21f3c3337df585453ccb8dd8eaf78f2}{imageSize}}; \textcolor{comment}{//grandezza in byte dell'immagine}}
+\DoxyCodeLine{15     \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} \mbox{\hyperlink{struct_img_prop_struct_a9ade0edaa5ec15b0da03383766a6d5d8}{headerInfo}}[54]; \textcolor{comment}{//header BMP dell'immagine}}
+\DoxyCodeLine{16 }
+\DoxyCodeLine{17 \} \mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{imgProp\_t}};}
+\DoxyCodeLine{18 }
+\DoxyCodeLine{19 \textcolor{keyword}{typedef} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} \mbox{\hyperlink{image__handler_8h_a5661cb3c75abb43619cf0f82ecf972c2}{pel\_t}};}
+\DoxyCodeLine{20 }
+\DoxyCodeLine{21 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{struct_pixel_struct}{PixelStruct}} \{}
+\DoxyCodeLine{25 }
+\DoxyCodeLine{26     \mbox{\hyperlink{image__handler_8h_a5661cb3c75abb43619cf0f82ecf972c2}{pel\_t}} \mbox{\hyperlink{struct_pixel_struct_aae72b39bd5c943558a01fb173ec50e72}{B}};}
+\DoxyCodeLine{27     \mbox{\hyperlink{image__handler_8h_a5661cb3c75abb43619cf0f82ecf972c2}{pel\_t}} \mbox{\hyperlink{struct_pixel_struct_a561919bb6b9701c9df78d6fd6714beb8}{G}};}
+\DoxyCodeLine{28     \mbox{\hyperlink{image__handler_8h_a5661cb3c75abb43619cf0f82ecf972c2}{pel\_t}} \mbox{\hyperlink{struct_pixel_struct_af1633764231c857fc440a244ffebf61d}{R}};}
+\DoxyCodeLine{29 }
+\DoxyCodeLine{30 \} \mbox{\hyperlink{image__handler_8h_a2ecda34a1bdbf33933e5e61b64cb3fa4}{pixel\_t}};}
+\DoxyCodeLine{31 }
+\DoxyCodeLine{32 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{struct_energy_pixel_struct}{EnergyPixelStruct}} \{}
+\DoxyCodeLine{38     }
+\DoxyCodeLine{39     \textcolor{keywordtype}{long} \mbox{\hyperlink{struct_energy_pixel_struct_a25e1a414f05d278ee815bab1401b1a33}{id\_pixel}}; \textcolor{comment}{//idOriginale dell'immagine iniziale}}
+\DoxyCodeLine{40     \textcolor{keywordtype}{int} \mbox{\hyperlink{struct_energy_pixel_struct_aea9c6ad4228487bc8bd8a0c956322ad3}{energy}}; \textcolor{comment}{//energia del pixel}}
+\DoxyCodeLine{41     \mbox{\hyperlink{image__handler_8h_a5661cb3c75abb43619cf0f82ecf972c2}{pel\_t}} \mbox{\hyperlink{struct_energy_pixel_struct_a0ce9553b74fc40a58e3f4de971270955}{color}}; \textcolor{comment}{//il colore in scala di grigi}}
+\DoxyCodeLine{42     \textcolor{keywordtype}{int} \mbox{\hyperlink{struct_energy_pixel_struct_a4d17877328223ade03251d5c10651cb6}{succ\_min}};}
+\DoxyCodeLine{43 \} \mbox{\hyperlink{image__handler_8h_a6239917a28b62ca5e3c3cd981f41944c}{energyPixel\_t}};}
+\DoxyCodeLine{44 }
+\DoxyCodeLine{45 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{structseam_struct}{seamStruct}} \{}
+\DoxyCodeLine{46 }
+\DoxyCodeLine{52 }
+\DoxyCodeLine{53     \textcolor{keywordtype}{int} \mbox{\hyperlink{structseam_struct_abd8d67664d02e501152901e881109918}{total\_energy}}; \textcolor{comment}{//enerigia totale del seam}}
+\DoxyCodeLine{54     \textcolor{keywordtype}{int}* \mbox{\hyperlink{structseam_struct_a7f6aa5374970839c4ac2d7faeb92af1c}{ids}}; \textcolor{comment}{// id del seam, che corrisponde al pixel di partenza}}
+\DoxyCodeLine{55 }
+\DoxyCodeLine{56 \} \mbox{\hyperlink{image__handler_8h_afa036bc04d925ac554f8714304c2131b}{seam\_t}};}
+\DoxyCodeLine{57 }
+\DoxyCodeLine{58 \textcolor{keywordtype}{void} \mbox{\hyperlink{image__handler_8h_a5e2e3b7222b00bb25d5d015165cca7e9}{readBMP}}(FILE* f, \mbox{\hyperlink{struct_pixel_struct}{pixel\_t}}* img, \mbox{\hyperlink{struct_img_prop_struct}{imgProp\_t}}* imgProp);}
+\DoxyCodeLine{59 \textcolor{keywordtype}{void} \mbox{\hyperlink{image__handler_8h_a6f5cd91597c669969324094d86a3c82d}{setupImgProp}}(\mbox{\hyperlink{struct_img_prop_struct}{imgProp\_t}}* ip, FILE* f);}
+\DoxyCodeLine{60 \textcolor{keywordtype}{void} \mbox{\hyperlink{image__handler_8h_a8a49ee9a31f899e97cca69db5e271047}{toGrayScale}}(\mbox{\hyperlink{struct_pixel_struct}{pixel\_t}}* img, \mbox{\hyperlink{struct_energy_pixel_struct}{energyPixel\_t}}* imgGray, \mbox{\hyperlink{struct_img_prop_struct}{imgProp\_t}}* imgProp);}
+\DoxyCodeLine{61 }
+\DoxyCodeLine{62 \textcolor{keywordtype}{void} \mbox{\hyperlink{image__handler_8h_a2bd2715f05c3213b13f1a1d666920261}{setBMP\_header}}(\mbox{\hyperlink{struct_img_prop_struct}{imgProp\_t}}* imgProp, \textcolor{keywordtype}{int} fileSize, \textcolor{keywordtype}{int} width);}
+\DoxyCodeLine{63 }
+\DoxyCodeLine{64 \textcolor{keywordtype}{void} \mbox{\hyperlink{image__handler_8h_af1a035335d9b3bb3b0cee65f7a546fe3}{writeBMP\_minimumSeam}}(\textcolor{keywordtype}{char}* p, \mbox{\hyperlink{struct_pixel_struct}{pixel\_t}}* img, \mbox{\hyperlink{structseam_struct}{seam\_t}}* minSeam, \mbox{\hyperlink{struct_img_prop_struct}{imgProp\_t}}* imgProp);}
+\DoxyCodeLine{65 \textcolor{keywordtype}{void} \mbox{\hyperlink{image__handler_8h_a962807b061549b46899d4e9af64b7e37}{writeBMP\_pixel}}(\textcolor{keywordtype}{char}* p, \mbox{\hyperlink{struct_pixel_struct}{pixel\_t}}* img, \mbox{\hyperlink{struct_img_prop_struct}{imgProp\_t}}* ip);}
+\DoxyCodeLine{66 \textcolor{keywordtype}{void} \mbox{\hyperlink{image__handler_8h_a37b1c45a5573b980f70967cf662e2478}{writeBMP\_energy}}(\textcolor{keywordtype}{char}* p, \mbox{\hyperlink{struct_energy_pixel_struct}{energyPixel\_t}}* energyImg, \mbox{\hyperlink{struct_img_prop_struct}{imgProp\_t}}* ip);}
+\DoxyCodeLine{67 \textcolor{keywordtype}{void} \mbox{\hyperlink{image__handler_8h_a1e8f4613f134ad204a0db4f814f697e3}{writeBMP\_grayscale}}(\mbox{\hyperlink{struct_energy_pixel_struct}{energyPixel\_t}}* imgGray, \mbox{\hyperlink{struct_img_prop_struct}{imgProp\_t}}* imgProp);}
+\DoxyCodeLine{68 }
+\DoxyCodeLine{69 \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

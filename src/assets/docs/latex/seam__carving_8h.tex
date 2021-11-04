@@ -1,0 +1,93 @@
+\hypertarget{seam__carving_8h}{}\doxysection{seam\+\_\+carving.\+h File Reference}
+\label{seam__carving_8h}\index{seam\_carving.h@{seam\_carving.h}}
+{\ttfamily \#include \char`\"{}image\+\_\+handler.\+h\char`\"{}}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{seam__carving_8h_a232c6e86e018436ef60f90f8a0dbd01e}{energy\+Map}} (\mbox{\hyperlink{image__handler_8h_a6239917a28b62ca5e3c3cd981f41944c}{energy\+Pixel\+\_\+t}} $\ast$energy\+Img, \mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$img\+Prop)
+\item 
+void \mbox{\hyperlink{seam__carving_8h_a5ec19204ba4266b4f2104383532daf4a}{find\+Seams}} (\mbox{\hyperlink{image__handler_8h_a6239917a28b62ca5e3c3cd981f41944c}{energy\+Pixel\+\_\+t}} $\ast$energy\+Img, \mbox{\hyperlink{image__handler_8h_a2ecda34a1bdbf33933e5e61b64cb3fa4}{pixel\+\_\+t}} $\ast$img\+Src, \mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$img\+Prop, \mbox{\hyperlink{image__handler_8h_afa036bc04d925ac554f8714304c2131b}{seam\+\_\+t}} $\ast$min\+Seam, \mbox{\hyperlink{image__handler_8h_afa036bc04d925ac554f8714304c2131b}{seam\+\_\+t}} $\ast$seams, \mbox{\hyperlink{image__handler_8h_afa036bc04d925ac554f8714304c2131b}{seam\+\_\+t}} $\ast$min\+Seams\+Per\+Block)
+\item 
+void \mbox{\hyperlink{seam__carving_8h_afc7c647fefb6d13ff0623f2fe8fbba3c}{remove\+Seam}} (\mbox{\hyperlink{image__handler_8h_a6239917a28b62ca5e3c3cd981f41944c}{energy\+Pixel\+\_\+t}} $\ast$img\+Gray, \mbox{\hyperlink{image__handler_8h_a6239917a28b62ca5e3c3cd981f41944c}{energy\+Pixel\+\_\+t}} $\ast$img\+Without\+Seam\+Gray, \mbox{\hyperlink{image__handler_8h_afa036bc04d925ac554f8714304c2131b}{seam\+\_\+t}} $\ast$ids\+To\+Remove, \mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$img\+Prop)
+\item 
+void \mbox{\hyperlink{seam__carving_8h_aae132adc8b12a518d6399e3ac9c5ed5d}{remove\+Pixels\+From\+Src}} (\mbox{\hyperlink{image__handler_8h_a2ecda34a1bdbf33933e5e61b64cb3fa4}{pixel\+\_\+t}} $\ast$img\+Src, \mbox{\hyperlink{image__handler_8h_a2ecda34a1bdbf33933e5e61b64cb3fa4}{pixel\+\_\+t}} $\ast$new\+Img\+Src, \mbox{\hyperlink{image__handler_8h_a6239917a28b62ca5e3c3cd981f41944c}{energy\+Pixel\+\_\+t}} $\ast$img\+Gray, \mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$img\+Prop)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{seam__carving_8h_a232c6e86e018436ef60f90f8a0dbd01e}\label{seam__carving_8h_a232c6e86e018436ef60f90f8a0dbd01e}} 
+\index{seam\_carving.h@{seam\_carving.h}!energyMap@{energyMap}}
+\index{energyMap@{energyMap}!seam\_carving.h@{seam\_carving.h}}
+\doxysubsubsection{\texorpdfstring{energyMap()}{energyMap()}}
+{\footnotesize\ttfamily void energy\+Map (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{image__handler_8h_a6239917a28b62ca5e3c3cd981f41944c}{energy\+Pixel\+\_\+t}} $\ast$}]{energy\+Img,  }\item[{\mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$}]{img\+Prop }\end{DoxyParamCaption})}
+
+Funzione che chiama il kernel GPU che genera la mappa dell\textquotesingle{}energia 
+
+
+\begin{DoxyParams}{Parameters}
+{\em energy\+Img} & L\textquotesingle{}Immagine di input di cui si vuole calcolare l\textquotesingle{}energia\\
+\hline
+{\em img\+Prop} & Le caratteristiche dell\textquotesingle{}immagine\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{seam__carving_8h_a5ec19204ba4266b4f2104383532daf4a}\label{seam__carving_8h_a5ec19204ba4266b4f2104383532daf4a}} 
+\index{seam\_carving.h@{seam\_carving.h}!findSeams@{findSeams}}
+\index{findSeams@{findSeams}!seam\_carving.h@{seam\_carving.h}}
+\doxysubsubsection{\texorpdfstring{findSeams()}{findSeams()}}
+{\footnotesize\ttfamily void find\+Seams (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{image__handler_8h_a6239917a28b62ca5e3c3cd981f41944c}{energy\+Pixel\+\_\+t}} $\ast$}]{energy\+Img,  }\item[{\mbox{\hyperlink{image__handler_8h_a2ecda34a1bdbf33933e5e61b64cb3fa4}{pixel\+\_\+t}} $\ast$}]{img\+Src,  }\item[{\mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$}]{img\+Prop,  }\item[{\mbox{\hyperlink{image__handler_8h_afa036bc04d925ac554f8714304c2131b}{seam\+\_\+t}} $\ast$}]{min\+Seam,  }\item[{\mbox{\hyperlink{image__handler_8h_afa036bc04d925ac554f8714304c2131b}{seam\+\_\+t}} $\ast$}]{seams,  }\item[{\mbox{\hyperlink{image__handler_8h_afa036bc04d925ac554f8714304c2131b}{seam\+\_\+t}} $\ast$}]{min\+Seams\+Per\+Block }\end{DoxyParamCaption})}
+
+Funzione host che richiama i kernel compute\+Seams e min. Questa funzione permette di trovare il seam da rimuovere mediante la computazione di tutti i seams e della risoluzione di quello minimo. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em energy\+Img} & L\textquotesingle{}immagine di input di cui si vuole trovare il seam da rimuovere\\
+\hline
+{\em img\+Src} & L\textquotesingle{}immagine a colori di cui si vogliono colorare i seam\\
+\hline
+{\em img\+Prop} & Le caratteristiche dell\textquotesingle{}immagine di input\\
+\hline
+{\em min\+Seam} & Il seam con peso minore da rimuovere\\
+\hline
+{\em seams} & Lo spazio di memoria dedicato ai seams da trovare\\
+\hline
+{\em min\+Seams\+Per\+Block} & Lo spazio di memoria dedicato a tutti i minseam per ogni blocco del kernel\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{seam__carving_8h_aae132adc8b12a518d6399e3ac9c5ed5d}\label{seam__carving_8h_aae132adc8b12a518d6399e3ac9c5ed5d}} 
+\index{seam\_carving.h@{seam\_carving.h}!removePixelsFromSrc@{removePixelsFromSrc}}
+\index{removePixelsFromSrc@{removePixelsFromSrc}!seam\_carving.h@{seam\_carving.h}}
+\doxysubsubsection{\texorpdfstring{removePixelsFromSrc()}{removePixelsFromSrc()}}
+{\footnotesize\ttfamily void remove\+Pixels\+From\+Src (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{image__handler_8h_a2ecda34a1bdbf33933e5e61b64cb3fa4}{pixel\+\_\+t}} $\ast$}]{img\+Src,  }\item[{\mbox{\hyperlink{image__handler_8h_a2ecda34a1bdbf33933e5e61b64cb3fa4}{pixel\+\_\+t}} $\ast$}]{new\+Img\+Src,  }\item[{\mbox{\hyperlink{image__handler_8h_a6239917a28b62ca5e3c3cd981f41944c}{energy\+Pixel\+\_\+t}} $\ast$}]{img\+Gray,  }\item[{\mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$}]{img\+Prop }\end{DoxyParamCaption})}
+
+Funzione host che lancia il kernel GPU utile alla rimozione di tutti i pixel non necessari nell\textquotesingle{}immagine a colori originale. Il risultato sarà un immagine ridotta del numero di pixel inseriti dall\textquotesingle{}utente. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em img\+Src} & L\textquotesingle{}immagine originale di input\\
+\hline
+{\em img\+Without\+Seam\+Src} & L\textquotesingle{}immagine finale in output\\
+\hline
+{\em img\+Gray} & L\textquotesingle{}immagine in GS utilizzata per rimuovere i pixel\\
+\hline
+{\em img\+Prop} & Le caratteristiche dell\textquotesingle{}immagine finale.\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{seam__carving_8h_afc7c647fefb6d13ff0623f2fe8fbba3c}\label{seam__carving_8h_afc7c647fefb6d13ff0623f2fe8fbba3c}} 
+\index{seam\_carving.h@{seam\_carving.h}!removeSeam@{removeSeam}}
+\index{removeSeam@{removeSeam}!seam\_carving.h@{seam\_carving.h}}
+\doxysubsubsection{\texorpdfstring{removeSeam()}{removeSeam()}}
+{\footnotesize\ttfamily void remove\+Seam (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{image__handler_8h_a6239917a28b62ca5e3c3cd981f41944c}{energy\+Pixel\+\_\+t}} $\ast$}]{img\+Gray,  }\item[{\mbox{\hyperlink{image__handler_8h_a6239917a28b62ca5e3c3cd981f41944c}{energy\+Pixel\+\_\+t}} $\ast$}]{img\+Without\+Seam\+Gray,  }\item[{\mbox{\hyperlink{image__handler_8h_afa036bc04d925ac554f8714304c2131b}{seam\+\_\+t}} $\ast$}]{ids\+To\+Remove,  }\item[{\mbox{\hyperlink{image__handler_8h_a3173789b5a5a8673b3025bd014732715}{img\+Prop\+\_\+t}} $\ast$}]{img\+Prop }\end{DoxyParamCaption})}
+
+Funzione host che lancia il kernel GPU che rimuove il seam dall\textquotesingle{}immagine. Verranno lanciati tanti thread quanti sono i pixel dell\textquotesingle{}immagine finale. Infine aggiorno l\textquotesingle{}immagine in GS 
+
+
+\begin{DoxyParams}{Parameters}
+{\em img\+Gray} & \\
+\hline
+{\em img\+Without\+Seam\+Gray} & \\
+\hline
+{\em ids\+To\+Remove} & \\
+\hline
+{\em img\+Prop} & \\
+\hline
+\end{DoxyParams}

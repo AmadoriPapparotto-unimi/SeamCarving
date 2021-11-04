@@ -1,0 +1,200 @@
+.TH "image_handler.h" 3 "Thu Nov 4 2021" "My Project" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+image_handler.h
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <stdio\&.h>\fP
+.br
+\fC#include <stdlib\&.h>\fP
+.br
+
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "struct \fBImgPropStruct\fP"
+.br
+.ti -1c
+.RI "struct \fBPixelStruct\fP"
+.br
+.ti -1c
+.RI "struct \fBEnergyPixelStruct\fP"
+.br
+.ti -1c
+.RI "struct \fBseamStruct\fP"
+.br
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "typedef struct \fBImgPropStruct\fP \fBimgProp_t\fP"
+.br
+.ti -1c
+.RI "typedef unsigned char \fBpel_t\fP"
+.br
+.ti -1c
+.RI "typedef struct \fBPixelStruct\fP \fBpixel_t\fP"
+.br
+.ti -1c
+.RI "typedef struct \fBEnergyPixelStruct\fP \fBenergyPixel_t\fP"
+.br
+.ti -1c
+.RI "typedef struct \fBseamStruct\fP \fBseam_t\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBreadBMP\fP (FILE *f, \fBpixel_t\fP *img, \fBimgProp_t\fP *imgProp)"
+.br
+.ti -1c
+.RI "void \fBsetupImgProp\fP (\fBimgProp_t\fP *ip, FILE *f)"
+.br
+.ti -1c
+.RI "void \fBtoGrayScale\fP (\fBpixel_t\fP *img, \fBenergyPixel_t\fP *imgGray, \fBimgProp_t\fP *imgProp)"
+.br
+.ti -1c
+.RI "void \fBsetBMP_header\fP (\fBimgProp_t\fP *imgProp, int fileSize, int width)"
+.br
+.ti -1c
+.RI "void \fBwriteBMP_minimumSeam\fP (char *p, \fBpixel_t\fP *img, \fBseam_t\fP *minSeam, \fBimgProp_t\fP *imgProp)"
+.br
+.ti -1c
+.RI "void \fBwriteBMP_pixel\fP (char *p, \fBpixel_t\fP *img, \fBimgProp_t\fP *ip)"
+.br
+.ti -1c
+.RI "void \fBwriteBMP_energy\fP (char *p, \fBenergyPixel_t\fP *energyImg, \fBimgProp_t\fP *ip)"
+.br
+.ti -1c
+.RI "void \fBwriteBMP_grayscale\fP (\fBenergyPixel_t\fP *imgGray, \fBimgProp_t\fP *imgProp)"
+.br
+.in -1c
+.SH "Typedef Documentation"
+.PP 
+.SS "typedef struct \fBEnergyPixelStruct\fP \fBenergyPixel_t\fP"
+
+.SS "typedef struct \fBImgPropStruct\fP \fBimgProp_t\fP"
+
+.SS "typedef unsigned char \fBpel_t\fP"
+
+.SS "typedef struct \fBPixelStruct\fP \fBpixel_t\fP"
+
+.SS "typedef struct \fBseamStruct\fP \fBseam_t\fP"
+
+.SH "Function Documentation"
+.PP 
+.SS "void readBMP (FILE * f, \fBpixel_t\fP * img, \fBimgProp_t\fP * imgProp)"
+Legge un file BMP tenendo conto e conseguentemente scartando il padding all'interno di esso\&. Il formato BMP prevede l'inserimento di N byte a fine riga in modo tale che ogni indirizzo di inizio riga sia allineato mod 4 byte\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIf\fP File BMP
+.br
+\fIimg\fP Immagine
+.br
+\fIimgProp\fP Proprieta' dell'immagine
+.RE
+.PP
+
+.SS "void setBMP_header (\fBimgProp_t\fP * imgProp, int fileSize, int width)"
+Setup dell'header di un file BMP per i seguenti parametri:
+.IP "\(bu" 2
+dimensione totale del file
+.IP "\(bu" 2
+altezza (in pixel) dell'immagine 
+.PP
+.PP
+\fBParameters\fP
+.RS 4
+\fIimgProp\fP Proprieta' dell'immagine
+.br
+\fIfileSize\fP Dimensione (in byte) del file
+.br
+\fIwidth\fP Larghezza dell'immagine 
+.RE
+.PP
+
+.SS "void setupImgProp (\fBimgProp_t\fP * ip, FILE * f)"
+Funzione host che permette di estrapolare le proprietà dell'immagine di input mediante la lettura del suo header 
+.PP
+\fBParameters\fP
+.RS 4
+\fIimgProp\fP Output
+.br
+\fIf\fP File dell'immagine di input
+.RE
+.PP
+
+.SS "void toGrayScale (\fBpixel_t\fP * img, \fBenergyPixel_t\fP * imgGray, \fBimgProp_t\fP * imgProp)"
+Funzione host che richiama il kernel GPU per la colorazione in scala di grigi 
+.PP
+\fBParameters\fP
+.RS 4
+\fIimg\fP Immagine (input)
+.br
+\fIimgGray\fP Immagine in scala di grigi (output)
+.br
+\fIimgProp\fP Proprieta' dell'immagine
+.RE
+.PP
+
+.SS "void writeBMP_energy (char * p, \fBenergyPixel_t\fP * energyImg, \fBimgProp_t\fP * ip)"
+Scrittura di un file BMP a partire da una immagine di tipo energyPixel_t\&. Funzione non utilizzata dall'algoritmo, ma necessaria ad ottenere le stampe intermedie 
+.PP
+\fBParameters\fP
+.RS 4
+\fIp\fP Path del file
+.br
+\fIenergyImg\fP Immagine energyPixel_t da scrivere
+.br
+\fIimgProp\fP Prorpieta' dell'immagine
+.RE
+.PP
+
+.SS "void writeBMP_grayscale (\fBenergyPixel_t\fP * imgGray, \fBimgProp_t\fP * imgProp)"
+Scrittura di un file BMP a partire da una immagine di tipo energyPixel_t (raffigurante l'immagine in scala di grigi)\&. Funzione non utilizzata dall'algoritmo, ma necessaria ad ottenere le stampe intermedie 
+.PP
+\fBParameters\fP
+.RS 4
+\fIimgGray\fP Immagine in scala di grigi
+.br
+\fIimgProp\fP Proprieta' dell'immagine
+.RE
+.PP
+
+.SS "void writeBMP_minimumSeam (char * p, \fBpixel_t\fP * img, \fBseam_t\fP * minSeam, \fBimgProp_t\fP * imgProp)"
+Scrittura di un file BMP con colorazione del minSeam\&. Funzione non utilizzata dall'algoritmo, ma necessaria ad ottenere le stampe intermedie 
+.PP
+\fBParameters\fP
+.RS 4
+\fIp\fP 
+.br
+\fIimg\fP 
+.br
+\fIminSeam\fP 
+.br
+\fIimgProp\fP 
+.RE
+.PP
+
+.SS "void writeBMP_pixel (char * p, \fBpixel_t\fP * img, \fBimgProp_t\fP * ip)"
+Scrittura di un file BMP, che tiene conto del numero di byte padding da aggiungere\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIp\fP Path del file
+.br
+\fIimg\fP Immagine da scrivere
+.br
+\fIip\fP Proprieta' dell'immagine
+.RE
+.PP
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for My Project from the source code\&.

@@ -1,0 +1,309 @@
+.TH "seam_carving.cu" 3 "Thu Nov 4 2021" "My Project" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+seam_carving.cu
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'image_handler\&.h'\fP
+.br
+\fC#include 'seam_carving\&.h'\fP
+.br
+\fC#include 'math\&.h'\fP
+.br
+\fC#include 'utils\&.cuh'\fP
+.br
+\fC#include <stdio\&.h>\fP
+.br
+\fC#include <stdlib\&.h>\fP
+.br
+\fC#include <iostream>\fP
+.br
+\fC#include 'cuda_runtime\&.h'\fP
+.br
+\fC#include 'cuda_runtime_api\&.h'\fP
+.br
+\fC#include 'device_launch_parameters\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "__device__ char \fBgetPosition\fP (int id, \fBimgProp_t\fP *imgProp)"
+.br
+.ti -1c
+.RI "__device__ void \fBcalculateEnergy\fP (\fBenergyPixel_t\fP *energyPixel, \fBenergyPixel_t\fP *pixel, int id, \fBimgProp_t\fP *imgProp)"
+.br
+.ti -1c
+.RI "__device__ int \fBmin\fP (int id1, int id2, \fBenergyPixel_t\fP *energyImg)"
+.br
+.ti -1c
+.RI "__global__ void \fBenergyMap_\fP (\fBenergyPixel_t\fP *energyImg, \fBimgProp_t\fP *imgProp)"
+.br
+.ti -1c
+.RI "__global__ void \fBcomputeMinsPerPixel_\fP (\fBenergyPixel_t\fP *energyImg, \fBimgProp_t\fP *imgProp)"
+.br
+.ti -1c
+.RI "__global__ void \fBcomputeSeams_\fP (\fBenergyPixel_t\fP *energyImg, \fBpixel_t\fP *imgSrc, \fBseam_t\fP *seams, \fBimgProp_t\fP *imgProp, bool colorSeams=false)"
+.br
+.ti -1c
+.RI "__global__ void \fBcomputeSeams2_\fP (\fBenergyPixel_t\fP *energyImg, \fBpixel_t\fP *imgSrc, \fBseam_t\fP *seams, \fBimgProp_t\fP *imgProp, bool colorSeams=false)"
+.br
+.ti -1c
+.RI "__global__ void \fBremoveSeam_\fP (\fBenergyPixel_t\fP *energyImg, int *idsToRemove, \fBimgProp_t\fP *imgProp, \fBenergyPixel_t\fP *newImageGray)"
+.br
+.ti -1c
+.RI "__global__ void \fBupdateImageGray_\fP (\fBenergyPixel_t\fP *imgGray, \fBenergyPixel_t\fP *imgWithoutSeamGray, \fBimgProp_t\fP *imgProp)"
+.br
+.ti -1c
+.RI "__global__ void \fBupdateImageColored_\fP (\fBpixel_t\fP *imgSrc, \fBpixel_t\fP *imgWithoutSeamSrc, \fBimgProp_t\fP *imgProp)"
+.br
+.ti -1c
+.RI "__global__ void \fBremovePixelsFromSrc_\fP (\fBpixel_t\fP *imgSrc, \fBpixel_t\fP *newImgSrc, \fBenergyPixel_t\fP *imgGray, \fBimgProp_t\fP *imgProp)"
+.br
+.ti -1c
+.RI "__global__ void \fBss\fP (\fBenergyPixel_t\fP *energyImg, \fBseam_t\fP *seams, int *res, \fBimgProp_t\fP *imgProp)"
+.br
+.ti -1c
+.RI "void \fBenergyMap\fP (\fBenergyPixel_t\fP *energyImg, \fBimgProp_t\fP *imgProp)"
+.br
+.ti -1c
+.RI "void \fBfindSeams\fP (\fBenergyPixel_t\fP *energyImg, \fBpixel_t\fP *imgSrc, \fBimgProp_t\fP *imgProp, \fBseam_t\fP *minSeam, \fBseam_t\fP *seams, \fBseam_t\fP *minSeamsPerBlock)"
+.br
+.ti -1c
+.RI "void \fBremoveSeam\fP (\fBenergyPixel_t\fP *imgGray, \fBenergyPixel_t\fP *imgWithoutSeamGray, \fBseam_t\fP *idsToRemove, \fBimgProp_t\fP *imgProp)"
+.br
+.ti -1c
+.RI "void \fBremovePixelsFromSrc\fP (\fBpixel_t\fP *imgSrc, \fBpixel_t\fP *imgWithoutSeamSrc, \fBenergyPixel_t\fP *imgGray, \fBimgProp_t\fP *imgProp)"
+.br
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "__device__ void calculateEnergy (\fBenergyPixel_t\fP * energyPixel, \fBenergyPixel_t\fP * pixel, int id, \fBimgProp_t\fP * imgProp)"
+Funzione device che calcola l'energia di un pixel\&. Con energia si intende l'importanza di quel pixel nell'immagine rispetto ai suoi vicini\&. energy = sqrt(dy^2 + dx^2) dove dy = pixlexSopra\&.color - pixelSotto\&.color dx = pixlexDestra\&.color - pixelSinistra\&.color Prestando attenzione ai casi di bordo\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIenergyPixel\fP L'immagine di output con l'energia calcolata
+.br
+\fIpixel\fP Il pixel di cui si vuole trovare l'energia 
+.br
+\fIid\fP L'id del pixel
+.br
+\fIimgProp\fP Le caratteristiche dell'immagine
+.RE
+.PP
+
+.SS "__global__ void computeMinsPerPixel_ (\fBenergyPixel_t\fP * energyImg, \fBimgProp_t\fP * imgProp)"
+Kernel device che per ogni pixel indica quale sia il minimo tra i suoi possibili successori, prestanso attenzione alla sua posizione all'interno dell'immagine\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIenergyImg\fP L'immagine di input
+.br
+\fIimgProp\fP Le caratteristiche dell'immagine
+.RE
+.PP
+
+.SS "__global__ void computeSeams2_ (\fBenergyPixel_t\fP * energyImg, \fBpixel_t\fP * imgSrc, \fBseam_t\fP * seams, \fBimgProp_t\fP * imgProp, bool colorSeams = \fCfalse\fP)"
+Kernel device che calcola un path dal bordo inferiore a quello superiore\&. Vengono lanciati N thread pari al numero di pixel di lunghezza 
+.PP
+\fBParameters\fP
+.RS 4
+\fIenergyImg\fP L'immagine di input di cui si vogliono trovare i seams
+.br
+\fIimgSrc\fP L'immagine originaria di cui si vuole, eventualmente, colorare i seam trovati\&.
+.br
+\fIseams\fP Il seam di output trovato
+.br
+\fIimgProp\fP Le caratteristiche dell'immagine trovata
+.br
+\fIcolorSeams\fP Se colorare o meno il seam
+.RE
+.PP
+
+.SS "__global__ void computeSeams_ (\fBenergyPixel_t\fP * energyImg, \fBpixel_t\fP * imgSrc, \fBseam_t\fP * seams, \fBimgProp_t\fP * imgProp, bool colorSeams = \fCfalse\fP)"
+Kernel device che calcola un path dal bordo inferiore a quello superiore\&. Vengono lanciati N thread pari al numero di pixel di lunghezza\&. Questa implementazione si rifà ad una prima versione dell'algoritmo\&. Quella più ottimizzata è computeSeams2_ 
+.PP
+\fBParameters\fP
+.RS 4
+\fIenergyImg\fP L'immagine di input di cui si vogliono trovare i seams
+.br
+\fIimgSrc\fP L'immagine originaria di cui si vuole, eventualmente, colorare i seam trovati\&.
+.br
+\fIseams\fP Il seam di output trovato
+.br
+\fIimgProp\fP Le caratteristiche dell'immagine trovata
+.br
+\fIcolorSeams\fP Se colorare o meno il seam
+.RE
+.PP
+
+.SS "void energyMap (\fBenergyPixel_t\fP * energyImg, \fBimgProp_t\fP * imgProp)"
+Funzione che chiama il kernel GPU che genera la mappa dell'energia 
+.PP
+\fBParameters\fP
+.RS 4
+\fIenergyImg\fP L'Immagine di input di cui si vuole calcolare l'energia
+.br
+\fIimgProp\fP Le caratteristiche dell'immagine
+.RE
+.PP
+
+.SS "__global__ void energyMap_ (\fBenergyPixel_t\fP * energyImg, \fBimgProp_t\fP * imgProp)"
+Kernel che genera la mappa di energia dell'immagine 
+.PP
+\fBParameters\fP
+.RS 4
+\fIenergyImg\fP L'immagine di input di cui calcolare l'energia
+.br
+\fIimgProp\fP Le caratteristiche dell'immagine di input
+.RE
+.PP
+
+.SS "void findSeams (\fBenergyPixel_t\fP * energyImg, \fBpixel_t\fP * imgSrc, \fBimgProp_t\fP * imgProp, \fBseam_t\fP * minSeam, \fBseam_t\fP * seams, \fBseam_t\fP * minSeamsPerBlock)"
+Funzione host che richiama i kernel computeSeams e min\&. Questa funzione permette di trovare il seam da rimuovere mediante la computazione di tutti i seams e della risoluzione di quello minimo\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIenergyImg\fP L'immagine di input di cui si vuole trovare il seam da rimuovere
+.br
+\fIimgSrc\fP L'immagine a colori di cui si vogliono colorare i seam
+.br
+\fIimgProp\fP Le caratteristiche dell'immagine di input
+.br
+\fIminSeam\fP Il seam con peso minore da rimuovere
+.br
+\fIseams\fP Lo spazio di memoria dedicato ai seams da trovare
+.br
+\fIminSeamsPerBlock\fP Lo spazio di memoria dedicato a tutti i minseam per ogni blocco del kernel
+.RE
+.PP
+
+.SS "__device__ char getPosition (int id, \fBimgProp_t\fP * imgProp)"
+Funzione device che restituisce la posizione del pixel all'interno dell'immagine, ovvero se bordo, angolo o centrale\&. ANGOLO BASSO SX = 0 ANGOLO ALTO SX = 1 COLONNA SX = 2 ANGOLO BASSO DX = 3 ANGOLO ALTO DX = 4 COLONNA DX = 5 RIGA DOWN = 6 RIGA UP = 7 IN MEZZO 
+.PP
+\fBParameters\fP
+.RS 4
+\fIid\fP Id del pixel che si sta considerando
+.br
+\fIimgProp\fP Proprietà dell'immagine
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Il tipo di posizione del pixel all'interno dell'immagine
+.RE
+.PP
+
+.SS "__device__ int min (int id1, int id2, \fBenergyPixel_t\fP * energyImg)"
+Funzione device che restituisce il minimo tra due pixel basato sulla loro energia 
+.PP
+\fBParameters\fP
+.RS 4
+\fIid1\fP Pixel 1
+.br
+\fIid2\fP Pixel 2
+.br
+\fIenergyImg\fP L?immagine con energia
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Il minimo tra id1 e id2
+.RE
+.PP
+
+.SS "void removePixelsFromSrc (\fBpixel_t\fP * imgSrc, \fBpixel_t\fP * imgWithoutSeamSrc, \fBenergyPixel_t\fP * imgGray, \fBimgProp_t\fP * imgProp)"
+Funzione host che lancia il kernel GPU utile alla rimozione di tutti i pixel non necessari nell'immagine a colori originale\&. Il risultato sarà un immagine ridotta del numero di pixel inseriti dall'utente\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIimgSrc\fP L'immagine originale di input
+.br
+\fIimgWithoutSeamSrc\fP L'immagine finale in output
+.br
+\fIimgGray\fP L'immagine in GS utilizzata per rimuovere i pixel
+.br
+\fIimgProp\fP Le caratteristiche dell'immagine finale\&.
+.RE
+.PP
+
+.SS "__global__ void removePixelsFromSrc_ (\fBpixel_t\fP * imgSrc, \fBpixel_t\fP * newImgSrc, \fBenergyPixel_t\fP * imgGray, \fBimgProp_t\fP * imgProp)"
+Kernel che elimina tutti i pixel dell'immagine a colori basandosi su quelli rimasti nell'immagine in scala di grigi\&. Vengono lanciati tanti thread quanti sono i pixel dell'immagine in scala di grigi\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIimgSrc\fP Immagine a colori della quale si vogliono eliminare i pixel
+.br
+\fInewImgSrc\fP L'immagine di output
+.br
+\fIimgGray\fP L'immagine in scala di grigi di input
+.br
+\fIimgProp\fP Le caratteristiche delll'immagine finale
+.RE
+.PP
+
+.SS "void removeSeam (\fBenergyPixel_t\fP * imgGray, \fBenergyPixel_t\fP * imgWithoutSeamGray, \fBseam_t\fP * idsToRemove, \fBimgProp_t\fP * imgProp)"
+Funzione host che lancia il kernel GPU che rimuove il seam dall'immagine\&. Verranno lanciati tanti thread quanti sono i pixel dell'immagine finale\&. Infine aggiorno l'immagine in GS 
+.PP
+\fBParameters\fP
+.RS 4
+\fIimgGray\fP 
+.br
+\fIimgWithoutSeamGray\fP 
+.br
+\fIidsToRemove\fP 
+.br
+\fIimgProp\fP 
+.RE
+.PP
+
+.SS "__global__ void removeSeam_ (\fBenergyPixel_t\fP * energyImg, int * idsToRemove, \fBimgProp_t\fP * imgProp, \fBenergyPixel_t\fP * newImageGray)"
+Kernel GPU che rimuove un seam dall'immagine in GS\&. Questo kernel viene lanciato con un numero di thread al numero di pixel totali della nuova immagine\&. Ogni thread verifica se il pixel che sta considerando si trovi a destra o a sinistra (nella riga) del pixel che deve essere rimosso\&. Se a sinistra -> pixel viene copiato nella stessa posizione Se a destra -> pixel viene shiftato di una posizione a sinistra Ovviamente viene considerata anche la riga in cui viene fatta, ovvero il numero di pixel eliminati alle righe sottostanti 
+.PP
+\fBParameters\fP
+.RS 4
+\fIenergyImg\fP L'immagine di input dalla quale si vuole rimuovere il seam
+.br
+\fIidsToRemove\fP Il path del seam, ovvero tutti gli indici da rimuovere
+.br
+\fIimgProp\fP Le caratteristiche dell'immagine
+.br
+\fInewImageGray\fP La nuova immagine con i pixel rimossi
+.RE
+.PP
+
+.SS "__global__ void ss (\fBenergyPixel_t\fP * energyImg, \fBseam_t\fP * seams, int * res, \fBimgProp_t\fP * imgProp)"
+
+.SS "__global__ void updateImageColored_ (\fBpixel_t\fP * imgSrc, \fBpixel_t\fP * imgWithoutSeamSrc, \fBimgProp_t\fP * imgProp)"
+Kernel che aggiorna l'immagine a colori\&. Vengono lanciati tanti thread quanti sono i pixel dell'immagine senza seam 
+.PP
+\fBParameters\fP
+.RS 4
+\fIimgSrc\fP L'immagine da aggiornare
+.br
+\fIimgWithoutSeamSrc\fP L'immagine con seam rimosso
+.br
+\fIimgProp\fP Le proprietà della nuova immagine
+.RE
+.PP
+
+.SS "__global__ void updateImageGray_ (\fBenergyPixel_t\fP * imgGray, \fBenergyPixel_t\fP * imgWithoutSeamGray, \fBimgProp_t\fP * imgProp)"
+Aggiornamento dell'immagine in scala di grigi, con il nuovo path rimosso\&. Vengono lanciati tanti thread quanti sono i pixel della nuova immagine\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIimgGray\fP La vecchia immagine
+.br
+\fIimgWithoutSeamGray\fP La nuova immagine senza seam
+.br
+\fIimgProp\fP Le caratteristiche della nuova immagine
+.RE
+.PP
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for My Project from the source code\&.

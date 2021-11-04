@@ -1,0 +1,190 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_seam__carving_8h" xml:lang="en-US">
+<title>seam_carving.h File Reference</title>
+<indexterm><primary>seam_carving.h</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &quot;image_handler.h&quot;
+</programlisting><simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>void <link linkend="_seam__carving_8h_1a232c6e86e018436ef60f90f8a0dbd01e">energyMap</link> (<link linkend="_image__handler_8h_1a6239917a28b62ca5e3c3cd981f41944c">energyPixel_t</link> *energyImg, <link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> *imgProp)</para>
+</listitem>
+            <listitem><para>void <link linkend="_seam__carving_8h_1a5ec19204ba4266b4f2104383532daf4a">findSeams</link> (<link linkend="_image__handler_8h_1a6239917a28b62ca5e3c3cd981f41944c">energyPixel_t</link> *energyImg, <link linkend="_image__handler_8h_1a2ecda34a1bdbf33933e5e61b64cb3fa4">pixel_t</link> *imgSrc, <link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> *imgProp, <link linkend="_image__handler_8h_1afa036bc04d925ac554f8714304c2131b">seam_t</link> *minSeam, <link linkend="_image__handler_8h_1afa036bc04d925ac554f8714304c2131b">seam_t</link> *seams, <link linkend="_image__handler_8h_1afa036bc04d925ac554f8714304c2131b">seam_t</link> *minSeamsPerBlock)</para>
+</listitem>
+            <listitem><para>void <link linkend="_seam__carving_8h_1afc7c647fefb6d13ff0623f2fe8fbba3c">removeSeam</link> (<link linkend="_image__handler_8h_1a6239917a28b62ca5e3c3cd981f41944c">energyPixel_t</link> *imgGray, <link linkend="_image__handler_8h_1a6239917a28b62ca5e3c3cd981f41944c">energyPixel_t</link> *imgWithoutSeamGray, <link linkend="_image__handler_8h_1afa036bc04d925ac554f8714304c2131b">seam_t</link> *idsToRemove, <link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> *imgProp)</para>
+</listitem>
+            <listitem><para>void <link linkend="_seam__carving_8h_1aae132adc8b12a518d6399e3ac9c5ed5d">removePixelsFromSrc</link> (<link linkend="_image__handler_8h_1a2ecda34a1bdbf33933e5e61b64cb3fa4">pixel_t</link> *imgSrc, <link linkend="_image__handler_8h_1a2ecda34a1bdbf33933e5e61b64cb3fa4">pixel_t</link> *newImgSrc, <link linkend="_image__handler_8h_1a6239917a28b62ca5e3c3cd981f41944c">energyPixel_t</link> *imgGray, <link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> *imgProp)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="_seam__carving_8h_1a232c6e86e018436ef60f90f8a0dbd01e"/><section>
+    <title>energyMap()</title>
+<indexterm><primary>energyMap</primary><secondary>seam_carving.h</secondary></indexterm>
+<indexterm><primary>seam_carving.h</primary><secondary>energyMap</secondary></indexterm>
+<para><computeroutput>void energyMap (<link linkend="_image__handler_8h_1a6239917a28b62ca5e3c3cd981f41944c">energyPixel_t</link> * energyImg, <link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> * imgProp)</computeroutput></para>
+<para>Funzione che chiama il kernel GPU che genera la mappa dell&apos;energia </para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>energyImg</entry><entry>
+<para>L&apos;Immagine di input di cui si vuole calcolare l&apos;energia</para>
+</entry>
+                            </row>
+                            <row>
+<entry>imgProp</entry><entry>
+<para>Le caratteristiche dell&apos;immagine</para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="_seam__carving_8h_1a5ec19204ba4266b4f2104383532daf4a"/><section>
+    <title>findSeams()</title>
+<indexterm><primary>findSeams</primary><secondary>seam_carving.h</secondary></indexterm>
+<indexterm><primary>seam_carving.h</primary><secondary>findSeams</secondary></indexterm>
+<para><computeroutput>void findSeams (<link linkend="_image__handler_8h_1a6239917a28b62ca5e3c3cd981f41944c">energyPixel_t</link> * energyImg, <link linkend="_image__handler_8h_1a2ecda34a1bdbf33933e5e61b64cb3fa4">pixel_t</link> * imgSrc, <link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> * imgProp, <link linkend="_image__handler_8h_1afa036bc04d925ac554f8714304c2131b">seam_t</link> * minSeam, <link linkend="_image__handler_8h_1afa036bc04d925ac554f8714304c2131b">seam_t</link> * seams, <link linkend="_image__handler_8h_1afa036bc04d925ac554f8714304c2131b">seam_t</link> * minSeamsPerBlock)</computeroutput></para>
+<para>Funzione host che richiama i kernel computeSeams e min. Questa funzione permette di trovare il seam da rimuovere mediante la computazione di tutti i seams e della risoluzione di quello minimo. </para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>energyImg</entry><entry>
+<para>L&apos;immagine di input di cui si vuole trovare il seam da rimuovere</para>
+</entry>
+                            </row>
+                            <row>
+<entry>imgSrc</entry><entry>
+<para>L&apos;immagine a colori di cui si vogliono colorare i seam</para>
+</entry>
+                            </row>
+                            <row>
+<entry>imgProp</entry><entry>
+<para>Le caratteristiche dell&apos;immagine di input</para>
+</entry>
+                            </row>
+                            <row>
+<entry>minSeam</entry><entry>
+<para>Il seam con peso minore da rimuovere</para>
+</entry>
+                            </row>
+                            <row>
+<entry>seams</entry><entry>
+<para>Lo spazio di memoria dedicato ai seams da trovare</para>
+</entry>
+                            </row>
+                            <row>
+<entry>minSeamsPerBlock</entry><entry>
+<para>Lo spazio di memoria dedicato a tutti i minseam per ogni blocco del kernel</para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="_seam__carving_8h_1aae132adc8b12a518d6399e3ac9c5ed5d"/><section>
+    <title>removePixelsFromSrc()</title>
+<indexterm><primary>removePixelsFromSrc</primary><secondary>seam_carving.h</secondary></indexterm>
+<indexterm><primary>seam_carving.h</primary><secondary>removePixelsFromSrc</secondary></indexterm>
+<para><computeroutput>void removePixelsFromSrc (<link linkend="_image__handler_8h_1a2ecda34a1bdbf33933e5e61b64cb3fa4">pixel_t</link> * imgSrc, <link linkend="_image__handler_8h_1a2ecda34a1bdbf33933e5e61b64cb3fa4">pixel_t</link> * newImgSrc, <link linkend="_image__handler_8h_1a6239917a28b62ca5e3c3cd981f41944c">energyPixel_t</link> * imgGray, <link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> * imgProp)</computeroutput></para>
+<para>Funzione host che lancia il kernel GPU utile alla rimozione di tutti i pixel non necessari nell&apos;immagine a colori originale. Il risultato sarà un immagine ridotta del numero di pixel inseriti dall&apos;utente. </para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>imgSrc</entry><entry>
+<para>L&apos;immagine originale di input</para>
+</entry>
+                            </row>
+                            <row>
+<entry>imgWithoutSeamSrc</entry><entry>
+<para>L&apos;immagine finale in output</para>
+</entry>
+                            </row>
+                            <row>
+<entry>imgGray</entry><entry>
+<para>L&apos;immagine in GS utilizzata per rimuovere i pixel</para>
+</entry>
+                            </row>
+                            <row>
+<entry>imgProp</entry><entry>
+<para>Le caratteristiche dell&apos;immagine finale.</para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="_seam__carving_8h_1afc7c647fefb6d13ff0623f2fe8fbba3c"/><section>
+    <title>removeSeam()</title>
+<indexterm><primary>removeSeam</primary><secondary>seam_carving.h</secondary></indexterm>
+<indexterm><primary>seam_carving.h</primary><secondary>removeSeam</secondary></indexterm>
+<para><computeroutput>void removeSeam (<link linkend="_image__handler_8h_1a6239917a28b62ca5e3c3cd981f41944c">energyPixel_t</link> * imgGray, <link linkend="_image__handler_8h_1a6239917a28b62ca5e3c3cd981f41944c">energyPixel_t</link> * imgWithoutSeamGray, <link linkend="_image__handler_8h_1afa036bc04d925ac554f8714304c2131b">seam_t</link> * idsToRemove, <link linkend="_image__handler_8h_1a3173789b5a5a8673b3025bd014732715">imgProp_t</link> * imgProp)</computeroutput></para>
+<para>Funzione host che lancia il kernel GPU che rimuove il seam dall&apos;immagine. Verranno lanciati tanti thread quanti sono i pixel dell&apos;immagine finale. Infine aggiorno l&apos;immagine in GS </para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>imgGray</entry><entry></entry>
+                            </row>
+                            <row>
+<entry>imgWithoutSeamGray</entry><entry></entry>
+                            </row>
+                            <row>
+<entry>idsToRemove</entry><entry></entry>
+                            </row>
+                            <row>
+<entry>imgProp</entry><entry></entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+</section>
+</section>

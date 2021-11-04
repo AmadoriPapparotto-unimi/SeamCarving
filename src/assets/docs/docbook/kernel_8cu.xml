@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_kernel_8cu" xml:lang="en-US">
+<title>kernel.cu File Reference</title>
+<indexterm><primary>kernel.cu</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &quot;image_handler.h&quot;
+#include &quot;seam_carving.h&quot;
+#include &quot;utils.cuh&quot;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;iostream&gt;
+#include &lt;sys\timeb.h&gt;
+#include &quot;cuda_runtime.h&quot;
+#include &quot;cuda_runtime_api.h&quot;
+#include &quot;device_launch_parameters.h&quot;
+</programlisting><simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>void <link linkend="_kernel_8cu_1abca81d4baffad726ce1ad3ff034f3835">applySeamCarving</link> (char *p, int iterations)</para>
+</listitem>
+            <listitem><para>int <link linkend="_kernel_8cu_1a3c04138a5bfe5d72780bb7e82a18e627">main</link> (int argc, char **argv)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Variables    </title>
+        <itemizedlist>
+            <listitem><para>char * <link linkend="_kernel_8cu_1a311337de6bf365a42ec130beb66640cb">src_path</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="_kernel_8cu_1abca81d4baffad726ce1ad3ff034f3835"/><section>
+    <title>applySeamCarving()</title>
+<indexterm><primary>applySeamCarving</primary><secondary>kernel.cu</secondary></indexterm>
+<indexterm><primary>kernel.cu</primary><secondary>applySeamCarving</secondary></indexterm>
+<para><computeroutput>void applySeamCarving (char * p, int iterations)</computeroutput></para>
+<para>Funzione principale Host che alloca la memoria necessaria all&apos;algoritmo, legge l&apos;immagine, lancia i vari step del seam carving e scrive la nuova immagine ottenuta. </para>
+
+<para>
+                <formalpara>
+                    <title>
+Parameters</title>
+                    <para>
+                    <table frame="all">
+                        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                        <colspec colwidth="1*"/>
+                        <colspec colwidth="4*"/>
+                        <tbody>
+                            <row>
+<entry>p</entry><entry>
+<para>Il path dell&apos;immagine in input</para>
+</entry>
+                            </row>
+                            <row>
+<entry>iterations</entry><entry>
+<para>Il numero di pixel orizzontali da rimuovere su ogni riga</para>
+</entry>
+                            </row>
+                        </tbody>
+                        </tgroup>
+                    </table>
+                    </para>
+                </formalpara>
+                </para>
+</section>
+<anchor xml:id="_kernel_8cu_1a3c04138a5bfe5d72780bb7e82a18e627"/><section>
+    <title>main()</title>
+<indexterm><primary>main</primary><secondary>kernel.cu</secondary></indexterm>
+<indexterm><primary>kernel.cu</primary><secondary>main</secondary></indexterm>
+<para><computeroutput>int main (int argc, char ** argv)</computeroutput></para></section>
+</section>
+<section>
+<title>Variable Documentation</title>
+<anchor xml:id="_kernel_8cu_1a311337de6bf365a42ec130beb66640cb"/><section>
+    <title>src_path</title>
+<indexterm><primary>src_path</primary><secondary>kernel.cu</secondary></indexterm>
+<indexterm><primary>kernel.cu</primary><secondary>src_path</secondary></indexterm>
+<para><computeroutput>char* src_path</computeroutput></para></section>
+</section>
+</section>
