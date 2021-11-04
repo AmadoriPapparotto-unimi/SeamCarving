@@ -8,6 +8,8 @@ L'algoritmo SeamCarving è un algoritmo di ridimensionamento delle immagini cont
 
 [src/bin](https://github.com/AmadoriPapparotto-unimi/SeamCarving/tree/main/src/bin): contiene il codice sorgente.
 
+[report/profiling](https://github.com/AmadoriPapparotto-unimi/SeamCarving/tree/main/src/assets/reports/profiling): alcuni dei test di profiling effettuati.
+
 Report finale: [report](https://github.com/Luca-Tommy/SeamCarving/blob/main/src/assets/reports/Amadori_Papparotto_SeamCarving.pdf)
 
 SeamCarvingCPU: [repo github](https://github.com/Luca-Tommy/SeamCarvingCPU)
