@@ -4,7 +4,7 @@ L'algoritmo SeamCarving è un algoritmo di ridimensionamento delle immagini cont
 
 # Documentazione
 
-Documentazione disponibile [qui](https://amadoripapparotto-unimi.github.io/SeamCarving/) una documentazione nel formato html.
+Documentazione disponibile [qui](https://amadoripapparotto-unimi.github.io/SeamCarving/) in formato html.
 
 # Struttura del repository
 
