@@ -464,7 +464,7 @@ void findSeams(energyPixel_t* energyImg, pixel_t* imgSrc, imgProp_t* imgProp, se
 
 	int numBlocksMinPerPixel = (imgProp->imageSize - imgProp->width) / nThreadsMinPerPixel + 1;
 	int numBlocksComputeSeams = imgProp->width / nThreadsComputeSeams + 1;
-	int numBlocksMin = imgProp->width / 128 + 1;
+	int numBlocksMin = imgProp->width / nThreadsMin + 1;
 
 	//computo tutti i seams
 	computeMinsPerPixel_ << <numBlocksMinPerPixel, nThreadsMinPerPixel >> > (energyImg, imgProp);
