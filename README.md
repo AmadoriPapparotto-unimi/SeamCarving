@@ -32,5 +32,5 @@ Ad esempio:
 
 [v1.0](https://github.com/AmadoriPapparotto-unimi/SeamCarving/releases/tag/v1.0): soluzione iniziale funzionante ma priva di tutti gli accorgimenti e ottimizzazioni adottate.
 
-[v2.0](https://github.com/AmadoriPapparotto-unimi/SeamCarving/releases/tag/v2.0): soluzione finale.
+[v2.1](https://github.com/AmadoriPapparotto-unimi/SeamCarving/releases/tag/v2.1): soluzione finale.
 
